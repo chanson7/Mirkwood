@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c0722b467ea2634e8af80dbb440c3ec, type: 3}
   m_Name: PlayerSession
   m_EditorClassIdentifier: 
-  playerSessionId: 
-  ipAddress: 
-  port: 0
-  dnsName: 
-  onPlayerSessionUpdated: {fileID: 0}
+  playerSessionId: psess-b41bd29a-6f48-464a-9e50-d698edede7fe
+  ipAddress: 127.0.0.1
+  port: 5000
+  dnsName: localhost
+  onPlayerSessionUpdated: {fileID: 11400000, guid: c7dfb6813f48a2440ab09ea900ae26fc,
+    type: 2}

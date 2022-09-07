@@ -6,6 +6,11 @@ using System.Collections;
 public class PregameMenuHandler : MonoBehaviour
 {
 
+    //so we can test locally within the editor
+#if UNITY_EDITOR
+    public PlayerSession playerSession;
+#endif
+
     [SerializeField] UIDocument uiDocument;
     VisualElement menu;
     VisualElement[] mainMenuOptions;

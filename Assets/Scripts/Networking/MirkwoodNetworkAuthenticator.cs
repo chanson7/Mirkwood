@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Aws.GameLift;
 using Mirror;
 using UnityEngine;
 
@@ -11,11 +12,21 @@ using UnityEngine;
 
 public class MirkwoodNetworkAuthenticator : NetworkAuthenticator
 {
+
+    [SerializeField] GameLiftServer gameLiftServer;
+    [SerializeField] PlayerSession playerSession;
+
     #region Messages
 
-    public struct AuthRequestMessage : NetworkMessage { }
+    public struct AuthRequestMessage : NetworkMessage
+    {
+        public string playerSessionId;
+    }
 
-    public struct AuthResponseMessage : NetworkMessage { }
+    public struct AuthResponseMessage : NetworkMessage
+    {
+        public bool authSuccess;
+    }
 
     #endregion
 
@@ -27,6 +38,7 @@ public class MirkwoodNetworkAuthenticator : NetworkAuthenticator
     /// </summary>
     public override void OnStartServer()
     {
+        Debug.Log($"..Server started. Registering auth message handlers");
         // register a handler for the authentication request we expect from client
         NetworkServer.RegisterHandler<AuthRequestMessage>(OnAuthRequestMessage, false);
     }
@@ -44,12 +56,25 @@ public class MirkwoodNetworkAuthenticator : NetworkAuthenticator
     /// <param name="msg">The message payload</param>
     public void OnAuthRequestMessage(NetworkConnectionToClient conn, AuthRequestMessage msg)
     {
+        Debug.Log($"..Authentication message received from client at {conn.address}");
         AuthResponseMessage authResponseMessage = new AuthResponseMessage();
 
-        conn.Send(authResponseMessage);
+        if (gameLiftServer.AcceptPlayerSession(msg.playerSessionId).Success)
+        {
+            authResponseMessage.authSuccess = true;
+            Debug.Log($"..Authenticator ACCEPTS {msg.playerSessionId} connection at {NetworkTime.time}");
 
-        // Accept the successful authentication
-        ServerAccept(conn);
+            ServerAccept(conn);
+        }
+        else
+        {
+            // reject the connection
+            authResponseMessage.authSuccess = false;
+            Debug.Log($"..Authenticator REJECTS {msg.playerSessionId} connection at {NetworkTime.time}");
+            ServerReject(conn);
+        }
+
+        conn.Send(authResponseMessage);
     }
 
     #endregion
@@ -62,6 +87,7 @@ public class MirkwoodNetworkAuthenticator : NetworkAuthenticator
     /// </summary>
     public override void OnStartClient()
     {
+        Debug.Log($"..Client started. Registering auth message handlers");
         // register a handler for the authentication response we expect from server
         NetworkClient.RegisterHandler<AuthResponseMessage>(OnAuthResponseMessage, false);
     }
@@ -71,7 +97,11 @@ public class MirkwoodNetworkAuthenticator : NetworkAuthenticator
     /// </summary>
     public override void OnClientAuthenticate()
     {
-        AuthRequestMessage authRequestMessage = new AuthRequestMessage();
+        Debug.Log($"..Client sending Auth Request Message at {NetworkTime.time}");
+        AuthRequestMessage authRequestMessage = new AuthRequestMessage
+        {
+            playerSessionId = playerSession.playerSessionId
+        };
 
         NetworkClient.Send(authRequestMessage);
     }
@@ -82,8 +112,13 @@ public class MirkwoodNetworkAuthenticator : NetworkAuthenticator
     /// <param name="msg">The message payload</param>
     public void OnAuthResponseMessage(AuthResponseMessage msg)
     {
-        // Authentication has been accepted
-        ClientAccept();
+        Debug.Log($"..Server auth response received at {NetworkTime.time}");
+
+        if (msg.authSuccess)
+        {
+            Debug.Log($"..Accepting server authentication");
+            ClientAccept();
+        }
     }
 
     #endregion

@@ -16,9 +16,8 @@ MonoBehaviour:
     m_AppId: 836430
   isDebugging: 0
   server:
-    autoInitalize: 0
+    autoInitialize: 0
     autoLogon: 0
-    enableMirror: 0
     ip: 0
     queryPort: 27016
     gamePort: 27015
@@ -57,13 +56,14 @@ MonoBehaviour:
     actions: []
     inventory:
       items: []
+      runTimeUpdateItemDefinitions: 0
   stats: []
   achievements: []
   dlc: []
   leaderboards: []
-  evtSteamInitalized:
+  evtSteamInitialized:
     m_PersistentCalls:
       m_Calls: []
-  evtSteamInitalizationError:
+  evtSteamInitializationError:
     m_PersistentCalls:
       m_Calls: []

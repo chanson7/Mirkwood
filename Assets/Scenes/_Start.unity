@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 865809900}
   - component: {fileID: 865809899}
   - component: {fileID: 865809898}
+  - component: {fileID: 865809901}
   m_Layer: 0
   m_Name: Network Manager
   m_TagString: Untagged
@@ -175,6 +176,8 @@ MonoBehaviour:
   OnClientAuthenticated:
     m_PersistentCalls:
       m_Calls: []
+  gameLiftServer: {fileID: 1171518016}
+  playerSession: {fileID: 11400000, guid: 6b94213fb22887349b5b67d5fadaa18b, type: 2}
 --- !u!114 &865809899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,7 +221,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
   runInBackground: 1
-  autoStartServerBuild: 1
+  autoStartServerBuild: 0
   serverTickRate: 30
   offlineScene: Assets/Scenes/MainMenu.unity
   onlineScene: Assets/Scenes/Arena.unity
@@ -231,6 +234,36 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
+  gameLiftServer: {fileID: 1171518016}
+--- !u!114 &865809901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 865809894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c43250eeeea7f064cbdfa0fd891a4683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scriptableEvent: {fileID: 11400000, guid: c7dfb6813f48a2440ab09ea900ae26fc, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 865809900}
+        m_TargetAssemblyTypeName: MirkwoodNetworkManager, Assembly-CSharp
+        m_MethodName: ConnectToPlayerSession
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 11400000, guid: 6b94213fb22887349b5b67d5fadaa18b,
+            type: 2}
+          m_ObjectArgumentAssemblyTypeName: PlayerSession, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1150552896
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,7 +318,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1171518017}
   - component: {fileID: 1171518016}
-  - component: {fileID: 1171518019}
   - component: {fileID: 1171518018}
   m_Layer: 0
   m_Name: GameLift Server
@@ -333,23 +365,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9e5805cddeeb1a4cae1fa3f3d3e331c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1171518019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1171518015}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sceneId: 3327276534
-  serverOnly: 1
-  visible: 0
-  m_AssetId: 
-  hasSpawned: 0
 --- !u!1 &1865850962
 GameObject:
   m_ObjectHideFlags: 0

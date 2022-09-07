@@ -1,7 +1,8 @@
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using Mirror;
+using System.Net.NetworkInformation;
+using System.Linq;
 
 /*
 	Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
@@ -13,6 +14,8 @@ public class MirkwoodNetworkManager : NetworkManager
     // Overrides the base singleton so we don't
     // have to cast to this type everywhere.
     public static new MirkwoodNetworkManager singleton { get; private set; }
+    static int minPort = 5000;
+    [SerializeField] GameLiftServer gameLiftServer;
 
     #region Unity Callbacks
 
@@ -37,6 +40,14 @@ public class MirkwoodNetworkManager : NetworkManager
     public override void Start()
     {
         singleton = this;
+
+        if (!Application.isEditor)
+        {
+            //this line somehow finds available UDP ports idk i got it from discord
+            ((kcp2k.KcpTransport)Transport.activeTransport).Port = (ushort)Enumerable.Range(minPort, ushort.MaxValue).First(p => !IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().Any(l => l.Port == p));
+            gameLiftServer.StartGameLiftServer(((kcp2k.KcpTransport)Transport.activeTransport).Port);
+        }
+
         base.Start();
     }
 
@@ -176,6 +187,23 @@ public class MirkwoodNetworkManager : NetworkManager
     #region Client System Callbacks
 
     /// <summary>
+    /// Called on the client when a new GameLift Player Session has been received from AWS.
+    /// </summary>
+    /// <param name="playerSession">The updated Player Session scriptable object</param>
+
+    public void ConnectToPlayerSession(PlayerSession playerSession)
+    {
+        Debug.Log($"..New Player Session Received, starting Mirror Client");
+
+        singleton.StartClient(new UriBuilder
+        {
+            Scheme = "kcp",
+            Host = playerSession.dnsName,
+            Port = playerSession.port
+        }.Uri);
+    }
+
+    /// <summary>
     /// Called on the client when connected to a server.
     /// <para>The default implementation of this function sets the client as ready and adds a player. Override the function to dictate what happens when the client connects.</para>
     /// </summary>
@@ -223,12 +251,19 @@ public class MirkwoodNetworkManager : NetworkManager
     /// This is invoked when a server is started - including when a host is started.
     /// <para>StartServer has multiple signatures, but they all cause this hook to be called.</para>
     /// </summary>
-    public override void OnStartServer() { }
+    public override void OnStartServer()
+    {
+
+        Debug.Log($"..Mirror Server started");
+    }
 
     /// <summary>
     /// This is invoked when the client is started.
     /// </summary>
-    public override void OnStartClient() { }
+    public override void OnStartClient()
+    {
+        Debug.Log($"..Mirror Client started");
+    }
 
     /// <summary>
     /// This is called when a host is stopped.
@@ -238,12 +273,18 @@ public class MirkwoodNetworkManager : NetworkManager
     /// <summary>
     /// This is called when a server is stopped - including when a host is stopped.
     /// </summary>
-    public override void OnStopServer() { }
+    public override void OnStopServer()
+    {
+        Debug.Log($"..Mirror Server stopped");
+    }
 
     /// <summary>
     /// This is called when a client is stopped.
     /// </summary>
-    public override void OnStopClient() { }
+    public override void OnStopClient()
+    {
+        Debug.Log($"..Mirror Client stopped");
+    }
 
     #endregion
 }

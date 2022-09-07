@@ -1,12 +1,10 @@
 #if UNITY_EDITOR
 using System;
 using UnityEditor;
-using System.Diagnostics;
-using UnityEngine;
 
 public class BuildScript
 {
-    static string[] scenes = new[] { "Assets/Scenes/_Start.unity", "Assets/Scenes/MainMenu.unity" };
+    static string[] scenes = new[] { "Assets/Scenes/_Start.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Arena.unity" };
 
     [MenuItem("Build/Build Client (Windows)")]
     public static void BuildWindowsClient()
@@ -19,7 +17,7 @@ public class BuildScript
 
         Console.WriteLine("..Building Client (Windows)...");
         BuildPipeline.BuildPlayer(buildPlayerOptions);
-        Console.WriteLine("..Built Client (Windows).");
+        Console.WriteLine("..Built Client (Windows)");
     }
 
     [MenuItem("Build/Build Server (Windows)")]
@@ -27,12 +25,13 @@ public class BuildScript
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.scenes = scenes;
-        buildPlayerOptions.locationPathName = "Builds/Windows/Client/MirkwoodServer.exe";
-        buildPlayerOptions.target = (UnityEditor.BuildTarget)StandaloneBuildSubtarget.Server;
+        buildPlayerOptions.locationPathName = "Builds/Windows/Server/MirkwoodServer.exe";
+        buildPlayerOptions.target = BuildTarget.StandaloneWindows64;
+        buildPlayerOptions.subtarget = (int)StandaloneBuildSubtarget.Server;
 
         Console.WriteLine("..Building Server (Windows)...");
         BuildPipeline.BuildPlayer(buildPlayerOptions);
-        Console.WriteLine("..Built Server (Windows).");
+        Console.WriteLine("..Built Server (Windows)");
     }
 
 }

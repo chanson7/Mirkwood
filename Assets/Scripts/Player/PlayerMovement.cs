@@ -9,33 +9,23 @@ public class PlayerMovement : NetworkBehaviour
 {
 
     Vector2 movementInput;
-    Vector2 rotationInput;
+    Vector3 mouseWorldPosition;
     [SerializeField] CharacterController characterController;
     [SerializeField] PlayerInput playerInput;
 
     float verticalVelocity = 0f;
+    [SerializeField] float movementSpeed = 5f;
 
     #region player inputs
-
-    void Start()
-    {
-        if (!hasAuthority && !isServer)
-        {
-            characterController.enabled = false;
-            playerInput.enabled = false;
-            this.enabled = false;
-        }
-
-    }
 
     void OnMove(InputValue input)
     {
         movementInput = input.Get<Vector2>();
     }
 
-    void OnLook(InputValue input)
+    void OnLook()
     {
-        rotationInput = input.Get<Vector2>();
+        mouseWorldPosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
     }
     #endregion
 
@@ -45,10 +35,10 @@ public class PlayerMovement : NetworkBehaviour
             return;
 
         CmdMovePlayer(movementInput);
-        CmdRotatePlayer(rotationInput);
+        CmdRotatePlayer(mouseWorldPosition);
 
-        MovePlayer(movementInput);
-        RotatePlayer(rotationInput);
+        // MovePlayer(movementInput);
+        // RotatePlayer(mouseWorldPosition);
     }
 
     [Command]
@@ -58,9 +48,9 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     [Command]
-    void CmdRotatePlayer(Vector2 rotationInput)
+    void CmdRotatePlayer(Vector3 mouseWorldPosition)
     {
-        RotatePlayer(rotationInput);
+        RotatePlayer(mouseWorldPosition);
     }
 
     #region transform logic
@@ -75,13 +65,14 @@ public class PlayerMovement : NetworkBehaviour
         Vector3 direction = new Vector3(movement.x, verticalVelocity, movement.y);
 
         direction = transform.TransformDirection(direction);
-        characterController.Move(direction * Time.fixedDeltaTime);
+        characterController.Move(direction * Time.fixedDeltaTime * movementSpeed);
 
     }
 
-    void RotatePlayer(Vector2 rotation)
+    void RotatePlayer(Vector3 mouseWorldPosition)
     {
-        characterController.transform.Rotate(transform.up, rotation.x);
+        // Quaternion rotation = Quaternion.LookRotation(mouseWorldPosition - transform.position);
+        // transform.rotation = rotation;
     }
 
     #endregion

@@ -35,6 +35,11 @@ public class GameInitializer : MonoBehaviour
                     autoStartServer = true;
                     break;
 
+                case "-localTest":
+                    disableServerAuth = true;
+                    autoStartServer = true;
+                    break;
+
                 default:
                     break;
             }

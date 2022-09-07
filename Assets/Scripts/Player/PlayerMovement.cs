@@ -3,26 +3,29 @@ using UnityEngine.InputSystem;
 using Mirror;
 
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(NetworkTransform))]
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerMovement : NetworkBehaviour
 {
 
     Vector2 movementInput;
     Vector2 rotationInput;
-    Vector3 currentVelocity;
-    [SyncVar] Vector2 knockbackValue = Vector2.zero;
     [SerializeField] CharacterController characterController;
-    float knockbackTime = 0.4f;
-    float verticalVelocity = 0f;
+    [SerializeField] PlayerInput playerInput;
 
-    [Header("Player Settings")]
-    float xRotationSensitivity = 0.4f;
-    public float movementSpeed;
+    float verticalVelocity = 0f;
 
     #region player inputs
 
     void Start()
     {
-        characterController.enabled = hasAuthority || isServer;
+        if (!hasAuthority && !isServer)
+        {
+            characterController.enabled = false;
+            playerInput.enabled = false;
+            this.enabled = false;
+        }
+
     }
 
     void OnMove(InputValue input)
@@ -32,7 +35,7 @@ public class PlayerMovement : NetworkBehaviour
 
     void OnLook(InputValue input)
     {
-        rotationInput = input.Get<Vector2>() * xRotationSensitivity;
+        rotationInput = input.Get<Vector2>();
     }
     #endregion
 
@@ -72,7 +75,7 @@ public class PlayerMovement : NetworkBehaviour
         Vector3 direction = new Vector3(movement.x, verticalVelocity, movement.y);
 
         direction = transform.TransformDirection(direction);
-        characterController.Move(direction * Time.fixedDeltaTime * movementSpeed);
+        characterController.Move(direction * Time.fixedDeltaTime);
 
     }
 

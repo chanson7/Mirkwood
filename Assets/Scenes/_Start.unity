@@ -308,6 +308,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e6aa4b1db9c7ed4b871b8e6418eb376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  networkManager: {fileID: 865809900}
+  disableServerAuth: 1
+  autoStartServer: 0
 --- !u!1 &1171518015
 GameObject:
   m_ObjectHideFlags: 0

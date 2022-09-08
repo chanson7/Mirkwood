@@ -10,10 +10,9 @@ public class ServerGhost : NetworkBehaviour
     [SerializeField] GameObject serverGhost;
 
 
-    private void Start()
+    public override void OnStartLocalPlayer()
     {
-        if (!base.isServer && !isLocalPlayer)
-            Destroy(serverGhost);
+        serverGhost.SetActive(true);
     }
 
     void Update()

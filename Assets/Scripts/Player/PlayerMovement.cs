@@ -1,80 +1,191 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Mirror;
+using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(CharacterController))]
-[RequireComponent(typeof(NetworkTransform))]
-[RequireComponent(typeof(PlayerInput))]
+public struct InputPayload
+{
+    public int tick;
+    public Vector3 movementInput;
+}
+
+public struct StatePayload
+{
+    public int tick;
+    public Vector3 position;
+}
+
 public class PlayerMovement : NetworkBehaviour
 {
-
-    Vector2 movementInput;
-    Vector3 mouseWorldPosition;
-    [SerializeField] CharacterController characterController;
-    [SerializeField] PlayerInput playerInput;
-
-    float verticalVelocity = 0f;
+    float timer;
+    int currentTick;
+    float minTimeBetweenServerTicks;
+    const int BUFFER_SIZE = 1024;
     [SerializeField] float movementSpeed = 5f;
+    [SerializeField] float acceptablePositionError = 0.001f;
 
-    #region player inputs
+    //client only
+    private StatePayload[] clientStateBuffer;
+    private InputPayload[] clientInputBuffer;
+    StatePayload latestServerState;
+    StatePayload lastProcessedState;
+    Vector3 movementInput = new Vector3();
+
+    //server only
+    StatePayload[] serverStateBuffer;
+    Queue<InputPayload> inputQueue;
+
+
+    void Start()
+    {
+        minTimeBetweenServerTicks = 1f / MirkwoodNetworkManager.singleton.serverTickRate;
+    }
+
+    public override void OnStartLocalPlayer()
+    {
+        Debug.Log($"..Initializing CLIENT side player movement for {this.gameObject.name}");
+
+        clientStateBuffer = new StatePayload[BUFFER_SIZE];
+        clientInputBuffer = new InputPayload[BUFFER_SIZE];
+    }
+
+    public override void OnStartServer()
+    {
+        Debug.Log($"..Initializing SERVER side player movement for {this.gameObject.name}");
+
+        serverStateBuffer = new StatePayload[BUFFER_SIZE];
+        inputQueue = new Queue<InputPayload>();
+    }
 
     void OnMove(InputValue input)
     {
-        movementInput = input.Get<Vector2>();
+        movementInput.x = input.Get<Vector2>().x;
+        movementInput.z = input.Get<Vector2>().y;
     }
 
-    void OnLook()
+    void Update()
     {
-        mouseWorldPosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        timer += Time.deltaTime;
+
+        while (timer >= minTimeBetweenServerTicks)
+        {
+            timer -= minTimeBetweenServerTicks;
+
+            if (isLocalPlayer)
+                HandleTickOnClient();
+            else if (isServer)
+                HandleTickOnServer();
+
+            currentTick++;
+        }
     }
-    #endregion
 
-    private void FixedUpdate()
+    [Client]
+    void HandleTickOnClient()
     {
-        if (!base.hasAuthority)
-            return;
 
-        CmdMovePlayer(movementInput);
-        CmdRotatePlayer(mouseWorldPosition);
+        if (!latestServerState.Equals(default(StatePayload)) &&
+        (lastProcessedState.Equals(default(StatePayload)) ||
+        !latestServerState.Equals(lastProcessedState)))
+            HandleServerReconciliation();
 
-        // MovePlayer(movementInput);
-        // RotatePlayer(mouseWorldPosition);
+
+        int bufferIndex = currentTick % BUFFER_SIZE;
+
+        //Add the input payload to the input buffer
+        InputPayload inputPayload = new InputPayload();
+        inputPayload.tick = currentTick;
+        inputPayload.movementInput = movementInput;
+        clientInputBuffer[bufferIndex] = inputPayload;
+
+        clientStateBuffer[bufferIndex] = ProcessMovement(inputPayload);
+
+        CmdOnClientInput(inputPayload);
     }
 
     [Command]
-    void CmdMovePlayer(Vector2 movementInput)
+    void CmdOnClientInput(InputPayload inputPayload)
     {
-        MovePlayer(movementInput);
+        inputQueue.Enqueue(inputPayload);
     }
 
-    [Command]
-    void CmdRotatePlayer(Vector3 mouseWorldPosition)
+    [Server]
+    void HandleTickOnServer()
     {
-        RotatePlayer(mouseWorldPosition);
+        int bufferIndex = -1;
+
+        //server has some inputs to process
+        while (inputQueue.Count > 0)
+        {
+            InputPayload inputPayload = inputQueue.Dequeue();
+
+            bufferIndex = inputPayload.tick % BUFFER_SIZE;
+
+            StatePayload statePayload = ProcessMovement(inputPayload);
+            serverStateBuffer[bufferIndex] = statePayload;
+        }
+
+        //we made it through the buffer!!!!
+        if (bufferIndex != -1)
+        {
+            RpcOnServerMovementState(serverStateBuffer[bufferIndex]);
+        }
+
     }
 
-    #region transform logic
-    void MovePlayer(Vector2 movement)
+    [ClientRpc]
+    void RpcOnServerMovementState(StatePayload statePayload)
     {
-
-        if (!characterController.isGrounded)
-            verticalVelocity += Physics.gravity.y;
-        else
-            verticalVelocity = Physics.gravity.y;
-
-        Vector3 direction = new Vector3(movement.x, verticalVelocity, movement.y);
-
-        direction = transform.TransformDirection(direction);
-        characterController.Move(direction * Time.fixedDeltaTime * movementSpeed);
-
+        latestServerState = statePayload;
     }
 
-    void RotatePlayer(Vector3 mouseWorldPosition)
+
+
+    StatePayload ProcessMovement(InputPayload input)
     {
-        // Quaternion rotation = Quaternion.LookRotation(mouseWorldPosition - transform.position);
-        // transform.rotation = rotation;
+        transform.position += input.movementInput * movementSpeed * minTimeBetweenServerTicks;
+
+        return new StatePayload()
+        {
+            tick = input.tick,
+            position = transform.position
+        };
     }
 
-    #endregion
+    [Client]
+    void HandleServerReconciliation()
+    {
+        lastProcessedState = latestServerState;
+
+        int serverStateBufferIndex = latestServerState.tick % BUFFER_SIZE;
+        float positionError = Vector3.Distance(latestServerState.position, clientStateBuffer[serverStateBufferIndex].position);
+
+        if (positionError > acceptablePositionError)
+        {
+            Debug.Log($"..Reconciling for {positionError} error");
+
+            // Rewind & Replay
+            transform.position = latestServerState.position;
+
+            // Update buffer at index of latest server state
+            clientStateBuffer[serverStateBufferIndex] = latestServerState;
+
+            // Now re-simulate the rest of the ticks up to the current tick on the client
+            int tickToProcess = latestServerState.tick + 1;
+
+            while (tickToProcess < currentTick)
+            {
+                int bufferIndex = tickToProcess % BUFFER_SIZE;
+
+                // Process new movement with reconciled state
+                StatePayload statePayload = ProcessMovement(clientInputBuffer[bufferIndex]);
+
+                // Update buffer with recalculated state
+                clientStateBuffer[bufferIndex] = statePayload;
+
+                tickToProcess++;
+            }
+        }
+    }
 
 }

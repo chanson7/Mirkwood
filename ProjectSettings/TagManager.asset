@@ -9,7 +9,6 @@ TagManager:
   - Enemy
   - World
   - NoMask
-  - Camera Follow Target
   layers:
   - Default
   - TransparentFX

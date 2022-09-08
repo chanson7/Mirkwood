@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using UnityEditor;
+using System.Diagnostics;
 
 public class BuildScript
 {
@@ -15,9 +16,9 @@ public class BuildScript
         buildPlayerOptions.target = BuildTarget.StandaloneWindows64;
         buildPlayerOptions.options = BuildOptions.CompressWithLz4HC;
 
-        Console.WriteLine("..Building Client (Windows)...");
+        UnityEngine.Debug.Log("..Building Client (Windows)...");
         BuildPipeline.BuildPlayer(buildPlayerOptions);
-        Console.WriteLine("..Built Client (Windows)");
+        UnityEngine.Debug.Log("..Built Client (Windows)");
     }
 
     [MenuItem("Build/Build Server (Windows)")]
@@ -29,9 +30,24 @@ public class BuildScript
         buildPlayerOptions.target = BuildTarget.StandaloneWindows64;
         buildPlayerOptions.subtarget = (int)StandaloneBuildSubtarget.Server;
 
-        Console.WriteLine("..Building Server (Windows)...");
+        UnityEngine.Debug.Log("..Building Server (Windows)...");
         BuildPipeline.BuildPlayer(buildPlayerOptions);
-        Console.WriteLine("..Built Server (Windows)");
+        UnityEngine.Debug.Log("..Built Server (Windows)");
+    }
+
+    [MenuItem("Build/Run Local Test Server")]
+    public static void UploadServerBuild()
+    {
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = "Builds/Windows/Server/MirkwoodServer.exe";
+            process.StartInfo.Arguments = "-localTest";
+
+            process.Start();
+
+            UnityEngine.Debug.Log($"..Running Local Test Server");
+        }
+
     }
 
 }

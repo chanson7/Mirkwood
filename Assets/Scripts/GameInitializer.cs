@@ -1,14 +1,17 @@
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using System;
+using HeathenEngineering.SteamworksIntegration;
 
 public class GameInitializer : MonoBehaviour
 {
 
     [SerializeField] MirkwoodNetworkManager networkManager;
+    [SerializeField] SteamworksBehaviour steamworksBehaviour;
 
     [SerializeField] bool disableServerAuth = false;
     [SerializeField] bool autoStartServer = false;
+    [SerializeField] bool disableSteam = false;
 
     void Awake()
     {
@@ -27,17 +30,27 @@ public class GameInitializer : MonoBehaviour
         {
             switch (arg)
             {
-                case "-disableServerAuth":
-                    disableServerAuth = true;
-                    break;
-
                 case "-autoStartServer":
                     autoStartServer = true;
                     break;
 
-                case "-localTest":
+                case "-disableServerAuth":
+                    disableServerAuth = true;
+                    break;
+
+                case "-disableSteam":
+                    disableSteam = true;
+                    break;
+
+                case "-localTestClient":
+                    disableServerAuth = true;
+                    disableSteam = true;
+                    break;
+
+                case "-localTestServer":
                     disableServerAuth = true;
                     autoStartServer = true;
+                    disableSteam = true;
                     break;
 
                 default:
@@ -57,6 +70,11 @@ public class GameInitializer : MonoBehaviour
         {
             Debug.Log("..Server will automatically start");
             networkManager.StartServer();
+        }
+        if (disableSteam)
+        {
+            Debug.Log("..Disabling Steam Integration");
+            steamworksBehaviour.enabled = false;
         }
     }
 

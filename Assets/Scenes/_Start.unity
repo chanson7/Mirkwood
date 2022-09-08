@@ -324,8 +324,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkManager: {fileID: 865809900}
+  steamworksBehaviour: {fileID: 2077987995}
   disableServerAuth: 1
   autoStartServer: 0
+  disableSteam: 0
 --- !u!1 &1171518015
 GameObject:
   m_ObjectHideFlags: 0

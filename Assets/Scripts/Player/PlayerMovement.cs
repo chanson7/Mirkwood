@@ -35,7 +35,6 @@ public class PlayerMovement : NetworkBehaviour
     StatePayload[] serverStateBuffer;
     Queue<InputPayload> inputQueue;
 
-
     void Start()
     {
         minTimeBetweenServerTicks = 1f / MirkwoodNetworkManager.singleton.serverTickRate;
@@ -89,15 +88,18 @@ public class PlayerMovement : NetworkBehaviour
         !latestServerState.Equals(lastProcessedState)))
             HandleServerReconciliation();
 
-
         int bufferIndex = currentTick % BUFFER_SIZE;
 
         //Add the input payload to the input buffer
-        InputPayload inputPayload = new InputPayload();
-        inputPayload.tick = currentTick;
-        inputPayload.movementInput = movementInput;
-        clientInputBuffer[bufferIndex] = inputPayload;
+        InputPayload inputPayload = new InputPayload
+        {
+            tick = currentTick,
+            movementInput = movementInput
+        };
 
+        // inputPayload.tick = currentTick;
+        // inputPayload.movementInput = movementInput;
+        clientInputBuffer[bufferIndex] = inputPayload;
         clientStateBuffer[bufferIndex] = ProcessMovement(inputPayload);
 
         CmdOnClientInput(inputPayload);
@@ -138,8 +140,6 @@ public class PlayerMovement : NetworkBehaviour
     {
         latestServerState = statePayload;
     }
-
-
 
     StatePayload ProcessMovement(InputPayload input)
     {

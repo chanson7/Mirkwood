@@ -1,5 +1,4 @@
 #if UNITY_EDITOR
-using System;
 using UnityEditor;
 using System.Diagnostics;
 
@@ -36,7 +35,7 @@ public class BuildScript
     }
 
     [MenuItem("Build/Run Local Test Server")]
-    public static void UploadServerBuild()
+    public static void RunLocalTestServer()
     {
         using (Process process = new Process())
         {
@@ -46,6 +45,21 @@ public class BuildScript
             process.Start();
 
             UnityEngine.Debug.Log($"..Running Local Test Server");
+        }
+
+    }
+
+    [MenuItem("Build/Run Local Test Client")]
+    public static void RunLocalTestClient()
+    {
+        using (Process process = new Process())
+        {
+            process.StartInfo.FileName = "Builds/Windows/Client/Mirkwood.exe";
+            process.StartInfo.Arguments = "-disableSteam";
+
+            process.Start();
+
+            UnityEngine.Debug.Log($"..Running Local Test Client");
         }
 
     }

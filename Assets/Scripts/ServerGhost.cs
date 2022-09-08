@@ -9,7 +9,6 @@ public class ServerGhost : NetworkBehaviour
     [SyncVar] Quaternion serverRotation;
     [SerializeField] GameObject serverGhost;
 
-
     public override void OnStartLocalPlayer()
     {
         serverGhost.SetActive(true);

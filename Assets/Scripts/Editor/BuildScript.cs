@@ -56,7 +56,7 @@ public class BuildScript
     {
         using (Process process = new Process())
         {
-            process.StartInfo.FileName = Directory.GetCurrentDirectory() + "Builds/Windows/Client/Mirkwood.exe";
+            process.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Builds/Windows/Client/Mirkwood.exe";
             process.StartInfo.Arguments = "-localTestClient";
 
             process.Start();

@@ -47,7 +47,7 @@ public class PregameMenuHandler : MonoBehaviour
 
     private IEnumerator Start()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.5f);
         menu.ToggleInClassList(POPUP_ANIMATION);
     }
 

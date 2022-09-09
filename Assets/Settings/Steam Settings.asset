@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   applicationId:
     m_AppId: 836430
-  isDebugging: 0
+  isDebugging: 1
   server:
     autoInitialize: 0
     autoLogon: 0

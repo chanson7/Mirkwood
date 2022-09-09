@@ -97,8 +97,6 @@ public class PlayerMovement : NetworkBehaviour
             movementInput = movementInput
         };
 
-        // inputPayload.tick = currentTick;
-        // inputPayload.movementInput = movementInput;
         clientInputBuffer[bufferIndex] = inputPayload;
         clientStateBuffer[bufferIndex] = ProcessMovement(inputPayload);
 

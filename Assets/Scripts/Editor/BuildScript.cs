@@ -40,7 +40,7 @@ public class BuildScript
         using (Process process = new Process())
         {
             process.StartInfo.FileName = "Builds/Windows/Server/MirkwoodServer.exe";
-            process.StartInfo.Arguments = "-localTest";
+            process.StartInfo.Arguments = "-localTestServer";
 
             process.Start();
 
@@ -55,7 +55,7 @@ public class BuildScript
         using (Process process = new Process())
         {
             process.StartInfo.FileName = "Builds/Windows/Client/Mirkwood.exe";
-            process.StartInfo.Arguments = "-disableSteam";
+            process.StartInfo.Arguments = "-localTestClient";
 
             process.Start();
 

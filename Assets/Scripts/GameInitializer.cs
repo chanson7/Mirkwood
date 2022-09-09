@@ -7,11 +7,10 @@ public class GameInitializer : MonoBehaviour
 {
 
     [SerializeField] MirkwoodNetworkManager networkManager;
-    [SerializeField] SteamworksBehaviour steamworksBehaviour;
-
+    [SerializeField] GameObject logGui;
     [SerializeField] bool disableServerAuth = false;
     [SerializeField] bool autoStartServer = false;
-    [SerializeField] bool disableSteam = false;
+    [SerializeField] bool enableLogging = false;
 
     void Awake()
     {
@@ -38,19 +37,18 @@ public class GameInitializer : MonoBehaviour
                     disableServerAuth = true;
                     break;
 
-                case "-disableSteam":
-                    disableSteam = true;
+                case "-enableLogging":
+                    enableLogging = true;
                     break;
 
                 case "-localTestClient":
                     disableServerAuth = true;
-                    disableSteam = true;
+                    enableLogging = true;
                     break;
 
                 case "-localTestServer":
                     disableServerAuth = true;
                     autoStartServer = true;
-                    disableSteam = true;
                     break;
 
                 default:
@@ -61,20 +59,20 @@ public class GameInitializer : MonoBehaviour
 
     void ApplySettings()
     {
-        if (disableServerAuth)
-        {
-            Debug.Log("..Disabling Authentication");
-            networkManager.authenticator = null;
-        }
         if (autoStartServer)
         {
             Debug.Log("..Server will automatically start");
             networkManager.StartServer();
         }
-        if (disableSteam)
+        if (disableServerAuth)
         {
-            Debug.Log("..Disabling Steam Integration");
-            steamworksBehaviour.enabled = false;
+            Debug.Log("..Disabling Authentication");
+            networkManager.authenticator = null;
+        }
+        if (enableLogging)
+        {
+            Debug.Log("..Enabling log GUI");
+            logGui.SetActive(true);
         }
     }
 

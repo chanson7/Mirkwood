@@ -41,7 +41,7 @@ public class MirkwoodNetworkManager : NetworkManager
     {
         singleton = this;
 
-        if (!Application.isEditor)
+        if (Application.isBatchMode)
         {
             //this line somehow finds available UDP ports idk i got it from discord
             ((kcp2k.KcpTransport)Transport.activeTransport).Port = (ushort)Enumerable.Range(minPort, ushort.MaxValue).First(p => !IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().Any(l => l.Port == p));

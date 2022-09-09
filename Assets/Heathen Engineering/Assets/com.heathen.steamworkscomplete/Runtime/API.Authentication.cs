@@ -31,7 +31,7 @@ namespace HeathenEngineering.SteamworksIntegration.API
         /// <summary>
         /// Sessions this player has started
         /// </summary>
-        public static List<AuthenticationSession> ActiveSessions; 
+        public static List<AuthenticationSession> ActiveSessions;
 
 #pragma warning disable IDE0052 // Remove unread private members
         private static Callback<GetAuthSessionTicketResponse_t> m_GetAuthSessionTicketResponce;

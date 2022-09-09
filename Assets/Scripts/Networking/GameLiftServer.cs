@@ -8,12 +8,6 @@ using Mirror;
 public class GameLiftServer : MonoBehaviour
 {
 
-    private void Awake()
-    {
-        if (Application.isEditor)
-            Destroy(this.gameObject);
-    }
-
     //Make game server processes go active on Amazon GameLift
     public void StartGameLiftServer(ushort listeningPort)
     {

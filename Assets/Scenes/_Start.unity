@@ -262,8 +262,8 @@ MonoBehaviour:
   MaximizeSendReceiveBuffersToOSLimit: 1
   ReliableMaxMessageSize: 298449
   UnreliableMaxMessageSize: 1199
-  debugLog: 0
-  statisticsGUI: 0
+  debugLog: 1
+  statisticsGUI: 1
   statisticsLog: 0
 --- !u!114 &865809900
 MonoBehaviour:
@@ -384,7 +384,7 @@ MonoBehaviour:
   logGui: {fileID: 255322372}
   disableServerAuth: 1
   autoStartServer: 0
-  enableLogging: 0
+  enableLogGui: 0
 --- !u!1 &1171518015
 GameObject:
   m_ObjectHideFlags: 0

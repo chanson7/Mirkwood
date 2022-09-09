@@ -253,8 +253,7 @@ public class MirkwoodNetworkManager : NetworkManager
     /// </summary>
     public override void OnStartServer()
     {
-
-        Debug.Log($"..Mirror Server started");
+        Debug.Log($"..Mirror Server listening on port {((kcp2k.KcpTransport)Transport.activeTransport).Port}");
     }
 
     /// <summary>

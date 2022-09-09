@@ -1,6 +1,8 @@
 #if UNITY_EDITOR
 using UnityEditor;
 using System.Diagnostics;
+using UnityEngine;
+using System.IO;
 
 public class BuildScript
 {
@@ -39,7 +41,7 @@ public class BuildScript
     {
         using (Process process = new Process())
         {
-            process.StartInfo.FileName = "Builds/Windows/Server/MirkwoodServer.exe";
+            process.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Builds/Windows/Server/MirkwoodServer.exe";
             process.StartInfo.Arguments = "-localTestServer";
 
             process.Start();
@@ -54,7 +56,7 @@ public class BuildScript
     {
         using (Process process = new Process())
         {
-            process.StartInfo.FileName = "Builds/Windows/Client/Mirkwood.exe";
+            process.StartInfo.FileName = Directory.GetCurrentDirectory() + "Builds/Windows/Client/Mirkwood.exe";
             process.StartInfo.Arguments = "-localTestClient";
 
             process.Start();

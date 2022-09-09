@@ -23,6 +23,7 @@ public class PlayerMovement : NetworkBehaviour
     const int BUFFER_SIZE = 1024;
     [SerializeField] float movementSpeed = 5f;
     [SerializeField] float acceptablePositionError = 0.001f;
+    [SerializeField] NetworkTransform networkTransform;
 
     //client only
     private StatePayload[] clientStateBuffer;
@@ -43,6 +44,9 @@ public class PlayerMovement : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         Debug.Log($"..Initializing CLIENT side player movement for {this.gameObject.name}");
+
+        //Network Transform is needed to interpolate & send state updates to other clients.  It is not necessary for the local player
+        networkTransform.enabled = false;
 
         clientStateBuffer = new StatePayload[BUFFER_SIZE];
         clientInputBuffer = new InputPayload[BUFFER_SIZE];
@@ -71,7 +75,7 @@ public class PlayerMovement : NetworkBehaviour
             timer -= minTimeBetweenServerTicks;
 
             if (isLocalPlayer)
-                HandleTickOnClient();
+                HandleTickOnLocalClient();
             else if (isServer)
                 HandleTickOnServer();
 
@@ -80,7 +84,7 @@ public class PlayerMovement : NetworkBehaviour
     }
 
     [Client]
-    void HandleTickOnClient()
+    void HandleTickOnLocalClient()
     {
 
         if (!latestServerState.Equals(default(StatePayload)) &&
@@ -125,10 +129,11 @@ public class PlayerMovement : NetworkBehaviour
             serverStateBuffer[bufferIndex] = statePayload;
         }
 
-        //we made it through the buffer!!!!
+        //we processed all of the input!!!!
         if (bufferIndex != -1)
         {
             RpcOnServerMovementState(serverStateBuffer[bufferIndex]);
+            // UpdateStateOnOtherClients();
         }
 
     }
@@ -137,6 +142,12 @@ public class PlayerMovement : NetworkBehaviour
     void RpcOnServerMovementState(StatePayload statePayload)
     {
         latestServerState = statePayload;
+    }
+
+    [ClientRpc(includeOwner = false)]
+    void UpdateStateOnOtherClients()
+    {
+        transform.position = latestServerState.position;
     }
 
     StatePayload ProcessMovement(InputPayload input)

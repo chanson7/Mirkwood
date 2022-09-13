@@ -1,7 +1,6 @@
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using System;
-using HeathenEngineering.SteamworksIntegration;
 
 public class GameInitializer : MonoBehaviour
 {
@@ -18,7 +17,7 @@ public class GameInitializer : MonoBehaviour
         ApplySettings();
     }
 
-    private void Start()
+    void Start()
     {
         SceneManager.LoadScene("MainMenu");
     }
@@ -31,6 +30,10 @@ public class GameInitializer : MonoBehaviour
             {
                 case "-autoStartServer":
                     autoStartServer = true;
+                    break;
+
+                case "-testClient":
+                    enableLogGui = true;
                     break;
 
                 case "-disableServerAuth":

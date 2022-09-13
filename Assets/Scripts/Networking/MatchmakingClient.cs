@@ -12,15 +12,18 @@ public class MatchmakingClient : MonoBehaviour
 
     WebSocket websocketClient;
     [SerializeField] PlayerSession playerSession;
-    [SerializeField] ScriptableEvent onMatchRequested;
+    [SerializeField] ScriptableEvent MatchRequested;
     private void OnEnable()
     {
-        onMatchRequested.Raise();
+        MatchRequested.Raise();
         StartMatchmaking();
     }
 
     private void StartMatchmaking()
     {
+
+        Debug.Log("..Starting Matchmaking");
+
         SteamAuthAPI.GetAuthSessionTicket((ticket, IOError) =>
        {
            if (!IOError)

@@ -328,7 +328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSession: {fileID: 11400000, guid: 6b94213fb22887349b5b67d5fadaa18b, type: 2}
-  onMatchRequested: {fileID: 11400000, guid: 9b4bdd641adbc7b44b919c6fd748da44, type: 2}
+  MatchRequested: {fileID: 11400000, guid: 9b4bdd641adbc7b44b919c6fd748da44, type: 2}
 --- !u!4 &1587883163
 Transform:
   m_ObjectHideFlags: 0

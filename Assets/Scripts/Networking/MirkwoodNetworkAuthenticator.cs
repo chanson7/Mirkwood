@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Aws.GameLift;
 using Mirror;
 using UnityEngine;
 
@@ -62,16 +58,17 @@ public class MirkwoodNetworkAuthenticator : NetworkAuthenticator
         if (gameLiftServer.AcceptPlayerSession(msg.playerSessionId).Success)
         {
             authResponseMessage.authSuccess = true;
-            Debug.Log($"..Authenticator ACCEPTS {msg.playerSessionId} connection at {NetworkTime.time}");
+            gameLiftServer.playerSessionConnection.Add(conn.connectionId, msg.playerSessionId);
 
             ServerAccept(conn);
+            Debug.Log($"..Authenticator ACCEPTS {msg.playerSessionId} connection at {NetworkTime.time}");
         }
         else
         {
             // reject the connection
             authResponseMessage.authSuccess = false;
-            Debug.Log($"..Authenticator REJECTS {msg.playerSessionId} connection at {NetworkTime.time}");
             ServerReject(conn);
+            Debug.Log($"..Authenticator REJECTS {msg.playerSessionId} connection at {NetworkTime.time}");
         }
 
         conn.Send(authResponseMessage);

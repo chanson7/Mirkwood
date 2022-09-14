@@ -8,6 +8,9 @@ using Mirror;
 public class GameLiftServer : MonoBehaviour
 {
 
+    //associate Mirror server's connection to a client with a GameLift PlayerSession Id
+    public Dictionary<int, string> playerSessionConnection = new Dictionary<int, string>();
+
     //Make game server processes go active on Amazon GameLift
     public void StartGameLiftServer(ushort listeningPort)
     {
@@ -59,9 +62,13 @@ public class GameLiftServer : MonoBehaviour
         return GameLiftServerAPI.AcceptPlayerSession(playerSessionId);
     }
 
-    public GenericOutcome RemovePlayerSession(string playerSessionId)
+    public GenericOutcome RemovePlayerSession(int connectionId)
     {
-        return GameLiftServerAPI.RemovePlayerSession(playerSessionId);
+        string playerSessionToRemove = playerSessionConnection[connectionId];
+
+        playerSessionConnection.Remove(connectionId);
+
+        return GameLiftServerAPI.RemovePlayerSession(playerSessionToRemove);
     }
 
     void OnApplicationQuit()

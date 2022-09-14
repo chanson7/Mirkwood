@@ -1,7 +1,7 @@
 using UnityEngine;
 using Mirror;
 
-public class GameManager : NetworkBehaviour
+public class DuelGameManager : NetworkBehaviour
 {
 
     double serverStartTime;

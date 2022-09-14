@@ -171,6 +171,9 @@ public class MirkwoodNetworkManager : NetworkManager
     /// <param name="conn">Connection from client.</param>
     public override void OnServerDisconnect(NetworkConnectionToClient conn)
     {
+
+        gameLiftServer.RemovePlayerSession(conn.connectionId);
+
         base.OnServerDisconnect(conn);
     }
 

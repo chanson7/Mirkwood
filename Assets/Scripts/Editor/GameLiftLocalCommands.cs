@@ -8,32 +8,32 @@ using System.IO;
 public class GameLiftLocalCommands
 {
 
-    [MenuItem("GameLift/Upload Server Build (Windows)")]
-    public static void UploadServerBuild()
+    [MenuItem("GameLift/Create Local Game Session")]
+    public static void CreateLocalGameSession()
     {
-        // using (Process process = new Process())
-        // {
-        //     process.StartInfo.Arguments = "/C \"aws gamelift upload-build --name Mirkwood Server --build-version 0.0.1 --build-root \"Builds/Windows/Server/MirkwoodServer.exe\" --operating-system WINDOWS_2012 --region us-east-2";
-        //     process.StartInfo.FileName = "CMD.exe";
-        //     process.StartInfo.CreateNoWindow = true;
+        using (Process process = new Process())
+        {
+            process.StartInfo.Arguments = "/C \"AWS gamelift create-game-session --endpoint-url http://localhost:8081 --maximum-player-session-count 2 --fleet-id 123 > GameSession.txt\"";
+            process.StartInfo.FileName = "CMD.exe";
+            process.StartInfo.CreateNoWindow = true;
 
-        //     process.Start();
+            process.Start();
 
-        //     UnityEngine.Debug.Log($"..Windows Server uploaded to AWS");
-        // }
+            UnityEngine.Debug.Log($"..GameSession.txt File Updated");
+        }
     }
 
     // [MenuItem("GameLift/Create Player Session")]
     // public static void CreatePlayerSession()
     // {
 
-    //     GameSession gameSession = JsonConvert.DeserializeObject<GameLiftGameSession>(File.ReadAllText($@"{Environment.CurrentDirectory}\GameSession.txt")).gameSession;
+    //     string gameSession = JsonConvert.DeserializeObject<string>(File.ReadAllText($@"{Environment.CurrentDirectory}\GameSession.txt")).gameSession;
 
     //     string text = File.ReadAllText($@"{Environment.CurrentDirectory}\GameSession.txt");
 
     //     using (Process process = new Process())
     //     {
-    //         process.StartInfo.Arguments = $"/C \"AWS gamelift create-player-session --player-id 12345 --endpoint-url http://localhost:8080 --game-session-id {gameSession.gameSessionId} > PlayerSession.txt\"";
+    //         process.StartInfo.Arguments = $"/C \"AWS gamelift create-player-session --player-id 12345 --endpoint-url http://localhost:8081 --game-session-id {gameSession.string} > PlayerSession.txt\"";
     //         process.StartInfo.FileName = "CMD.exe";
     //         process.StartInfo.CreateNoWindow = true;
 

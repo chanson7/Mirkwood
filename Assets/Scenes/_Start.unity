@@ -382,7 +382,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   networkManager: {fileID: 865809900}
   logGui: {fileID: 255322372}
-  disableServerAuth: 0
+  disableServerAuth: 1
   autoStartServer: 0
   enableLogGui: 1
 --- !u!1 &1171518015

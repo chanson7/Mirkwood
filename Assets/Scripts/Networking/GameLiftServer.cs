@@ -87,9 +87,9 @@ public class GameLiftServer : MonoBehaviour
             GameLiftServerAPI.ActivateGameSession();
 
             Debug.Log($"New Game Session Activated: \n" +
-            $"IP Address: {gameSession.IpAddress}\n" +
-            $"Port: {gameSession.Port}\n" +
-            $"Game Session ID: {gameSession.GameSessionId}");
+                      $"IP Address: {gameSession.IpAddress}\n" +
+                      $"Port: {gameSession.Port}\n" +
+                      $"Game Session ID: {gameSession.GameSessionId}");
         }
     }
 

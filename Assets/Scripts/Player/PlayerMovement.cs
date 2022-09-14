@@ -7,14 +7,18 @@ public struct InputPayload
 {
     public int tick;
     public Vector3 movementInput;
+    public Vector3 mouseWorldPosition;
 }
 
 public struct StatePayload
 {
     public int tick;
     public Vector3 position;
+    public Quaternion rotation;
 }
 
+[RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(NetworkTransform))] //Network transform propogates state changes to other clients
 public class PlayerMovement : NetworkBehaviour
 {
     float timer;
@@ -24,13 +28,17 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] float movementSpeed = 5f;
     [SerializeField] float acceptablePositionError = 0.001f;
     [SerializeField] NetworkTransform networkTransform;
+    [SerializeField] CharacterController characterController;
 
     //client only
     private StatePayload[] clientStateBuffer;
     private InputPayload[] clientInputBuffer;
     StatePayload latestServerState;
     StatePayload lastProcessedState;
+    Ray pointerRay;
+    [SerializeField] LayerMask pointerMask; //so that the player will not look at everything the pointer ray hits
     Vector3 movementInput = new Vector3();
+    Vector3 mouseWorldPosition = new Vector3();
 
     //server only
     StatePayload[] serverStateBuffer;
@@ -43,8 +51,6 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        Debug.Log($"..Initializing CLIENT side player movement for {this.gameObject.name}");
-
         //Network Transform is needed to interpolate & send state updates to other clients.  It is not necessary for the local player
         networkTransform.enabled = false;
 
@@ -54,8 +60,6 @@ public class PlayerMovement : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        Debug.Log($"..Initializing SERVER side player movement for {this.gameObject.name}");
-
         serverStateBuffer = new StatePayload[BUFFER_SIZE];
         inputQueue = new Queue<InputPayload>();
     }
@@ -64,6 +68,17 @@ public class PlayerMovement : NetworkBehaviour
     {
         movementInput.x = input.Get<Vector2>().x;
         movementInput.z = input.Get<Vector2>().y;
+    }
+
+    void OnLook(InputValue input)
+    {
+        pointerRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+        if (Physics.Raycast(ray: pointerRay, layerMask: pointerMask, maxDistance: 100f, hitInfo: out RaycastHit hit))
+        {
+            mouseWorldPosition = hit.point;
+            mouseWorldPosition.y = transform.position.y; //transform should not rotate on Y axis
+        }
     }
 
     void Update()
@@ -98,7 +113,8 @@ public class PlayerMovement : NetworkBehaviour
         InputPayload inputPayload = new InputPayload
         {
             tick = currentTick,
-            movementInput = movementInput
+            movementInput = movementInput,
+            mouseWorldPosition = mouseWorldPosition
         };
 
         clientInputBuffer[bufferIndex] = inputPayload;
@@ -131,10 +147,7 @@ public class PlayerMovement : NetworkBehaviour
 
         //we processed all of the input!!!!
         if (bufferIndex != -1)
-        {
             RpcOnServerMovementState(serverStateBuffer[bufferIndex]);
-            // UpdateStateOnOtherClients();
-        }
 
     }
 
@@ -144,20 +157,16 @@ public class PlayerMovement : NetworkBehaviour
         latestServerState = statePayload;
     }
 
-    [ClientRpc(includeOwner = false)]
-    void UpdateStateOnOtherClients()
-    {
-        transform.position = latestServerState.position;
-    }
-
     StatePayload ProcessMovement(InputPayload input)
     {
-        transform.position += input.movementInput * movementSpeed * minTimeBetweenServerTicks;
+        characterController.Move(input.movementInput * movementSpeed * minTimeBetweenServerTicks);
+        transform.LookAt(input.mouseWorldPosition, Vector3.up);
 
         return new StatePayload()
         {
             tick = input.tick,
-            position = transform.position
+            position = transform.position,
+            rotation = transform.rotation
         };
     }
 
@@ -167,11 +176,15 @@ public class PlayerMovement : NetworkBehaviour
         lastProcessedState = latestServerState;
 
         int serverStateBufferIndex = latestServerState.tick % BUFFER_SIZE;
+
         float positionError = Vector3.Distance(latestServerState.position, clientStateBuffer[serverStateBufferIndex].position);
+
+        //dont care about rotation error for right now. I don't see why we would need to reconcile this
+        // float rotationError = Quaternion.Angle(latestServerState.rotation, clientStateBuffer[serverStateBufferIndex].rotation);
 
         if (positionError > acceptablePositionError)
         {
-            Debug.Log($"..Reconciling for {positionError} error");
+            Debug.Log($"..Reconciling for {positionError} position error");
 
             // Rewind & Replay
             transform.position = latestServerState.position;

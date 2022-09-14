@@ -36,7 +36,7 @@ public class PlayerMovement : NetworkBehaviour
     StatePayload latestServerState;
     StatePayload lastProcessedState;
     Ray pointerRay;
-    [SerializeField] LayerMask pointerMask; //so that the player will not look at everything the pointer ray hits
+    [SerializeField] LayerMask pointerMask; //the player will not look at everything the pointer ray hits
     Vector3 movementInput = new Vector3();
     Vector3 mouseWorldPosition = new Vector3();
 
@@ -70,7 +70,30 @@ public class PlayerMovement : NetworkBehaviour
         movementInput.z = input.Get<Vector2>().y;
     }
 
-    void OnLook(InputValue input)
+    void Update()
+    {
+        timer += Time.deltaTime;
+
+        while (timer >= minTimeBetweenServerTicks)
+        {
+            timer -= minTimeBetweenServerTicks;
+
+            if (isLocalPlayer)
+            {
+                SetMouseWorldPosition();
+                HandleTickOnLocalClient();
+            }
+            else if (isServer)
+            {
+                HandleTickOnServer();
+            }
+
+            currentTick++;
+        }
+    }
+
+    [Client]
+    void SetMouseWorldPosition()
     {
         pointerRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
 
@@ -81,27 +104,9 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
-    void Update()
-    {
-        timer += Time.deltaTime;
-
-        while (timer >= minTimeBetweenServerTicks)
-        {
-            timer -= minTimeBetweenServerTicks;
-
-            if (isLocalPlayer)
-                HandleTickOnLocalClient();
-            else if (isServer)
-                HandleTickOnServer();
-
-            currentTick++;
-        }
-    }
-
     [Client]
     void HandleTickOnLocalClient()
     {
-
         if (!latestServerState.Equals(default(StatePayload)) &&
         (lastProcessedState.Equals(default(StatePayload)) ||
         !latestServerState.Equals(lastProcessedState)))

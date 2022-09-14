@@ -384,7 +384,7 @@ MonoBehaviour:
   logGui: {fileID: 255322372}
   disableServerAuth: 1
   autoStartServer: 0
-  enableLogGui: 1
+  enableLogGui: 0
 --- !u!1 &1171518015
 GameObject:
   m_ObjectHideFlags: 0

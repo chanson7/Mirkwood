@@ -58,7 +58,7 @@ public class MirkwoodNetworkAuthenticator : NetworkAuthenticator
         if (gameLiftServer.AcceptPlayerSession(msg.playerSessionId).Success)
         {
             authResponseMessage.authSuccess = true;
-            gameLiftServer.playerSessionConnection.Add(conn.connectionId, msg.playerSessionId);
+            gameLiftServer.AddPlayerSession(conn.connectionId, msg.playerSessionId);
 
             ServerAccept(conn);
             Debug.Log($"..Authenticator ACCEPTS {msg.playerSessionId} connection at {NetworkTime.time}");

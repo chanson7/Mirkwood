@@ -2,14 +2,22 @@ using UnityEngine;
 using Aws.GameLift.Server;
 using Aws.GameLift.Server.Model;
 using Aws.GameLift;
+using System;
 using System.Collections.Generic;
 using Mirror;
 
 public class GameLiftServer : MonoBehaviour
 {
+    private const string logLocation = "C:\\game\\ServerLog.txt";
 
     //associate Mirror server's connection to a client with a GameLift PlayerSession Id
-    public Dictionary<int, string> playerSessionConnection = new Dictionary<int, string>();
+    Dictionary<int, string> playerSessionConnection = new Dictionary<int, string>();
+
+    public void AddPlayerSession(int connectionId, string playerSessionId)
+    {
+        playerSessionConnection.Add(connectionId, playerSessionId);
+        Debug.Log($"..Added Player Session {playerSessionId} with connectionId {connectionId}");
+    }
 
     //Make game server processes go active on Amazon GameLift
     public void StartGameLiftServer(ushort listeningPort)
@@ -37,7 +45,7 @@ public class GameLiftServer : MonoBehaviour
                 {
                     //Here, the game server tells GameLift what set of files to upload when the game session ends.
                     //GameLift uploads everything specified here for the developers to fetch later.
-                    "/MirkwoodServer.log"
+                    logLocation
                 }));
 
             //Calling ProcessReady tells GameLift this game server is ready to receive incoming game sessions!
@@ -64,11 +72,20 @@ public class GameLiftServer : MonoBehaviour
 
     public GenericOutcome RemovePlayerSession(int connectionId)
     {
-        string playerSessionToRemove = playerSessionConnection[connectionId];
+        try
+        {
+            string playerSessionToRemove = playerSessionConnection[connectionId];
 
-        playerSessionConnection.Remove(connectionId);
+            playerSessionConnection.Remove(connectionId);
 
-        return GameLiftServerAPI.RemovePlayerSession(playerSessionToRemove);
+            Debug.Log($"..Removed GameLift Player Session {connectionId}");
+            return GameLiftServerAPI.RemovePlayerSession(playerSessionToRemove);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"..Could not remove GameLift player session: {e.Message}");
+            return null;
+        }
     }
 
     void OnApplicationQuit()

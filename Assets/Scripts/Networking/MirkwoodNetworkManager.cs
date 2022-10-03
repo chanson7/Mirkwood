@@ -17,6 +17,11 @@ public class MirkwoodNetworkManager : NetworkManager
     static int minPort = 5000;
     [SerializeField] GameLiftServer gameLiftServer;
 
+    #region Events
+    [SerializeField] ScriptableEvent playerJoinedGameSessionEvent;
+    [SerializeField] ScriptableEvent playerLeftGameSessionEvent;
+    #endregion
+
     #region Unity Callbacks
 
     public override void OnValidate()
@@ -161,6 +166,7 @@ public class MirkwoodNetworkManager : NetworkManager
     /// <param name="conn">Connection from client.</param>
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
+        playerJoinedGameSessionEvent.Raise(); //this is only called on the server for now
         base.OnServerAddPlayer(conn);
     }
 
@@ -171,9 +177,8 @@ public class MirkwoodNetworkManager : NetworkManager
     /// <param name="conn">Connection from client.</param>
     public override void OnServerDisconnect(NetworkConnectionToClient conn)
     {
-
         gameLiftServer.RemovePlayerSession(conn.connectionId);
-
+        playerLeftGameSessionEvent.Raise();
         base.OnServerDisconnect(conn);
     }
 

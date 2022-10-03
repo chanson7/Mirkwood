@@ -6,10 +6,8 @@ public class GameInitializer : MonoBehaviour
 {
 
     [SerializeField] MirkwoodNetworkManager networkManager;
-    [SerializeField] GameObject logGui;
     [SerializeField] bool disableServerAuth = false;
     [SerializeField] bool autoStartServer = false;
-    [SerializeField] bool enableLogGui = false;
 
     void Awake()
     {
@@ -33,20 +31,14 @@ public class GameInitializer : MonoBehaviour
                     break;
 
                 case "-testClient":
-                    enableLogGui = true;
                     break;
 
                 case "-disableServerAuth":
                     disableServerAuth = true;
                     break;
 
-                case "-enableLogGui":
-                    enableLogGui = true;
-                    break;
-
                 case "-localTestClient":
                     disableServerAuth = true;
-                    enableLogGui = true;
                     break;
 
                 case "-localTestServer":
@@ -71,11 +63,6 @@ public class GameInitializer : MonoBehaviour
         {
             Debug.Log("..Disabling Authentication");
             networkManager.authenticator = null;
-        }
-        if (enableLogGui)
-        {
-            Debug.Log("..Enabling log GUI");
-            logGui.SetActive(true);
         }
     }
 

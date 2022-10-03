@@ -6,21 +6,33 @@ public class DuelGameManager : NetworkBehaviour
 
     double serverStartTime;
     int playerCount = 0;
-    GameLiftServer gameLiftServer;
 
-    [SerializeField] double timeOutInSeconds = 30;
+    [SerializeField] double timeOutInSeconds = 20;
 
     public override void OnStartServer()
     {
         serverStartTime = Time.timeAsDouble;
     }
 
-    //do this when a player disconnects to see if we should end the game
+    public void OnPlayerJoinedGameSession()
+    {
+        playerCount++;
+    }
+
+    public void OnPlayerLeftGameSession()
+    {
+        playerCount--;
+        CheckForGameTimeOut();
+    }
+
+    //do this when a player leaves the game session to see if we should end the game
+    [Server]
     void CheckForGameTimeOut()
     {
-        if (playerCount == 0 && Time.time - serverStartTime > timeOutInSeconds)
+        if (playerCount < 1 && Time.time - serverStartTime > timeOutInSeconds)
         {
             Debug.Log("..All players have disconnected.  Ending the game.");
+            Application.Quit();
         }
     }
 }

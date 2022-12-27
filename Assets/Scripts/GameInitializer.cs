@@ -12,7 +12,7 @@ public class GameInitializer : MonoBehaviour
     void Awake()
     {
         EvaluateCommandLineArgs();
-        ApplySettings();
+        ApplyCommandLineArgs();
     }
 
     void Start()
@@ -52,7 +52,7 @@ public class GameInitializer : MonoBehaviour
         }
     }
 
-    void ApplySettings()
+    void ApplyCommandLineArgs()
     {
         if (autoStartServer)
         {
@@ -61,7 +61,7 @@ public class GameInitializer : MonoBehaviour
         }
         if (disableServerAuth)
         {
-            Debug.Log("..Disabling Authentication");
+            Debug.Log("..Disabling authentication");
             networkManager.authenticator = null;
         }
     }

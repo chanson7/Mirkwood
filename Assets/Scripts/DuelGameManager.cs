@@ -1,11 +1,13 @@
 using UnityEngine;
 using Mirror;
+using System.Collections.Generic;
 
 public class DuelGameManager : NetworkBehaviour
 {
 
     double serverStartTime;
     int playerCount = 0;
+    Dictionary<int, PlayerDeck> playerDecks = new Dictionary<int, PlayerDeck>();
 
     [SerializeField] double timeOutInSeconds = 20;
 

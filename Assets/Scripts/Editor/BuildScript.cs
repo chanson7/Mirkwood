@@ -2,18 +2,20 @@
 using UnityEditor;
 using System.Diagnostics;
 using System.IO;
+using System;
 
 public class BuildScript
 {
-    static string[] scenes = new[] { "Assets/Scenes/_Start.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Arena.unity" };
+    static string[] clientScenes = new[] { "Assets/Scenes/_ClientStart.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Forest.unity" };
+    static string[] serverScenes = new[] { "Assets/Scenes/_ServerStart.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Forest.unity" };
 
     [MenuItem("Client/Build Client (Windows)")]
     public static void BuildWindowsClient()
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.scenes = scenes;
+        buildPlayerOptions.scenes = clientScenes;
         buildPlayerOptions.locationPathName = "Builds/Windows/Client/Mirkwood.exe";
-        buildPlayerOptions.target = BuildTarget.StandaloneWindows64;
+        buildPlayerOptions.target = UnityEditor.BuildTarget.StandaloneWindows64;
         buildPlayerOptions.options = BuildOptions.CompressWithLz4HC;
 
         UnityEngine.Debug.Log("..Building Client (Windows)...");
@@ -25,9 +27,9 @@ public class BuildScript
     public static void BuildWindowsServer()
     {
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-        buildPlayerOptions.scenes = scenes;
+        buildPlayerOptions.scenes = serverScenes;
         buildPlayerOptions.locationPathName = "Builds/Windows/Server/MirkwoodServer.exe";
-        buildPlayerOptions.target = BuildTarget.StandaloneWindows64;
+        buildPlayerOptions.target = UnityEditor.BuildTarget.StandaloneWindows64;
         buildPlayerOptions.subtarget = (int)StandaloneBuildSubtarget.Server;
 
         UnityEngine.Debug.Log("..Building Server (Windows)...");
@@ -88,7 +90,7 @@ public class BuildScript
         using (Process process = new Process())
         {
             process.StartInfo.FileName = "CMD.exe";
-            process.StartInfo.Arguments = $"/C \"aws gamelift upload-build --name MirkwoodServer --build-version 0.0.1 --build-root {Directory.GetCurrentDirectory()}/Builds/Windows/Server --operating-system WINDOWS_2012 --region {region}";
+            process.StartInfo.Arguments = $"/C \"aws gamelift upload-build --name MirkwoodServer --build-version {Guid.NewGuid().ToString()} --build-root {Directory.GetCurrentDirectory()}/Builds/Windows/Server --operating-system WINDOWS_2012 --region {region}";
 
             process.Start();
 

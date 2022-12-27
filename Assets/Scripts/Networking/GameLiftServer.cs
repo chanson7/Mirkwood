@@ -8,7 +8,6 @@ using Mirror;
 
 public class GameLiftServer : MonoBehaviour
 {
-    private const string logLocation = "C:\\game\\ServerLog.txt";
 
     //associate Mirror server's connection to a client with a GameLift PlayerSession Id
     Dictionary<int, string> playerSessionConnection = new Dictionary<int, string>();
@@ -20,7 +19,7 @@ public class GameLiftServer : MonoBehaviour
     }
 
     //Make game server processes go active on Amazon GameLift
-    public void StartGameLiftServer(ushort listeningPort)
+    public void StartGameLiftServer(ushort listeningPort, string logPath)
     {
 
         //InitSDK establishes a local connection with the Amazon GameLift agent to enable 
@@ -45,7 +44,7 @@ public class GameLiftServer : MonoBehaviour
                 {
                     //Here, the game server tells GameLift what set of files to upload when the game session ends.
                     //GameLift uploads everything specified here for the developers to fetch later.
-                    logLocation
+                    logPath
                 }));
 
             //Calling ProcessReady tells GameLift this game server is ready to receive incoming game sessions!
@@ -103,10 +102,12 @@ public class GameLiftServer : MonoBehaviour
         {
             GameLiftServerAPI.ActivateGameSession();
 
-            Debug.Log($"New Game Session Activated: \n" +
-                      $"IP Address: {gameSession.IpAddress}\n" +
-                      $"Port: {gameSession.Port}\n" +
-                      $"Game Session ID: {gameSession.GameSessionId}");
+            //names the log file the last 5 characters of the Game Session Id
+
+            Debug.Log($"..New Game Session Activated: \n" +
+                      $"..IP Address: {gameSession.IpAddress}\n" +
+                      $"..Port: {gameSession.Port}\n" +
+                      $"..Game Session ID: {gameSession.GameSessionId}");
         }
     }
 

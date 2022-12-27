@@ -16,6 +16,7 @@ public class MirkwoodNetworkManager : NetworkManager
     public static new MirkwoodNetworkManager singleton { get; private set; }
     static int minPort = 5000;
     [SerializeField] GameLiftServer gameLiftServer;
+    [SerializeField] LogHandler logHandler;
 
     #region Events
     [SerializeField] ScriptableEvent playerJoinedGameSessionEvent;
@@ -48,9 +49,8 @@ public class MirkwoodNetworkManager : NetworkManager
 
         if (Application.isBatchMode)
         {
-            //this line somehow finds available UDP ports idk i got it from discord
-            ((kcp2k.KcpTransport)Transport.activeTransport).Port = (ushort)Enumerable.Range(minPort, ushort.MaxValue).First(p => !IPGlobalProperties.GetIPGlobalProperties().GetActiveUdpListeners().Any(l => l.Port == p));
-            gameLiftServer.StartGameLiftServer(((kcp2k.KcpTransport)Transport.activeTransport).Port);
+            ((kcp2k.KcpTransport)Transport.activeTransport).Port = UdpUtilities.GetFirstOpenUdpPort(minPort, 500);
+            gameLiftServer.StartGameLiftServer(((kcp2k.KcpTransport)Transport.activeTransport).Port, logHandler.CreateLogFile(System.Diagnostics.Process.GetCurrentProcess().Id.ToString()));
         }
 
         base.Start();

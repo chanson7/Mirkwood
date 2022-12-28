@@ -1,0 +1,12 @@
+
+12/28/2022 10:55:34 AM Log InitSDK failure : [GameLiftError: ErrorType=LOCAL_CONNECTION_FAILED, ErrorName=Local connection failed., ErrorMessage=Connection to local agent could not be established.] 
+12/28/2022 10:56:08 AM Error ..Could not remove GameLift player session: The given key '636420119' was not present in the dictionary. 
+12/28/2022 10:56:13 AM Log ..Mirror Server stopped 
+12/28/2022 10:56:17 AM Exception SocketException: No connection could be made because the target machine actively refused it.
+ System.Net.Sockets.SocketAsyncResult.CheckIfThrowDelayedException () (at <743b6648c9264b5cabe5d91045f6e132>:0)
+System.Net.Sockets.Socket.EndConnect (System.IAsyncResult asyncResult) (at <743b6648c9264b5cabe5d91045f6e132>:0)
+System.Net.WebConnection+<>c.<Connect>b__16_1 (System.IAsyncResult asyncResult) (at <743b6648c9264b5cabe5d91045f6e132>:0)
+System.Threading.Tasks.TaskFactory`1[TResult].FromAsyncCoreLogic (System.IAsyncResult iar, System.Func`2[T,TResult] endFunction, System.Action`1[T] endAction, System.Threading.Tasks.Task`1[TResult] promise, System.Boolean requiresSynchronization) (at <7b935204f5ff4bcab44b3b0ebca330bf>:0)
+--- End of stack trace from previous location where exception was thrown ---
+System.Net.WebConnection.Connect (System.Net.WebOperation operation, System.Threading.CancellationToken cancellationToken) (at <743b6648c9264b5cabe5d91045f6e132>:0)
+Rethrow as WebException: Error: ConnectFailure (No connection could be made because the target machine actively refused it.

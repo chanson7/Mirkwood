@@ -123,6 +123,63 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &525205486
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 525205489}
+  - component: {fileID: 525205488}
+  - component: {fileID: 525205487}
+  m_Layer: 0
+  m_Name: Log Handler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &525205487
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525205486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9e5805cddeeb1a4cae1fa3f3d3e331c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &525205488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525205486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cbbe9a4901380e47a5d8e95f6119002, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &525205489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525205486}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &865809894
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,7 +192,6 @@ GameObject:
   - component: {fileID: 865809900}
   - component: {fileID: 865809899}
   - component: {fileID: 865809898}
-  - component: {fileID: 865809901}
   m_Layer: 0
   m_Name: Server Network Manager
   m_TagString: Untagged
@@ -235,23 +291,11 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs: []
   gameLiftServer: {fileID: 1171518016}
-  logHandler: {fileID: 865809901}
+  logHandler: {fileID: 525205488}
   playerJoinedGameSessionEvent: {fileID: 11400000, guid: 86208e7c2f8351f4eb7b7e2fc7c236f1,
     type: 2}
   playerLeftGameSessionEvent: {fileID: 11400000, guid: 1d1e47ff6ffc3ef4b96c3308b57d7f6d,
     type: 2}
---- !u!114 &865809901
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 865809894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cbbe9a4901380e47a5d8e95f6119002, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1150552896
 GameObject:
   m_ObjectHideFlags: 0

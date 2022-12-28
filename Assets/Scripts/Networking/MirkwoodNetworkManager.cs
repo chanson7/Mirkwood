@@ -15,6 +15,7 @@ public class MirkwoodNetworkManager : NetworkManager
     // have to cast to this type everywhere.
     public static new MirkwoodNetworkManager singleton { get; private set; }
     static int minPort = 5000;
+    [Tooltip("Server Only")]
     [SerializeField] GameLiftServer gameLiftServer;
     [SerializeField] LogHandler logHandler;
 

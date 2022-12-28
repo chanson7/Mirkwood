@@ -22,7 +22,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: M Grass Solid
   m_Shader: {fileID: 4800000, guid: 661dd8296a83b46c7973a6d226d36c62, type: 3}
-  m_ShaderKeywords: _NORMALINDEPTHNORMALPASS _RECEIVEDECALS
+  m_ShaderKeywords: _DISPLACEMENT _NORMALINDEPTHNORMALPASS _RECEIVEDECALS
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
@@ -77,7 +77,7 @@ Material:
     - _Cull: 0
     - _Culling: 0
     - _Cutoff: 0.5
-    - _Displacement: 0
+    - _Displacement: 1
     - _DisplacementSampleSize: 0.5
     - _DisplacementStrength: 4
     - _DisplacementStrengthVertical: 4

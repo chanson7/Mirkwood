@@ -9,6 +9,7 @@ using UnityEngine;
 public class MirkwoodNetworkAuthenticator : NetworkAuthenticator
 {
 
+    [Tooltip("Server Only")]
     [SerializeField] GameLiftServer gameLiftServer;
     [SerializeField] PlayerSession playerSession;
 

@@ -329,7 +329,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   networkManager: {fileID: 865809900}
-  disableServerAuth: 1
+  disableServerAuth: 0
   autoStartServer: 0
 --- !u!1 &1865850962
 GameObject:

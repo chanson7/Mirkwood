@@ -31,7 +31,7 @@ public class GameManager : NetworkBehaviour
     {
         if (playerCount < 1 && Time.time - serverStartTime > timeOutInSeconds)
         {
-            Debug.Log("..All players have disconnected.  Ending the game.");
+            Debug.Log("..All players have disconnected. Ending the game.");
             Application.Quit();
         }
     }

@@ -56,12 +56,12 @@ public class GameInitializer : MonoBehaviour
     {
         if (autoStartServer)
         {
-            Debug.Log("..Server will automatically start");
+            Debug.LogWarning("..Server will automatically start");
             networkManager.StartServer();
         }
         if (disableServerAuth)
         {
-            Debug.Log("..Disabling authentication");
+            Debug.LogWarning("..Authentication has been disabled");
             networkManager.authenticator = null;
         }
     }

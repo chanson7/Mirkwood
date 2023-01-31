@@ -7,7 +7,7 @@ public struct InputPayload
 {
     public int tick;
     public Vector3 movementInput;
-    public Vector3 rotationInput;
+    public Vector3 mouseWorldPosition;
 }
 
 public struct StatePayload
@@ -42,8 +42,10 @@ public class PlayerMovement : NetworkBehaviour
     private InputPayload[] clientInputBuffer;
     StatePayload latestServerState;
     StatePayload lastProcessedState;
+    Ray pointerRay;
+    [SerializeField] LayerMask pointerMask; //so that the player will not look at everything the pointer ray hits
     Vector3 movementInput = new Vector3();
-    Vector3 rotationInput = new Vector3();
+    Vector3 mouseWorldPosition = new Vector3();
 
     //server only
     StatePayload[] serverStateBuffer;
@@ -76,11 +78,6 @@ public class PlayerMovement : NetworkBehaviour
         movementInput.z = input.Get<Vector2>().y;
     }
 
-    void OnLook(InputValue input)
-    {
-        rotationInput = input.Get<Vector2>();
-    }
-
     void Update()
     {
         timer += Time.deltaTime;
@@ -91,6 +88,7 @@ public class PlayerMovement : NetworkBehaviour
 
             if (isLocalPlayer)
             {
+                ClientRotateTowardsMouse();
                 HandleTickOnLocalClient();
             }
             else if (isServer)
@@ -100,6 +98,18 @@ public class PlayerMovement : NetworkBehaviour
 
             currentTick++;
         }
+    }
+
+    void ClientRotateTowardsMouse()
+    {
+        pointerRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+
+        if (Physics.Raycast(ray: pointerRay, layerMask: pointerMask, maxDistance: 100f, hitInfo: out RaycastHit hit))
+        {
+            mouseWorldPosition = hit.point;
+            mouseWorldPosition.y = transform.position.y; //transform should not rotate on Y axis
+        }
+
     }
 
     [Client]
@@ -117,7 +127,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             tick = currentTick,
             movementInput = movementInput,
-            rotationInput = rotationInput
+            mouseWorldPosition = mouseWorldPosition
         };
 
         clientInputBuffer[bufferIndex] = inputPayload;
@@ -170,10 +180,8 @@ public class PlayerMovement : NetworkBehaviour
 
         Vector3 movementLocalDirection = new Vector3(input.movementInput.x, verticalVelocity, input.movementInput.z);
 
-        characterController.Move(transform.TransformDirection(movementLocalDirection) *
-                                 movementSpeed *
-                                 minTimeBetweenServerTicks);
-        transform.Rotate(transform.up, input.rotationInput.x);
+        characterController.Move(input.movementInput * movementSpeed * minTimeBetweenServerTicks);
+        transform.LookAt(input.mouseWorldPosition, Vector3.up);
 
         AnimateMovement();
 

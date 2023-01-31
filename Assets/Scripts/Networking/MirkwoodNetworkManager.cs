@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Mirror;
+using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Linq;
 
@@ -23,6 +24,9 @@ public class MirkwoodNetworkManager : NetworkManager
     [SerializeField] ScriptableEvent playerJoinedGameSessionEvent;
     [SerializeField] ScriptableEvent playerLeftGameSessionEvent;
     #endregion
+
+    [Tooltip("Need this because I have 2 separate Scenes for Client and Server")]
+    [SerializeField] RegisteredSpawnablePrefabs registeredSpawnablePrefabs;
 
     #region Unity Callbacks
 
@@ -53,6 +57,8 @@ public class MirkwoodNetworkManager : NetworkManager
             ((kcp2k.KcpTransport)Transport.activeTransport).Port = UdpUtilities.GetFirstOpenUdpPort(minPort, 500);
             gameLiftServer.StartGameLiftServer(((kcp2k.KcpTransport)Transport.activeTransport).Port, logHandler.CreateLogFile(System.Diagnostics.Process.GetCurrentProcess().Id.ToString()));
         }
+
+        spawnPrefabs = registeredSpawnablePrefabs.spawnablePrefabs;
 
         base.Start();
     }

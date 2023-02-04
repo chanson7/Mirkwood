@@ -775,7 +775,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh334054
+  m_Name: pb_Mesh52818
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -967,7 +967,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  timeOutInSeconds: 20
+  playerDisconnectTimeOut: 20
+  gameSessionTimeOut: 120
 --- !u!114 &1110272108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1089,11 +1090,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hexCalculator:
     hexScale:
-      scale: {x: 1, y: 1}
+      scale: {x: 6, y: 6}
     container: {fileID: 1163620692}
   enableSnap: 1
   snapImmediately: 1
-  createPrefabConnection: 1
+  createPrefabConnection: 0
   palette:
   - {fileID: 320704094948622509, guid: d03fc9b19e2993c4683524385f80efd3, type: 3}
 --- !u!4 &1163620692
@@ -1143,7 +1144,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   mapDefinition: {fileID: 11400000, guid: bf56506b2cc19ac45bdfb93023692c7d, type: 2}
-  hexRadius: 10
+  hexRadius: 100
+  randomPositionConstant: 0.3
   hexGrid: {fileID: 1163620691}
 --- !u!1 &1565655024
 GameObject:

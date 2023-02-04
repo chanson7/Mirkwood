@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d1fc54a8e5e55f4382a1a9a42fa30cd, type: 3}
   m_Name: ForestDefinition
   m_EditorClassIdentifier: 
-  edgeRadius: 5000
   environmentObjects:
   - {fileID: 7017949747070345409, guid: c370276e9ec77a341bffba86cd8b6e73, type: 3}
   - {fileID: 8562940930063639784, guid: 592e7c348bf978d4e97427d8f16b472d, type: 3}

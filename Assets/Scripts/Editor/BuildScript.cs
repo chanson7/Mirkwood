@@ -6,8 +6,8 @@ using System;
 
 public class BuildScript
 {
-    static string[] clientScenes = new[] { "Assets/Scenes/_ClientStart.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Forest.unity" };
-    static string[] serverScenes = new[] { "Assets/Scenes/_ServerStart.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Forest.unity" };
+    static string[] clientScenes = new[] { "Assets/Scenes/_ClientStart.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Forest.unity", "Assets/Scenes/Testing.unity" };
+    static string[] serverScenes = new[] { "Assets/Scenes/_ServerStart.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Forest.unity", "Assets/Scenes/Testing.unity" };
 
     [MenuItem("Client/Build Client (Windows)")]
     public static void BuildWindowsClient()

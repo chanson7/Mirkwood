@@ -51,6 +51,7 @@ GameObject:
   - component: {fileID: 4708448802937948552}
   - component: {fileID: 9183383045216143226}
   - component: {fileID: 2645220848224348915}
+  - component: {fileID: 7364747481044195532}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -108,7 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0
   clientAuthority: 0
   sendInterval: 0.05
   syncPosition: 1
@@ -142,7 +143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
-  syncInterval: 0.1
+  syncInterval: 0
   clientAuthority: 0
   animator: {fileID: 8351850468574034549}
 --- !u!95 &8351850468574034549
@@ -179,7 +180,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0
   m_SkinWidth: 0.0001
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
@@ -238,13 +239,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 61de233c956f1e743b19e411c0690ced, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
+  syncMode: 1
+  syncInterval: 0
   serverGhost: {fileID: 3628061218609516559}
 --- !u!114 &9183383045216143226
 MonoBehaviour:
@@ -283,6 +284,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  recoveryPerSecond: 1
+--- !u!114 &7364747481044195532
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62eef6c011ea73c49891476f92abad2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  extractionTime: 10
 --- !u!1 &327441760391424072
 GameObject:
   m_ObjectHideFlags: 0

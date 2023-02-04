@@ -1,9 +1,6 @@
 using System;
 using UnityEngine;
 using Mirror;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using System.Linq;
 
 /*
 	Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
@@ -12,20 +9,8 @@ using System.Linq;
 
 public class MirkwoodNetworkManager : NetworkManager
 {
-    // Overrides the base singleton so we don't
-    // have to cast to this type everywhere.
-    public static new MirkwoodNetworkManager singleton { get; private set; }
-    static int minPort = 5000;
-    [Tooltip("Server Only")]
-    [SerializeField] GameLiftServer gameLiftServer;
-    [SerializeField] LogHandler logHandler;
 
-    #region Events
-    [SerializeField] ScriptableEvent playerJoinedGameSessionEvent;
-    [SerializeField] ScriptableEvent playerLeftGameSessionEvent;
-    #endregion
-
-    [Tooltip("Need this because I have 2 separate Scenes for Client and Server")]
+    [Tooltip("Need this because of 2 separate network managers for Client and Server")]
     [SerializeField] RegisteredSpawnablePrefabs registeredSpawnablePrefabs;
 
     #region Unity Callbacks
@@ -50,14 +35,6 @@ public class MirkwoodNetworkManager : NetworkManager
     /// </summary>
     public override void Start()
     {
-        singleton = this;
-
-        if (Application.isBatchMode)
-        {
-            ((kcp2k.KcpTransport)Transport.activeTransport).Port = UdpUtilities.GetFirstOpenUdpPort(minPort, 500);
-            gameLiftServer.StartGameLiftServer(((kcp2k.KcpTransport)Transport.activeTransport).Port, logHandler.CreateLogFile(System.Diagnostics.Process.GetCurrentProcess().Id.ToString()));
-        }
-
         spawnPrefabs = registeredSpawnablePrefabs.spawnablePrefabs;
 
         base.Start();
@@ -144,109 +121,6 @@ public class MirkwoodNetworkManager : NetworkManager
     {
         base.OnClientSceneChanged();
     }
-
-    #endregion
-
-    #region Server System Callbacks
-
-    /// <summary>
-    /// Called on the server when a new client connects.
-    /// <para>Unity calls this on the Server when a Client connects to the Server. Use an override to tell the NetworkManager what to do when a client connects to the server.</para>
-    /// </summary>
-    /// <param name="conn">Connection from client.</param>
-    public override void OnServerConnect(NetworkConnectionToClient conn) { }
-
-    /// <summary>
-    /// Called on the server when a client is ready.
-    /// <para>The default implementation of this function calls NetworkServer.SetClientReady() to continue the network setup process.</para>
-    /// </summary>
-    /// <param name="conn">Connection from client.</param>
-    public override void OnServerReady(NetworkConnectionToClient conn)
-    {
-        base.OnServerReady(conn);
-    }
-
-    /// <summary>
-    /// Called on the server when a client adds a new player with ClientScene.AddPlayer.
-    /// <para>The default implementation for this function creates a new player object from the playerPrefab.</para>
-    /// </summary>
-    /// <param name="conn">Connection from client.</param>
-    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-    {
-        playerJoinedGameSessionEvent.Raise();
-        base.OnServerAddPlayer(conn);
-    }
-
-    /// <summary>
-    /// Called on the server when a client disconnects.
-    /// <para>This is called on the Server when a Client disconnects from the Server. Use an override to decide what should happen when a disconnection is detected.</para>
-    /// </summary>
-    /// <param name="conn">Connection from client.</param>
-    public override void OnServerDisconnect(NetworkConnectionToClient conn)
-    {
-        gameLiftServer.RemovePlayerSession(conn.connectionId);
-        playerLeftGameSessionEvent.Raise();
-        base.OnServerDisconnect(conn);
-    }
-
-    /// <summary>
-    /// Called on server when transport raises an exception.
-    /// <para>NetworkConnection may be null.</para>
-    /// </summary>
-    /// <param name="conn">Connection of the client...may be null</param>
-    /// <param name="exception">Exception thrown from the Transport.</param>
-    public override void OnServerError(NetworkConnectionToClient conn, Exception exception) { }
-
-    #endregion
-
-    #region Client System Callbacks
-
-    /// <summary>
-    /// Called on the client when a new GameLift Player Session has been received from AWS.
-    /// </summary>
-    /// <param name="playerSession">The updated Player Session scriptable object</param>
-
-    public void ConnectToPlayerSession(PlayerSession playerSession)
-    {
-        Debug.Log($"..New Player Session Received, starting Mirror Client");
-
-        singleton.StartClient(new UriBuilder
-        {
-            Scheme = "kcp",
-            Host = playerSession.dnsName,
-            Port = playerSession.port
-        }.Uri);
-    }
-
-    /// <summary>
-    /// Called on the client when connected to a server.
-    /// <para>The default implementation of this function sets the client as ready and adds a player. Override the function to dictate what happens when the client connects.</para>
-    /// </summary>
-    public override void OnClientConnect()
-    {
-        base.OnClientConnect();
-    }
-
-    /// <summary>
-    /// Called on clients when disconnected from a server.
-    /// <para>This is called on the client when it disconnects from the server. Override this function to decide what happens when the client disconnects.</para>
-    /// </summary>
-    public override void OnClientDisconnect()
-    {
-        base.OnClientDisconnect();
-    }
-
-    /// <summary>
-    /// Called on clients when a servers tells the client it is no longer ready.
-    /// <para>This is commonly used when switching scenes.</para>
-    /// </summary>
-    public override void OnClientNotReady() { }
-
-    /// <summary>
-    /// Called on client when transport raises an exception.</summary>
-    /// </summary>
-    /// <param name="exception">Exception thrown from the Transport.</param>
-    public override void OnClientError(Exception exception) { }
 
     #endregion
 

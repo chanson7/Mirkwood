@@ -8,6 +8,9 @@ public class HexMapInitializer : NetworkBehaviour
 
     [Tooltip("In # of hexagons")]
     [SerializeField] int hexRadius;
+
+    [Tooltip("Randomizes the placement of the object within the hexagon")]
+    [SerializeField][Range(0.0f, 0.3f)] float randomPositionConstant;
     [SerializeField] HexGrid hexGrid;
 
     public override void OnStartServer()
@@ -21,22 +24,26 @@ public class HexMapInitializer : NetworkBehaviour
     void SpawnMapObjects(HexGrid hexGrid)
     {
 
-        for (int x = -hexRadius; x < hexRadius; x++)
+        Vector3 hexagonSize = new Vector3(hexGrid.HexScale.Size.x, 0f, hexGrid.HexScale.Size.y);
+
+        for (int x = -hexRadius; x <= hexRadius; x++)
         {
-            for (int y = -hexRadius; y < hexRadius; y++)
+            for (int y = -hexRadius; y <= hexRadius; y++)
             {
-                HexCoordinates coordinates = HexCoordinates.FromOffsetCoordinates(x, y);
                 float hypotenuse = Mathf.Sqrt(Mathf.Pow(x, 2) + Mathf.Pow(y, 2));
+                HexCoordinates coordinates = HexCoordinates.FromOffsetCoordinates(x, y);
 
-                GameObject mapObject = Instantiate(mapDefinition.SelectObjectByDistanceFromOrigin(hypotenuse),
-                                                   hexGrid.HexCalculator.HexToPosition(coordinates),
-                                                   Quaternion.identity);
+                GameObject mapObject = mapDefinition.SelectObjectByDistanceFromOrigin(hypotenuse / hexRadius);
 
-                NetworkServer.Spawn(mapObject);
+                if (mapObject is not null)
+                {
+                    NetworkServer.Spawn(Instantiate(mapObject,
+                                                    hexGrid.HexCalculator.HexToPosition(coordinates) + (Random.Range(-randomPositionConstant, randomPositionConstant) * hexagonSize),
+                                                    Quaternion.identity));
+                }
+
             }
-
         }
-
 
         Debug.Log($"..Spawned Map Objects");
 

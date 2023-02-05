@@ -53,6 +53,12 @@ public class PlayerMovement : NetworkBehaviour
 
     void Start()
     {
+
+        if (isServer)
+            Debug.Log("..This is the Server");
+        if (isLocalPlayer)
+            Debug.Log("..This is the Local Player");
+
         minTimeBetweenServerTicks = 1f / MirkwoodNetworkManager.singleton.serverTickRate;
     }
 
@@ -178,8 +184,6 @@ public class PlayerMovement : NetworkBehaviour
         else
             verticalVelocity = Physics.gravity.y;
 
-        Vector3 movementLocalDirection = new Vector3(input.movementInput.x, verticalVelocity, input.movementInput.z);
-
         characterController.Move(input.movementInput * movementSpeed * minTimeBetweenServerTicks);
         transform.LookAt(input.mouseWorldPosition, Vector3.up);
 
@@ -208,7 +212,7 @@ public class PlayerMovement : NetworkBehaviour
 
         float positionError = Vector3.Distance(latestServerState.position, clientStateBuffer[serverStateBufferIndex].position);
 
-        //dont care about rotation error for right now. I don't see why we would need to reconcile this
+        //dont care about rotation error for right now.
         // float rotationError = Quaternion.Angle(latestServerState.rotation, clientStateBuffer[serverStateBufferIndex].rotation);
 
         if (positionError > acceptablePositionError)

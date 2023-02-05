@@ -11,12 +11,6 @@ public class ServerInitializer : MonoBehaviour
     void Awake()
     {
         EvaluateCommandLineArgs();
-        ApplyCommandLineArgs();
-    }
-
-    void Start()
-    {
-
     }
 
     void EvaluateCommandLineArgs()
@@ -42,11 +36,6 @@ public class ServerInitializer : MonoBehaviour
                     break;
             }
         }
-    }
-
-    void ApplyCommandLineArgs()
-    {
-
     }
 
 }

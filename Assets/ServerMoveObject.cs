@@ -22,8 +22,6 @@ public class ServerMoveObject : NetworkBehaviour
     [Server]
     IEnumerator RotateAroundPoint()
     {
-
-
         float angle = 0f;
         while (true)
         {

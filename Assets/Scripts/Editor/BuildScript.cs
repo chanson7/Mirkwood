@@ -52,21 +52,6 @@ public class BuildScript
 
     }
 
-    [MenuItem("Client/Run Test Client")]
-    public static void RunAwsTestClient()
-    {
-        using (Process process = new Process())
-        {
-            process.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Builds/Windows/Client/Mirkwood.exe";
-            process.StartInfo.Arguments = "-testClient";
-
-            process.Start();
-
-            UnityEngine.Debug.Log($"..Running Test Client");
-        }
-
-    }
-
     [MenuItem("Server/Run Local Test Server")]
     public static void RunLocalTestServer()
     {
@@ -103,15 +88,16 @@ public class BuildScript
     public static void UploadClientToSteam()
     {
 
-        using (Process process = new Process())
-        {
-            process.StartInfo.FileName = "CMD.exe";
-            process.StartInfo.Arguments = $"/C \"C:/Users/hanso/Dev/Steamworks SDK/sdk/tools/ContentBuilder/builder/steamcmd.exe  +login chanson71 \"7CHRCHR19jm?\" +run_app_build \"C:/Users/hanso/Dev/Steamworks SDK/sdk/tools/ContentBuilder/scripts/app_836430.vdf\" +quit";
+        UnityEngine.Debug.Log("..this doesn't work yet");
+        // using (Process process = new Process())
+        // {
+        //     process.StartInfo.FileName = "CMD.exe";
+        //     process.StartInfo.Arguments = $"/C \"C:/Users/hanso/Dev/Steamworks SDK/sdk/tools/ContentBuilder/builder/steamcmd.exe  +login chanson71 \"7CHRCHR19jm?\" +run_app_build \"C:/Users/hanso/Dev/Steamworks SDK/sdk/tools/ContentBuilder/scripts/app_836430.vdf\" +quit";
 
-            process.Start();
+        //     process.Start();
 
-            UnityEngine.Debug.Log($"..Uploaded Client Build to Steam");
-        }
+        //     UnityEngine.Debug.Log($"..Uploaded Client Build to Steam");
+        // }
 
     }
 

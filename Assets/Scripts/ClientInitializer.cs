@@ -30,11 +30,6 @@ public class ClientInitializer : MonoBehaviour
         {
             switch (arg)
             {
-
-                case "-testClient":
-                    clientConfig.enableInGameDebugConsole = true;
-                    break;
-
                 case "-disableServerAuth":
                     clientConfig.disableServerAuth = true;
                     break;

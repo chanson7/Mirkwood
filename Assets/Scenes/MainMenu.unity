@@ -249,10 +249,6 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
-  playerJoinedGameSessionEvent: {fileID: 11400000, guid: 86208e7c2f8351f4eb7b7e2fc7c236f1,
-    type: 2}
-  playerLeftGameSessionEvent: {fileID: 11400000, guid: 1d1e47ff6ffc3ef4b96c3308b57d7f6d,
-    type: 2}
   registeredSpawnablePrefabs: {fileID: 11400000, guid: 83cf460a5b6137a4899b180d21bc65bf,
     type: 2}
   clientLaunchConfiguration: {fileID: 11400000, guid: a5a5fe818ca165b4faf5910cb86247bb,

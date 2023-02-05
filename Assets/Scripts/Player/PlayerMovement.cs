@@ -53,12 +53,6 @@ public class PlayerMovement : NetworkBehaviour
 
     void Start()
     {
-
-        if (isServer)
-            Debug.Log("..This is the Server");
-        if (isLocalPlayer)
-            Debug.Log("..This is the Local Player");
-
         minTimeBetweenServerTicks = 1f / MirkwoodNetworkManager.singleton.serverTickRate;
     }
 
@@ -115,7 +109,6 @@ public class PlayerMovement : NetworkBehaviour
             mouseWorldPosition = hit.point;
             mouseWorldPosition.y = transform.position.y; //transform should not rotate on Y axis
         }
-
     }
 
     [Client]

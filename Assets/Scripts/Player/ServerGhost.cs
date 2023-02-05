@@ -5,13 +5,14 @@ public class ServerGhost : NetworkBehaviour
 {
 
     [SyncVar] Vector3 serverPosition;
-
     [SyncVar] Quaternion serverRotation;
-    [SerializeField] GameObject serverGhost;
+    [SerializeField] GameObject ghostPrefab;
+    GameObject serverGhost;
+
 
     public override void OnStartLocalPlayer()
     {
-        serverGhost.SetActive(true);
+        serverGhost = Instantiate(ghostPrefab);
     }
 
     void Update()

@@ -6,4 +6,6 @@ using Mirror;
 public class PlayerAbility : NetworkBehaviour
 {
 
+    [SyncVar] public int energy;
+
 }

@@ -204,7 +204,6 @@ public class PlayerMovement : NetworkBehaviour
 
     void AnimateMovement(Vector3 currentVelocity)
     {
-        Debug.Log($"{currentVelocity}");
         animator.SetFloat(forwardHash, transform.InverseTransformDirection(currentVelocity).z);
         animator.SetFloat(rightHash, transform.InverseTransformDirection(currentVelocity).x);
     }

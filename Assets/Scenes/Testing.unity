@@ -215,6 +215,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Damage Over Time Zone
       objectReference: {fileID: 0}
+    - target: {fileID: 6767486207924569042, guid: cbd378ea2fe54f5488f0ff92f089e7b8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cbd378ea2fe54f5488f0ff92f089e7b8, type: 3}
 --- !u!4 &56584567 stripped
@@ -1035,6 +1040,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Extraction Zone
+      objectReference: {fileID: 0}
+    - target: {fileID: 6767486207924569042, guid: a3a60b7c06b23d842a91bd70a9e80bef,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3a60b7c06b23d842a91bd70a9e80bef, type: 3}
@@ -3456,7 +3466,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-16238
+  m_Name: pb_Mesh-814720
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4188,7 +4198,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-16256
+  m_Name: pb_Mesh-814736
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2

@@ -7,6 +7,7 @@ public struct InputPayload
 {
     public int tick;
     public Vector3 movementInput;
+    public bool isSprinting;
     public Vector3 mouseWorldPosition;
 }
 
@@ -15,6 +16,7 @@ public struct StatePayload
     public int tick;
     public Vector3 position;
     public Quaternion rotation;
+    public Vector3 currentAcceleration;
 }
 
 [RequireComponent(typeof(CharacterController))]
@@ -26,16 +28,18 @@ public class PlayerMovement : NetworkBehaviour
     int currentTick;
     float minTimeBetweenServerTicks;
     const int BUFFER_SIZE = 1024;
-    [SerializeField] float movementSpeed = 5f;
+
+    Vector3 currentVelocity;
+    [SerializeField] float movementSpeed = 1f;
+    [SerializeField] float sprintSpeedMultiplier = 5.0f;
     [SerializeField] float acceptablePositionError = 0.001f;
     [SerializeField] NetworkTransform networkTransform;
     [SerializeField] NetworkAnimator networkAnimator;
     [SerializeField] CharacterController characterController;
     [SerializeField] Animator animator;
+
     static int forwardHash = Animator.StringToHash("Forward");
     static int rightHash = Animator.StringToHash("Right");
-
-    float verticalVelocity = 0f;
 
     //client only
     private StatePayload[] clientStateBuffer;
@@ -45,6 +49,7 @@ public class PlayerMovement : NetworkBehaviour
     Ray pointerRay;
     [SerializeField] LayerMask pointerMask; //so that the player will not look at everything the pointer ray hits
     Vector3 movementInput = new Vector3();
+    bool isSprinting = false;
     Vector3 mouseWorldPosition = new Vector3();
 
     //server only
@@ -78,6 +83,11 @@ public class PlayerMovement : NetworkBehaviour
         movementInput.z = input.Get<Vector2>().y;
     }
 
+    void OnSprint(InputValue input)
+    {
+        isSprinting = input.isPressed;
+    }
+
     void Update()
     {
         timer += Time.deltaTime;
@@ -100,6 +110,7 @@ public class PlayerMovement : NetworkBehaviour
         }
     }
 
+    [Client]
     void ClientRotateTowardsMouse()
     {
         pointerRay = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -126,6 +137,7 @@ public class PlayerMovement : NetworkBehaviour
         {
             tick = currentTick,
             movementInput = movementInput,
+            isSprinting = isSprinting,
             mouseWorldPosition = mouseWorldPosition
         };
 
@@ -172,15 +184,15 @@ public class PlayerMovement : NetworkBehaviour
     StatePayload ProcessMovement(InputPayload input)
     {
 
-        if (!characterController.isGrounded)
-            verticalVelocity += Physics.gravity.y;
-        else
-            verticalVelocity = Physics.gravity.y;
+        currentVelocity = input.isSprinting ? Vector3.Lerp(currentVelocity, input.movementInput * movementSpeed * sprintSpeedMultiplier, 0.2f) :
+                                                  Vector3.Lerp(currentVelocity, input.movementInput * movementSpeed, 0.2f);
 
-        characterController.Move(input.movementInput * movementSpeed * minTimeBetweenServerTicks);
+        Vector3 movementValue = currentVelocity * minTimeBetweenServerTicks;
+
+        characterController.Move(movementValue);
+
         transform.LookAt(input.mouseWorldPosition, Vector3.up);
-
-        AnimateMovement();
+        AnimateMovement(currentVelocity);
 
         return new StatePayload()
         {
@@ -190,10 +202,11 @@ public class PlayerMovement : NetworkBehaviour
         };
     }
 
-    void AnimateMovement()
+    void AnimateMovement(Vector3 currentVelocity)
     {
-        animator.SetFloat(forwardHash, transform.InverseTransformDirection(characterController.velocity).z);
-        animator.SetFloat(rightHash, transform.InverseTransformDirection(characterController.velocity).x);
+        Debug.Log($"{currentVelocity}");
+        animator.SetFloat(forwardHash, transform.InverseTransformDirection(currentVelocity).z);
+        animator.SetFloat(rightHash, transform.InverseTransformDirection(currentVelocity).x);
     }
 
     [Client]

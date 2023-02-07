@@ -12,7 +12,8 @@ public class ServerGhost : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        serverGhost = Instantiate(ghostPrefab);
+        if (this.isActiveAndEnabled)
+            serverGhost = Instantiate(ghostPrefab);
     }
 
     void Update()

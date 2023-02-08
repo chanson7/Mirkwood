@@ -185,7 +185,7 @@ public class PlayerMovement : NetworkBehaviour
     {
 
         currentVelocity = input.isSprinting ? Vector3.Lerp(currentVelocity, input.movementInput * movementSpeed * sprintSpeedMultiplier, 0.2f) :
-                                                  Vector3.Lerp(currentVelocity, input.movementInput * movementSpeed, 0.2f);
+                                              Vector3.Lerp(currentVelocity, input.movementInput * movementSpeed, 0.2f);
 
         Vector3 movementValue = currentVelocity * minTimeBetweenServerTicks;
 

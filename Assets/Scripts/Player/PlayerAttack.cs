@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class PlayerAttack : NetworkBehaviour
 {
     [SerializeField] Animator animator;
+    NetworkAnimator networkAnimator;
     static int attackHash = Animator.StringToHash("Attack");
 
     void OnAttack(InputValue input)
@@ -21,6 +22,7 @@ public class PlayerAttack : NetworkBehaviour
     [Command]
     void CmdBeginAttackAnimation()
     {
+        animator.SetTrigger(attackHash); //the animation needs to happen on the server if there is root motion
         RpcBeginAttackAnimation(); //the server plays the animations on all the other clients
     }
 

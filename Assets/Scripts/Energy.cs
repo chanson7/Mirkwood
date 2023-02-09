@@ -5,7 +5,7 @@ public class Energy : NetworkBehaviour
 {
 
     [SyncVar] int maxEnergy = 10;
-    [SyncVar] uint energy;
+    [SyncVar][SerializeField] uint energy = 10;
 
     [Tooltip("Time in seconds for the player to recover 1 energy")]
     [SerializeField] float recoveryTime = 4f;

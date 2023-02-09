@@ -21,7 +21,6 @@ public struct StatePayload
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(NetworkTransform))] //Server Authoritative network transform propogates state changes to other clients.
-[RequireComponent(typeof(NetworkAnimator))] //Same as above but with movement animation
 public class PlayerMovement : NetworkBehaviour
 {
     float timer;
@@ -34,7 +33,6 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] float sprintSpeedMultiplier = 5.0f;
     [SerializeField] float acceptablePositionError = 0.001f;
     [SerializeField] NetworkTransform networkTransform;
-    [SerializeField] NetworkAnimator networkAnimator;
     [SerializeField] CharacterController characterController;
     [SerializeField] Animator animator;
 
@@ -65,7 +63,6 @@ public class PlayerMovement : NetworkBehaviour
     {
         //Network Transform is needed to interpolate & send state updates to other clients.  It is not necessary for the local player
         networkTransform.enabled = false;
-        networkAnimator.enabled = false;
 
         clientStateBuffer = new StatePayload[BUFFER_SIZE];
         clientInputBuffer = new InputPayload[BUFFER_SIZE];
@@ -171,12 +168,12 @@ public class PlayerMovement : NetworkBehaviour
 
         //we processed all of the input!!!!
         if (bufferIndex != -1)
-            RpcOnServerMovementState(serverStateBuffer[bufferIndex]);
+            TargetOnServerMovementState(serverStateBuffer[bufferIndex]);
 
     }
 
-    [ClientRpc]
-    void RpcOnServerMovementState(StatePayload statePayload)
+    [TargetRpc]
+    void TargetOnServerMovementState(StatePayload statePayload)
     {
         latestServerState = statePayload;
     }

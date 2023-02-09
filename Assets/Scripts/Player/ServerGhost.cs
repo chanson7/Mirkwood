@@ -4,29 +4,31 @@ using Mirror;
 public class ServerGhost : NetworkBehaviour
 {
 
-    [SyncVar] Vector3 serverPosition;
-    [SyncVar] Quaternion serverRotation;
+    [SerializeField] PlayerNetworkedState playerNetworkedState;
     [SerializeField] GameObject ghostPrefab;
     GameObject serverGhost;
+    Animator ghostAnimator;
 
+    static int forwardHash = Animator.StringToHash("Forward");
+    static int rightHash = Animator.StringToHash("Right");
 
     public override void OnStartLocalPlayer()
     {
         if (this.isActiveAndEnabled)
+        {
             serverGhost = Instantiate(ghostPrefab);
+            ghostAnimator = serverGhost.GetComponent<Animator>();
+        }
     }
 
     void Update()
     {
-        if (isServer)
-        {
-            serverPosition = transform.position;
-            serverRotation = transform.rotation;
-        }
         if (isLocalPlayer)
         {
-            serverGhost.transform.position = serverPosition;
-            serverGhost.transform.rotation = serverRotation;
+            serverGhost.transform.position = playerNetworkedState.latestServerState.Position;
+            serverGhost.transform.rotation = playerNetworkedState.latestServerState.Rotation;
+            ghostAnimator.SetFloat(forwardHash, transform.InverseTransformDirection(playerNetworkedState.latestServerState.CurrentVelocity).z);
+            ghostAnimator.SetFloat(rightHash, transform.InverseTransformDirection(playerNetworkedState.latestServerState.CurrentVelocity).x);
         }
     }
 

@@ -1,7 +1,7 @@
 using UnityEngine;
 using Mirror;
 using System;
-public class Energy : NetworkBehaviour
+public class PlayerEnergy : NetworkBehaviour
 {
 
     [SyncVar] int maxEnergy = 10;

@@ -28,7 +28,7 @@ public class PlayerRotation : NetworkBehaviour
 
     public StatePayload ProcessRotationInput(StatePayload statePayload, Vector3 mouseWorldPosition)
     {
-        transform.LookAt(mouseWorldPosition, Vector3.up);
+        transform.LookAt(mouseWorldPosition, Vector3.up); //todo need to use rigidbody to rotate here? 
         statePayload.Rotation = transform.rotation;
 
         return statePayload;

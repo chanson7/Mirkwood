@@ -9,7 +9,7 @@ public class PlayerMovement : NetworkBehaviour
     public bool isSprinting = false;
     public Vector3 movementInput = new Vector3();
     [SerializeField] float movementSpeed = 1f;
-    [SerializeField] float sprintSpeedMultiplier = 5.0f;
+    [SerializeField] float sprintSpeedMultiplier = 5f;
     [SerializeField] CharacterController characterController;
     [SerializeField] PlayerNetworkedState networkedState;
     [SerializeField] Animator animator;
@@ -41,12 +41,14 @@ public class PlayerMovement : NetworkBehaviour
         currentVelocity = isSprinting ? Vector3.Lerp(currentVelocity, movementInput * movementSpeed * sprintSpeedMultiplier, 0.2f) :
                                         Vector3.Lerp(currentVelocity, movementInput * movementSpeed, 0.2f);
 
+        currentVelocity.y = characterController.isGrounded ? Physics.gravity.y : currentVelocity.y + Physics.gravity.y;
+
         Vector3 movementValue = currentVelocity * networkedState.minTimeBetweenServerTicks;
 
         characterController.Move(movementValue);
 
         statePayload.Position = transform.position;
-        statePayload.CurrentVelocity = currentVelocity;
+        statePayload.CurrentVelocity = characterController.velocity;
 
         return statePayload;
     }

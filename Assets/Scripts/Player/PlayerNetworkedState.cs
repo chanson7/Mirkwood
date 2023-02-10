@@ -65,7 +65,7 @@ public class PlayerNetworkedState : NetworkBehaviour
 
     void Update()
     {
-        timer += Time.deltaTime;
+        timer += minTimeBetweenServerTicks;
 
         while (timer >= minTimeBetweenServerTicks)
         {
@@ -131,14 +131,14 @@ public class PlayerNetworkedState : NetworkBehaviour
             serverStateBuffer[bufferIndex] = statePayload;
         }
 
-        //we processed all of the input!! Send the latest server state to the owning client for reconciliation
+        //we processed all of the input!!
         if (bufferIndex != -1)
-            RpcOnServerMovementState(serverStateBuffer[bufferIndex]);
+            TargetOnServerMovementState(serverStateBuffer[bufferIndex]);
 
     }
 
-    [ClientRpc]
-    void RpcOnServerMovementState(StatePayload statePayload)
+    [TargetRpc]
+    void TargetOnServerMovementState(StatePayload statePayload)
     {
         latestServerState = statePayload;
     }
@@ -165,8 +165,13 @@ public class PlayerNetworkedState : NetworkBehaviour
 
         float positionError = Vector3.Distance(latestServerState.Position, clientStateBuffer[serverStateBufferIndex].Position);
 
-        //dont care about rotation error for right now.
-        // float rotationError = Quaternion.Angle(latestServerState.rotation, clientStateBuffer[serverStateBufferIndex].rotation);
+        //this is how to find the difference between the rotations i guess
+        // Quaternion serverRotation = Quaternion.identity * Quaternion.Inverse(latestServerState.Rotation);
+        // Quaternion clientRotation = Quaternion.identity * Quaternion.Inverse(clientStateBuffer[serverStateBufferIndex].Rotation);
+
+        // Quaternion rotationError = clientRotation * Quaternion.Inverse(serverRotation);
+        // Debug.Log($"euler angles {rotationError.eulerAngles}\nrotation error {rotationError}");
+
 
         if (positionError > acceptablePositionError)
         {

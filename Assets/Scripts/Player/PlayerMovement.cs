@@ -8,8 +8,8 @@ public class PlayerMovement : NetworkBehaviour
     Vector3 currentVelocity;
     public bool isSprinting = false;
     public Vector3 movementInput = new Vector3();
-    [SerializeField] float movementSpeed = 1f;
-    [SerializeField] float sprintSpeedMultiplier = 5f;
+    [SerializeField] float movementSpeed;
+    [SerializeField] float sprintSpeedMultiplier;
     [SerializeField] CharacterController characterController;
     [SerializeField] PlayerNetworkedState networkedState;
     [SerializeField] Animator animator;

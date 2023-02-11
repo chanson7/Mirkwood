@@ -170,8 +170,7 @@ public class PlayerNetworkedState : NetworkBehaviour
         // Quaternion clientRotation = Quaternion.identity * Quaternion.Inverse(clientStateBuffer[serverStateBufferIndex].Rotation);
 
         // Quaternion rotationError = clientRotation * Quaternion.Inverse(serverRotation);
-        // Debug.Log($"euler angles {rotationError.eulerAngles}\nrotation error {rotationError}");
-
+        // Debug.Log($"euler angles magnitude{rotationError.eulerAngles}\nrotation error {rotationError}");
 
         if (positionError > acceptablePositionError)
         {

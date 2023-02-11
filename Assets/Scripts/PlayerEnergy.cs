@@ -4,18 +4,32 @@ using System;
 public class PlayerEnergy : NetworkBehaviour
 {
 
-    [SyncVar] int maxEnergy = 10;
-    [SyncVar][SerializeField] uint energy = 10;
+    uint maxEnergy = 10;
+    [SyncVar][SerializeField] uint energy;
 
-    [Tooltip("Time in seconds for the player to recover 1 energy")]
-    [SerializeField] float recoveryTime = 4f;
+    [Tooltip("Time in seconds for the player to recover energy")]
+    [SerializeField] float recoveryInterval = 4f;
+    [Tooltip("Amount of energy recovered after each recovery interval")]
+    [SerializeField] uint energyRecovered = 1;
     float lastRecoveryTime;
+
+    public uint GetEnergy()
+    {
+        return energy;
+    }
+
+    public override void OnStartServer()
+    {
+        energy = maxEnergy;
+
+        base.OnStartServer();
+    }
 
     void Update()
     {
-        if (isServer && Time.time - lastRecoveryTime > recoveryTime)
+        if (isServer && Time.time - lastRecoveryTime > recoveryInterval)
         {
-            RecoverEnergy(1);
+            RecoverEnergy(energyRecovered);
             lastRecoveryTime = Time.time;
         }
     }

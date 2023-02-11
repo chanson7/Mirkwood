@@ -4,7 +4,7 @@ using UnityEngine;
 public class MeleeCollision : MonoBehaviour
 {
 
-    List<Collider> playerCollisions = new List<Collider>();
+    public List<Collider> damageableColliders = new List<Collider>();
     [SerializeField] Collider characterControllerCollider;
 
     private void Start()
@@ -14,15 +14,14 @@ public class MeleeCollision : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"..{other.name} is in melee range!");
-        playerCollisions.Add(other);
+        damageableColliders.Add(other);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (playerCollisions.Contains(other))
+        if (damageableColliders.Contains(other))
         {
-            playerCollisions.Remove(other);
+            damageableColliders.Remove(other);
         }
     }
 

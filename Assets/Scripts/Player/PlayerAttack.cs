@@ -55,7 +55,6 @@ public class PlayerAttack : NetworkBehaviour
             }
         }
 
-        //blood animation or knockback here or some shit
     }
 
 }

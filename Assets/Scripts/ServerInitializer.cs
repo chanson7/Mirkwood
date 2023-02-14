@@ -5,11 +5,21 @@ using System;
 public class ServerInitializer : MonoBehaviour
 {
 
+    [SerializeField] bool disableServerAuth = false;
+    [SerializeField] bool autoStartServer = false;
+
+
+
     [SerializeField] MirkwoodNetworkManager networkManager;
     [SerializeField] ServerLaunchConfiguration serverConfig;
 
     void Awake()
     {
+#if UNITY_EDITOR
+        serverConfig.disableServerAuth = disableServerAuth;
+        serverConfig.autoStartServer = autoStartServer;
+#endif
+
         EvaluateCommandLineArgs();
     }
 

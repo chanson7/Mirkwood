@@ -189,7 +189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Port: 7777
+  Port: 5000
   DualMode: 1
   NoDelay: 1
   Interval: 10
@@ -344,6 +344,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e849d24c0e1dd424c820abf0e5b8af6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableServerAuth: 1
+  autoStartServer: 1
   networkManager: {fileID: 201009780}
   serverConfig: {fileID: 11400000, guid: bcc7363b932ef1844a6e4166d694f51d, type: 2}
 --- !u!1 &1171518015

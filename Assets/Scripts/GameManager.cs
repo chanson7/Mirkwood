@@ -11,6 +11,7 @@ public class GameManager : NetworkBehaviour
     [SerializeField] double playerDisconnectTimeOut = 20;
     [SerializeField] double gameSessionTimeOut = 120;
 
+
     public override void OnStartServer()
     {
         serverStartTime = Time.timeAsDouble;
@@ -27,9 +28,7 @@ public class GameManager : NetworkBehaviour
     public void OnPlayerLeftGameSession()
     {
         playerCount--;
-
-        if (playerDisconnectTimeOut > 0)
-            CheckForGameTimeOut();
+        CheckForGameTimeOut();
     }
 
     //do this when a player leaves the game session to see if we should end the game

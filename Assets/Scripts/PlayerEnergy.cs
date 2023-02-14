@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using Mirror;
 using System;
+
 public class PlayerEnergy : NetworkBehaviour
 {
 

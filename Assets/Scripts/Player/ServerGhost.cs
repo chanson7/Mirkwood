@@ -1,10 +1,11 @@
 using UnityEngine;
 using Mirror;
 
+[RequireComponent(typeof(PlayerNetworkedState))]
 public class ServerGhost : NetworkBehaviour
 {
 
-    [SerializeField] PlayerNetworkedState playerNetworkedState;
+    PlayerNetworkedState playerNetworkedState;
     [SerializeField] GameObject ghostPrefab;
     GameObject serverGhost;
     Animator ghostAnimator;
@@ -14,6 +15,9 @@ public class ServerGhost : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
+
+        playerNetworkedState = this.GetComponent<PlayerNetworkedState>();
+
         if (this.isActiveAndEnabled)
         {
             serverGhost = Instantiate(ghostPrefab);

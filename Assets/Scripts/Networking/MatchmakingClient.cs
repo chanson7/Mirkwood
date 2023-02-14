@@ -3,7 +3,22 @@ using UnityEngine;
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+
 using SteamAuthAPI = HeathenEngineering.SteamworksIntegration.API.Authentication;
+
+public class WebsocketMessage //todo should this just be a struct maybe
+{
+    public string action { get; set; }
+    public Dictionary<string, object> data { get; set; }
+
+    public WebsocketMessage(string action, Dictionary<string, object> data)
+    {
+        this.action = action;
+        this.data = data;
+    }
+
+}
 
 //Manages the websocket connection required for matchmaking.
 //Updates the player Session instance, then disables itself.

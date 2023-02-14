@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
+#region structs
+
 public struct InputPayload
 {
     public int Tick;
@@ -18,6 +20,8 @@ public struct StatePayload
     public Vector3 CurrentVelocity;
 }
 
+#endregion
+
 [RequireComponent(typeof(NetworkTransform))] //Server Authoritative network transform propogates transform changes to other clients.
 public class PlayerNetworkedState : NetworkBehaviour
 {
@@ -27,21 +31,24 @@ public class PlayerNetworkedState : NetworkBehaviour
     const int BUFFER_SIZE = 1024;
     [SerializeField] NetworkTransform networkTransform;
 
-    //State Components
+    //Processing Components
     [SerializeField] PlayerMovement playerMovement;
     [SerializeField] PlayerRotation playerRotation;
 
-
-    //client only
+    #region client only
     private StatePayload[] clientStateBuffer;
     private InputPayload[] clientInputBuffer;
     [SerializeField] float acceptablePositionError = 0.001f;
     public StatePayload latestServerState;
     StatePayload lastProcessedState;
 
-    //server only
+    #endregion
+
+    #region server only
     StatePayload[] serverStateBuffer;
     Queue<InputPayload> inputQueue;
+
+    #endregion
 
     void Start()
     {

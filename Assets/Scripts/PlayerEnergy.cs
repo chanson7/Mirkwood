@@ -35,7 +35,6 @@ public class PlayerEnergy : NetworkBehaviour
             energy -= energySpent;
             Math.Clamp(energy, 0, maxEnergy);
 
-
             if (!isRecoveringEnergy)
                 StartCoroutine(RecoverEnergy(energyRecovered));
 
@@ -50,12 +49,14 @@ public class PlayerEnergy : NetworkBehaviour
     IEnumerator RecoverEnergy(uint energyRecovered)
     {
         isRecoveringEnergy = true;
+
         while (energy < maxEnergy)
         {
-            yield return new WaitForSeconds(4);
+            yield return new WaitForSeconds(recoveryInterval);
             energy += energyRecovered;
             Math.Clamp(energy, 0, maxEnergy);
         }
+
         isRecoveringEnergy = false;
     }
 }

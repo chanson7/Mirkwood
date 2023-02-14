@@ -4,7 +4,7 @@ using Mirror;
 public class ServerGhost : NetworkBehaviour
 {
 
-    [SerializeField] PlayerNetworkedState playerNetworkedState;
+    [SerializeField] PlayerPredictedTransform predictedTransform;
     [SerializeField] GameObject ghostPrefab;
     GameObject serverGhost;
     Animator ghostAnimator;
@@ -25,10 +25,10 @@ public class ServerGhost : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            serverGhost.transform.position = playerNetworkedState.latestServerState.Position;
-            serverGhost.transform.rotation = playerNetworkedState.latestServerState.Rotation;
-            ghostAnimator.SetFloat(forwardHash, transform.InverseTransformDirection(playerNetworkedState.latestServerState.CurrentVelocity).z);
-            ghostAnimator.SetFloat(rightHash, transform.InverseTransformDirection(playerNetworkedState.latestServerState.CurrentVelocity).x);
+            serverGhost.transform.position = predictedTransform.latestServerState.Position;
+            serverGhost.transform.rotation = predictedTransform.latestServerState.Rotation;
+            ghostAnimator.SetFloat(rightHash, transform.InverseTransformDirection(predictedTransform.latestServerState.CurrentVelocity).x);
+            ghostAnimator.SetFloat(forwardHash, transform.InverseTransformDirection(predictedTransform.latestServerState.CurrentVelocity).z);
         }
     }
 

@@ -11,7 +11,7 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] float movementSpeed;
     [SerializeField] float sprintSpeedMultiplier;
     [SerializeField] CharacterController characterController;
-    [SerializeField] PlayerNetworkedState networkedState;
+    [SerializeField] PlayerPredictedTransform predictedTransform;
     [SerializeField] Animator animator;
 
     static int forwardHash = Animator.StringToHash("Forward");
@@ -43,12 +43,12 @@ public class PlayerMovement : NetworkBehaviour
 
         currentVelocity.y = characterController.isGrounded ? Physics.gravity.y : currentVelocity.y + Physics.gravity.y;
 
-        Vector3 movementValue = currentVelocity * networkedState.minTimeBetweenServerTicks;
+        Vector3 movementValue = currentVelocity * predictedTransform.minTimeBetweenServerTicks;
 
         characterController.Move(movementValue);
 
         statePayload.Position = transform.position;
-        statePayload.CurrentVelocity = characterController.velocity;
+        statePayload.CurrentVelocity = currentVelocity;
 
         return statePayload;
     }

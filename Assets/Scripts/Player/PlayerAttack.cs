@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class PlayerAttack : NetworkBehaviour
 {
     [SerializeField] Animator animator;
+    [SerializeField] Animator rootMotionAnimator;
     [SerializeField] MeleeCollision meleeCollision;
     [SerializeField] PlayerEnergy playerEnergy;
     [SerializeField] uint attackEnergyCost;
@@ -19,6 +20,8 @@ public class PlayerAttack : NetworkBehaviour
     void AnimateAttack()
     {
         animator.SetTrigger(attackHash); //the animation happens immediately for the local player
+        rootMotionAnimator.SetTrigger(attackHash);
+
         CmdAnimateAttack(); //tell the server to do the animation too
     }
 

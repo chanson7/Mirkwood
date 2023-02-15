@@ -216,7 +216,6 @@ MonoBehaviour:
   syncInterval: 0.1
   localPlayerStartedEvent: {fileID: 11400000, guid: 96a89d7b06af97d4ead9e676ae05a4d0,
     type: 2}
-  playerInput: {fileID: 6984687325368979073}
 --- !u!114 &4708448802937948552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,7 +230,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 1
   syncInterval: 0
-  playerNetworkedState: {fileID: 9183383045216143226}
   ghostPrefab: {fileID: 255875150686203505, guid: cddc15c91329aee4abfab1aa8a3451f9,
     type: 3}
 --- !u!114 &9183383045216143226
@@ -248,10 +246,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  minTimeBetweenServerTicks: 0
-  networkTransform: {fileID: 3437259606715259750}
   playerMovement: {fileID: 6365695650205679477}
   playerRotation: {fileID: 9150179849941971224}
+  networkTransform: {fileID: 3437259606715259750}
+  minTimeBetweenServerTicks: 0
   acceptablePositionError: 0.001
 --- !u!114 &6365695650205679477
 MonoBehaviour:

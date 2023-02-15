@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using Mirror;
 
 [RequireComponent(typeof(CharacterController))]
-public class PlayerMovement : NetworkBehaviour
+public class PredictedMovement : NetworkBehaviour
 {
     Vector3 currentVelocity;
     public bool isSprinting = false;
@@ -11,7 +11,7 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] float movementSpeed;
     [SerializeField] float sprintSpeedMultiplier;
     [SerializeField] CharacterController characterController;
-    [SerializeField] PlayerNetworkedState networkedState;
+    [SerializeField] PredictedTransform networkedState;
     [SerializeField] Animator animator;
 
     static int forwardHash = Animator.StringToHash("Forward");

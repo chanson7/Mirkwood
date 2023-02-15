@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
 
-public class PlayerRotation : NetworkBehaviour
+public class PredictedRotation : NetworkBehaviour
 {
     Ray pointerRay;
     [SerializeField] LayerMask pointerMask; //so that the player will not look at everything the pointer ray hits

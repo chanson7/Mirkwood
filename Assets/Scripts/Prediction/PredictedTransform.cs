@@ -23,17 +23,26 @@ public struct StatePayload
 #endregion
 
 [RequireComponent(typeof(NetworkTransform))] //Server Authoritative network transform propogates transform changes to other clients.
-public class PlayerNetworkedState : NetworkBehaviour
+public class PredictedTransform : NetworkBehaviour
 {
+
+    #region serialized
+    [SerializeField] PredictedMovement playerMovement;
+    [SerializeField] PredictedRotation playerRotation;
+    [SerializeField] NetworkTransform networkTransform;
+    #endregion
+
+    #region public
+    public float minTimeBetweenServerTicks;
+    #endregion
+
+    #region private 
     float timer;
     int currentTick;
-    public float minTimeBetweenServerTicks;
     const int BUFFER_SIZE = 1024;
-    [SerializeField] NetworkTransform networkTransform;
+    #endregion
 
     //Processing Components
-    [SerializeField] PlayerMovement playerMovement;
-    [SerializeField] PlayerRotation playerRotation;
 
     #region client only
     private StatePayload[] clientStateBuffer;
@@ -53,26 +62,35 @@ public class PlayerNetworkedState : NetworkBehaviour
     void Start()
     {
         minTimeBetweenServerTicks = 1f / MirkwoodNetworkManager.singleton.serverTickRate;
+        Debug.Log($"..time between ticks: {minTimeBetweenServerTicks}");
     }
 
     public override void OnStartLocalPlayer()
     {
+        Debug.Log("..Start Local");
+
         //Network Transform is needed to interpolate & send state updates to other clients.  It is not necessary for the local player
         networkTransform.enabled = false;
 
         clientStateBuffer = new StatePayload[BUFFER_SIZE];
         clientInputBuffer = new InputPayload[BUFFER_SIZE];
+
+        base.OnStartLocalPlayer();
     }
 
     public override void OnStartServer()
     {
+        Debug.Log("..Start Server");
+
         serverStateBuffer = new StatePayload[BUFFER_SIZE];
         inputQueue = new Queue<InputPayload>();
+
+        base.OnStartServer();
     }
 
     void Update()
     {
-        timer += minTimeBetweenServerTicks;
+        timer += Time.deltaTime;
 
         while (timer >= minTimeBetweenServerTicks)
         {

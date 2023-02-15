@@ -1,11 +1,11 @@
 using UnityEngine;
 using Mirror;
 
-[RequireComponent(typeof(PlayerNetworkedState))]
+[RequireComponent(typeof(PredictedTransform))]
 public class ServerGhost : NetworkBehaviour
 {
 
-    PlayerNetworkedState playerNetworkedState;
+    PredictedTransform playerNetworkedState;
     [SerializeField] GameObject ghostPrefab;
     GameObject serverGhost;
     Animator ghostAnimator;
@@ -16,7 +16,7 @@ public class ServerGhost : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
 
-        playerNetworkedState = this.GetComponent<PlayerNetworkedState>();
+        playerNetworkedState = this.GetComponent<PredictedTransform>();
 
         if (this.isActiveAndEnabled)
         {

@@ -12,6 +12,21 @@ public struct InputPayload
     public Vector3 MouseWorldPosition;
 }
 
+//for events where movement/rotation of the object span multiple frames like a knockback or attack animation. 
+//these should override the InputPayload during the same tick.
+public struct AnimationMotionPayload
+{
+    public int Tick;
+    public Priority priority; //Will interrupt an active movement with lower priority. For example, a player starts an attack animation that moves them over 10 frames, but 3 frames in they are knocked back.  The knock back should have higher priority.
+    public float duration;
+}
+
+public enum Priority
+{
+    Interrupt,
+    Attack
+}
+
 public struct StatePayload
 {
     public int Tick;
@@ -27,19 +42,25 @@ public class PredictedTransform : NetworkBehaviour
 {
 
     #region serialized
-    [SerializeField] PredictedMovement playerMovement;
-    [SerializeField] PredictedRotation playerRotation;
     [SerializeField] NetworkTransform networkTransform;
+
     #endregion
 
     #region public
-    public float minTimeBetweenServerTicks;
+    [SyncVar] public float minTimeBetweenServerTicks;
+
     #endregion
 
     #region private 
+    List<PredictedTickProcessor> tickProcessors = new List<PredictedTickProcessor>();
     float timer;
     int currentTick;
+
+    #endregion
+
+    #region constants
     const int BUFFER_SIZE = 1024;
+
     #endregion
 
     //Processing Components
@@ -56,19 +77,12 @@ public class PredictedTransform : NetworkBehaviour
     #region server only
     StatePayload[] serverStateBuffer;
     Queue<InputPayload> inputQueue;
+    AnimationMotionPayload activeAnimationMotion; //an animation-triggered motion that might move a predicted object over several frames
 
     #endregion
 
-    void Start()
-    {
-        minTimeBetweenServerTicks = 1f / MirkwoodNetworkManager.singleton.serverTickRate;
-        Debug.Log($"..time between ticks: {minTimeBetweenServerTicks}");
-    }
-
     public override void OnStartLocalPlayer()
     {
-        Debug.Log("..Start Local");
-
         //Network Transform is needed to interpolate & send state updates to other clients.  It is not necessary for the local player
         networkTransform.enabled = false;
 
@@ -80,12 +94,18 @@ public class PredictedTransform : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        Debug.Log("..Start Server");
 
+        minTimeBetweenServerTicks = 1f / MirkwoodNetworkManager.singleton.serverTickRate;
         serverStateBuffer = new StatePayload[BUFFER_SIZE];
         inputQueue = new Queue<InputPayload>();
+        activeAnimationMotion = new AnimationMotionPayload();
 
         base.OnStartServer();
+    }
+
+    public void RegisterTickProcessor(PredictedTickProcessor tickProcessor)
+    {
+        tickProcessors.Add(tickProcessor);
     }
 
     void Update()
@@ -112,21 +132,16 @@ public class PredictedTransform : NetworkBehaviour
     [Client]
     void HandleTickOnLocalClient()
     {
-        if (!latestServerState.Equals(default(StatePayload)) &&
-        (lastProcessedState.Equals(default(StatePayload)) ||
-        !latestServerState.Equals(lastProcessedState)))
+        if (!latestServerState.Equals(default(StatePayload)) && (lastProcessedState.Equals(default(StatePayload)) || !latestServerState.Equals(lastProcessedState)))
             HandleServerReconciliation();
 
         int bufferIndex = currentTick % BUFFER_SIZE;
 
         //Add the input payload to the input buffer
-        InputPayload inputPayload = new InputPayload
-        {
-            Tick = currentTick,
-            MovementInput = playerMovement.movementInput,
-            IsSprinting = playerMovement.isSprinting,
-            MouseWorldPosition = playerRotation.mouseWorldPosition
-        };
+        InputPayload inputPayload = new InputPayload { Tick = currentTick };
+
+        foreach (PredictedTickProcessor tickProcessor in tickProcessors)
+            inputPayload = tickProcessor.GatherInput(inputPayload);
 
         clientInputBuffer[bufferIndex] = inputPayload;
         clientStateBuffer[bufferIndex] = ProcessInput(inputPayload);
@@ -137,6 +152,7 @@ public class PredictedTransform : NetworkBehaviour
     [Command]
     void CmdOnClientInput(InputPayload inputPayload)
     {
+        //the player can just send any frequency of inputs to speed hack. this is bad and should be fixed by somebody
         inputQueue.Enqueue(inputPayload);
     }
 
@@ -174,9 +190,8 @@ public class PredictedTransform : NetworkBehaviour
 
         processedState.Tick = input.Tick;
 
-        //run the state through each component
-        processedState = playerMovement.ProcessMovementInput(processedState, input.MovementInput, input.IsSprinting);
-        processedState = playerRotation.ProcessRotationInput(processedState, input.MouseWorldPosition);
+        foreach (PredictedTickProcessor tickProcessor in tickProcessors)
+            processedState = tickProcessor.ProcessTick(processedState, input);
 
         return processedState;
     }

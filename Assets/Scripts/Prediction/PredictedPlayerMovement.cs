@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using Mirror;
 
 [RequireComponent(typeof(CharacterController))]
-public class PredictedMovement : NetworkBehaviour
+public class PredictedPlayerMovement : PredictedTickProcessor
 {
     Vector3 currentVelocity;
     public bool isSprinting = false;
@@ -36,10 +36,19 @@ public class PredictedMovement : NetworkBehaviour
         isSprinting = input.isPressed;
     }
 
-    public StatePayload ProcessMovementInput(StatePayload statePayload, Vector3 movementInput, bool isSprinting)
+    public override InputPayload GatherInput(InputPayload inputPayload)
     {
-        currentVelocity = isSprinting ? Vector3.Lerp(currentVelocity, movementInput * movementSpeed * sprintSpeedMultiplier, 0.2f) :
-                                        Vector3.Lerp(currentVelocity, movementInput * movementSpeed, 0.2f);
+
+        inputPayload.IsSprinting = isSprinting;
+        inputPayload.MovementInput = movementInput;
+
+        return inputPayload;
+    }
+
+    public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
+    {
+        currentVelocity = inputPayload.IsSprinting ? Vector3.Lerp(currentVelocity, inputPayload.MovementInput * movementSpeed * sprintSpeedMultiplier, 0.2f) :
+                                        Vector3.Lerp(currentVelocity, inputPayload.MovementInput * movementSpeed, 0.2f);
 
         currentVelocity.y = characterController.isGrounded ? Physics.gravity.y : currentVelocity.y + Physics.gravity.y;
 

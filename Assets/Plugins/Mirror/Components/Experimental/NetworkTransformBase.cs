@@ -231,7 +231,7 @@ namespace Mirror.Experimental
             RpcMove(position, packedRotation, scale);
         }
 
-        [ClientRpc(channel = Channels.Unreliable)]
+        [ClientRpcAttribute(channel = Channels.Unreliable)]
         void RpcMove(Vector3 position, uint packedRotation, Vector3 scale)
         {
             if (hasAuthority && excludeOwnerUpdate) return;
@@ -458,7 +458,7 @@ namespace Mirror.Experimental
             lastRotation = newLocalRotation;
         }
 
-        [ClientRpc(channel = Channels.Unreliable)]
+        [ClientRpcAttribute(channel = Channels.Unreliable)]
         void RpcTeleport(Vector3 newPosition, uint newPackedRotation, bool isClientAuthority)
         {
             DoTeleport(newPosition, Compression.DecompressQuaternion(newPackedRotation));

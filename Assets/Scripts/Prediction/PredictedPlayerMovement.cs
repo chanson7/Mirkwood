@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using Mirror;
 
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerMovement : PredictedTickProcessor
+public class PredictedPlayerMovement : PredictedPlayerInputProcessor
 {
     Vector3 currentVelocity;
     public bool isSprinting = false;
@@ -11,7 +11,6 @@ public class PredictedPlayerMovement : PredictedTickProcessor
     [SerializeField] float movementSpeed;
     [SerializeField] float sprintSpeedMultiplier;
     [SerializeField] CharacterController characterController;
-    [SerializeField] PredictedTransform networkedState;
     [SerializeField] Animator animator;
 
     static int forwardHash = Animator.StringToHash("Forward");
@@ -36,23 +35,24 @@ public class PredictedPlayerMovement : PredictedTickProcessor
         isSprinting = input.isPressed;
     }
 
-    public override InputPayload GatherInput(InputPayload inputPayload)
+    public override InputPayload GatherClientInput(InputPayload movementPayload)
     {
+        movementPayload.MovementSpeedMultiplier = isSprinting ? sprintSpeedMultiplier : 1f;
+        movementPayload.MoveDirection = movementInput;
 
-        inputPayload.IsSprinting = isSprinting;
-        inputPayload.MovementInput = movementInput;
-
-        return inputPayload;
+        return movementPayload;
     }
 
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
-        currentVelocity = inputPayload.IsSprinting ? Vector3.Lerp(currentVelocity, inputPayload.MovementInput * movementSpeed * sprintSpeedMultiplier, 0.2f) :
-                                        Vector3.Lerp(currentVelocity, inputPayload.MovementInput * movementSpeed, 0.2f);
+
+        //clamp protects against somebody boosting the movementSpeedMultiplier.  Will need more thorough checks if later on there are different things than sprint that can effect movement speed
+        //normalizing movedirection so they can't mess with the value to change their speed
+        currentVelocity = Vector3.Lerp(currentVelocity, inputPayload.MoveDirection.normalized * movementSpeed * Mathf.Clamp(inputPayload.MovementSpeedMultiplier, 0f, sprintSpeedMultiplier), 0.2f);
 
         currentVelocity.y = characterController.isGrounded ? Physics.gravity.y : currentVelocity.y + Physics.gravity.y;
 
-        Vector3 movementValue = currentVelocity * networkedState.minTimeBetweenServerTicks;
+        Vector3 movementValue = currentVelocity * (1f / MirkwoodNetworkManager.singleton.serverTickRate);
 
         characterController.Move(movementValue);
 
@@ -68,7 +68,7 @@ public class PredictedPlayerMovement : PredictedTickProcessor
         animator.SetFloat(rightHash, transform.InverseTransformDirection(currentVelocity).x);
     }
 
-    [ClientRpc(includeOwner = false)]
+    [ClientRpcAttribute(includeOwner = false)]
     void RpcAnimateMovement(Vector3 currentVelocity)
     {
         animator.SetFloat(forwardHash, transform.InverseTransformDirection(currentVelocity).z);

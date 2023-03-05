@@ -150,13 +150,13 @@ namespace Mirror.Examples.MultipleMatch
             return false;
         }
 
-        [ClientRpc]
+        [ClientRpcAttribute]
         public void RpcUpdateCell(CellValue cellValue, NetworkIdentity player)
         {
             MatchCells[cellValue].SetPlayer(player);
         }
 
-        [ClientRpc]
+        [ClientRpcAttribute]
         public void RpcShowWinner(NetworkIdentity winner)
         {
 
@@ -228,7 +228,7 @@ namespace Mirror.Examples.MultipleMatch
             currentPlayer = startingPlayer;
         }
 
-        [ClientRpc]
+        [ClientRpcAttribute]
         public void RpcRestartGame()
         {
             foreach (CellGUI cellGUI in MatchCells.Values)
@@ -304,7 +304,7 @@ namespace Mirror.Examples.MultipleMatch
             NetworkServer.Destroy(gameObject);
         }
 
-        [ClientRpc]
+        [ClientRpcAttribute]
         public void RpcExitGame()
         {
             canvasController.OnMatchEnded();

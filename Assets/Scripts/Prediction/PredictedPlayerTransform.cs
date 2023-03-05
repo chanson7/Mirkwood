@@ -2,58 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-#region structs
-
-public struct InputPayload
+public class PredictedPlayerTransform : NetworkBehaviour
 {
-    public int Tick;
-    public Vector3 MovementInput;
-    public bool IsSprinting;
-    public Vector3 MouseWorldPosition;
-}
-
-//for events where movement/rotation of the object span multiple frames like a knockback or attack animation. 
-//these should override the InputPayload during the same tick.
-public struct AnimationMotionPayload
-{
-    public int Tick;
-    public Priority priority; //Will interrupt an active movement with lower priority. For example, a player starts an attack animation that moves them over 10 frames, but 3 frames in they are knocked back.  The knock back should have higher priority.
-    public float duration;
-}
-
-public enum Priority
-{
-    Interrupt,
-    Attack
-}
-
-public struct StatePayload
-{
-    public int Tick;
-    public Vector3 Position;
-    public Quaternion Rotation;
-    public Vector3 CurrentVelocity;
-}
-
-#endregion
-
-[RequireComponent(typeof(NetworkTransform))] //Server Authoritative network transform propogates transform changes to other clients.
-public class PredictedTransform : NetworkBehaviour
-{
-
-    #region serialized
-    [SerializeField] NetworkTransform networkTransform;
-
-    #endregion
-
-    #region public
-    [SyncVar] public float minTimeBetweenServerTicks;
-
-    #endregion
 
     #region private 
-    List<PredictedTickProcessor> tickProcessors = new List<PredictedTickProcessor>();
-    float timer;
+    List<PredictedPlayerInputProcessor> playerInputProcessors = new List<PredictedPlayerInputProcessor>(); //these take input from a player to alter transform state
     int currentTick;
 
     #endregion
@@ -77,14 +30,11 @@ public class PredictedTransform : NetworkBehaviour
     #region server only
     StatePayload[] serverStateBuffer;
     Queue<InputPayload> inputQueue;
-    AnimationMotionPayload activeAnimationMotion; //an animation-triggered motion that might move a predicted object over several frames
 
     #endregion
 
     public override void OnStartLocalPlayer()
     {
-        //Network Transform is needed to interpolate & send state updates to other clients.  It is not necessary for the local player
-        networkTransform.enabled = false;
 
         clientStateBuffer = new StatePayload[BUFFER_SIZE];
         clientInputBuffer = new InputPayload[BUFFER_SIZE];
@@ -94,39 +44,27 @@ public class PredictedTransform : NetworkBehaviour
 
     public override void OnStartServer()
     {
-
-        minTimeBetweenServerTicks = 1f / MirkwoodNetworkManager.singleton.serverTickRate;
         serverStateBuffer = new StatePayload[BUFFER_SIZE];
         inputQueue = new Queue<InputPayload>();
-        activeAnimationMotion = new AnimationMotionPayload();
 
         base.OnStartServer();
     }
 
-    public void RegisterTickProcessor(PredictedTickProcessor tickProcessor)
+    public void RegisterPlayerInputProcessor(PredictedPlayerInputProcessor playerInputProcessor)
     {
-        tickProcessors.Add(tickProcessor);
+        playerInputProcessors.Add(playerInputProcessor);
     }
 
-    void Update()
+    public void ServerUpdate()
     {
-        timer += Time.deltaTime;
+        if (isLocalPlayer)
+            HandleTickOnLocalClient();
+        else if (isServer)
+            HandleTickOnServer();
+        else if (isClient && !isLocalPlayer)
+            HandleTickOnOtherClient();
 
-        while (timer >= minTimeBetweenServerTicks)
-        {
-            timer -= minTimeBetweenServerTicks;
-
-            if (isLocalPlayer)
-            {
-                HandleTickOnLocalClient();
-            }
-            else if (isServer)
-            {
-                HandleTickOnServer();
-            }
-
-            currentTick++;
-        }
+        currentTick++;
     }
 
     [Client]
@@ -140,11 +78,11 @@ public class PredictedTransform : NetworkBehaviour
         //Add the input payload to the input buffer
         InputPayload inputPayload = new InputPayload { Tick = currentTick };
 
-        foreach (PredictedTickProcessor tickProcessor in tickProcessors)
-            inputPayload = tickProcessor.GatherInput(inputPayload);
+        foreach (PredictedPlayerInputProcessor tickProcessor in playerInputProcessors)
+            inputPayload = tickProcessor.GatherClientInput(inputPayload);
 
         clientInputBuffer[bufferIndex] = inputPayload;
-        clientStateBuffer[bufferIndex] = ProcessInput(inputPayload);
+        clientStateBuffer[bufferIndex] = ProcessMovement(inputPayload);
 
         CmdOnClientInput(inputPayload);
     }
@@ -152,7 +90,7 @@ public class PredictedTransform : NetworkBehaviour
     [Command]
     void CmdOnClientInput(InputPayload inputPayload)
     {
-        //the player can just send any frequency of inputs to speed hack. this is bad and should be fixed by somebody
+        //TODO the player can just send any frequency of inputs to speed hack. this is bad and should be fixed by somebody
         inputQueue.Enqueue(inputPayload);
     }
 
@@ -161,37 +99,44 @@ public class PredictedTransform : NetworkBehaviour
     {
         int bufferIndex = -1;
 
-        //server has some inputs to process
+        //server has some movements to process
         while (inputQueue.Count > 0)
         {
             InputPayload inputPayload = inputQueue.Dequeue();
 
             bufferIndex = inputPayload.Tick % BUFFER_SIZE;
 
-            StatePayload statePayload = ProcessInput(inputPayload);
+            StatePayload statePayload = ProcessMovement(inputPayload);
             serverStateBuffer[bufferIndex] = statePayload;
         }
 
         //we processed all of the input!!
         if (bufferIndex != -1)
-            TargetOnServerMovementState(serverStateBuffer[bufferIndex]);
+            RpcOnServerMovementState(serverStateBuffer[bufferIndex]);
 
     }
 
-    [TargetRpc]
-    void TargetOnServerMovementState(StatePayload statePayload)
+    [ClientRpcAttribute]
+    void RpcOnServerMovementState(StatePayload statePayload)
     {
         latestServerState = statePayload;
     }
 
-    StatePayload ProcessInput(InputPayload input)
+    void HandleTickOnOtherClient()
+    {
+        //TODO interpolation should probably be done here at some point 
+        transform.position = latestServerState.Position;
+        transform.rotation = latestServerState.Rotation;
+    }
+
+    StatePayload ProcessMovement(InputPayload movement)
     {
         StatePayload processedState = new StatePayload();
 
-        processedState.Tick = input.Tick;
+        processedState.Tick = movement.Tick;
 
-        foreach (PredictedTickProcessor tickProcessor in tickProcessors)
-            processedState = tickProcessor.ProcessTick(processedState, input);
+        foreach (PredictedPlayerInputProcessor tickProcessor in playerInputProcessors)
+            processedState = tickProcessor.ProcessTick(processedState, movement);
 
         return processedState;
     }
@@ -230,7 +175,7 @@ public class PredictedTransform : NetworkBehaviour
                 int bufferIndex = tickToProcess % BUFFER_SIZE;
 
                 // Process new movement with reconciled state
-                StatePayload statePayload = ProcessInput(clientInputBuffer[bufferIndex]);
+                StatePayload statePayload = ProcessMovement(clientInputBuffer[bufferIndex]);
 
                 // Update buffer with recalculated state
                 clientStateBuffer[bufferIndex] = statePayload;

@@ -2,13 +2,21 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(PlayerEnergy))]
 public class PlayerAttack : NetworkBehaviour
 {
-    [SerializeField] Animator animator;
     [SerializeField] MeleeCollision meleeCollision;
-    [SerializeField] PlayerEnergy playerEnergy;
     [SerializeField] uint attackEnergyCost;
+    Animator animator;
+    PlayerEnergy playerEnergy;
     static int attackHash = Animator.StringToHash("Attack");
+
+    private void Start()
+    {
+        animator = gameObject.GetComponent<Animator>();
+        playerEnergy = gameObject.GetComponent<PlayerEnergy>();
+    }
 
     void OnAttack(InputValue input)
     {
@@ -18,8 +26,11 @@ public class PlayerAttack : NetworkBehaviour
 
     void AnimateAttack()
     {
-        animator.SetTrigger(attackHash); //the animation happens immediately for the local player
-        CmdAnimateAttack(); //tell the server to do the animation too
+        if (playerEnergy.GetEnergy() > attackEnergyCost) //if the player has enough energy
+        {
+            animator.SetTrigger(attackHash); //the animation happens immediately for the local player
+            CmdAnimateAttack(); //tell the server to do the animation too
+        }
     }
 
     [Command]
@@ -32,7 +43,7 @@ public class PlayerAttack : NetworkBehaviour
         }
     }
 
-    [ClientRpc(includeOwner = false)] //dont do the animation again for the local player because he already saw it
+    [ClientRpcAttribute(includeOwner = false)] //dont do the animation again for the local player because he already saw it
     void RpcAnimateAttack()
     {
         animator.SetTrigger(attackHash);

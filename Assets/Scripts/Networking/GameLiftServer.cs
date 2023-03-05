@@ -82,7 +82,7 @@ public class GameLiftServer : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError($"..Could not remove GameLift player session: {e.Message}");
+            Debug.LogWarning($"..Could not remove GameLift player session: {e.Message}");
             return null;
         }
     }

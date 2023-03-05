@@ -45,7 +45,7 @@ namespace Mirror.Weaver
                     Log.Error($"ClientRpc {md.Name} must be declared inside a NetworkBehaviour", md);
                     WeavingFailed = true;
                 }
-                if (md.HasCustomAttribute<TargetRpcAttribute>())
+                if (md.HasCustomAttribute<ClientRpc>())
                 {
                     Log.Error($"TargetRpc {md.Name} must be declared inside a NetworkBehaviour", md);
                     WeavingFailed = true;

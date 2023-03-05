@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
 
-public class PredictedPlayerRotation : PredictedTickProcessor
+public class PredictedPlayerRotation : PredictedPlayerInputProcessor
 {
     Ray pointerRay;
     [SerializeField] LayerMask pointerMask; //so that the player will not look at everything the pointer ray hits
@@ -26,16 +26,16 @@ public class PredictedPlayerRotation : PredictedTickProcessor
         }
     }
 
-    public override InputPayload GatherInput(InputPayload inputPayload)
+    public override InputPayload GatherClientInput(InputPayload inputPayload)
     {
-        inputPayload.MouseWorldPosition = mouseWorldPosition;
+        inputPayload.LookAtDirection = mouseWorldPosition;
 
         return inputPayload;
     }
 
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
-        transform.LookAt(inputPayload.MouseWorldPosition, Vector3.up); //todo need to use rigidbody to rotate here? 
+        transform.LookAt(inputPayload.LookAtDirection, Vector3.up);
         statePayload.Rotation = transform.rotation;
 
         return statePayload;

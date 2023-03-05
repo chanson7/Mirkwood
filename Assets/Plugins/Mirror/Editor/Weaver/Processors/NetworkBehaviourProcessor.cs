@@ -906,7 +906,7 @@ namespace Mirror.Weaver
                         break;
                     }
 
-                    if (ca.AttributeType.Is<TargetRpcAttribute>())
+                    if (ca.AttributeType.Is<ClientRpc>())
                     {
                         ProcessTargetRpc(names, md, ca, ref WeavingFailed);
                         break;

@@ -42,7 +42,6 @@ GameObject:
   m_Component:
   - component: {fileID: 172309495854167161}
   - component: {fileID: 3553338720125219727}
-  - component: {fileID: 3437259606715259750}
   - component: {fileID: 8351850468574034549}
   - component: {fileID: 6984687325368979073}
   - component: {fileID: 8081118819086148916}
@@ -53,6 +52,8 @@ GameObject:
   - component: {fileID: 9150179849941971224}
   - component: {fileID: 9125753151718245912}
   - component: {fileID: 7577819120482532076}
+  - component: {fileID: 335206759807029794}
+  - component: {fileID: 5428020352656730822}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -97,40 +98,6 @@ MonoBehaviour:
   visible: 0
   m_AssetId: b1a4ac5be9ccc794685312a8591a3dd3
   hasSpawned: 0
---- !u!114 &3437259606715259750
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0
-  clientAuthority: 0
-  sendInterval: 0.05
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 0
-  bufferTimeMultiplier: 1
-  bufferSizeLimit: 64
-  catchupThreshold: 4
-  catchupMultiplier: 0.1
-  onlySyncOnChange: 1
-  bufferResetMultiplier: 5
-  positionSensitivity: 0.01
-  rotationSensitivity: 0.01
-  scaleSensitivity: 0.01
-  showGizmos: 1
-  showOverlay: 1
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!95 &8351850468574034549
 Animator:
   serializedVersion: 4
@@ -246,10 +213,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  movementInput: {fileID: 6365695650205679477}
-  rotationInput: {fileID: 9150179849941971224}
-  networkTransform: {fileID: 3437259606715259750}
-  minTimeBetweenServerTicks: 0
   acceptablePositionError: 0.001
 --- !u!114 &6365695650205679477
 MonoBehaviour:
@@ -270,7 +233,6 @@ MonoBehaviour:
   movementSpeed: 1
   sprintSpeedMultiplier: 5
   characterController: {fileID: 8081118819086148916}
-  networkedState: {fileID: 9183383045216143226}
   animator: {fileID: 8351850468574034549}
 --- !u!114 &9150179849941971224
 MonoBehaviour:
@@ -302,6 +264,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76d33a32e5bb0c5479378fe8f0aa45b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &7577819120482532076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,6 +283,50 @@ MonoBehaviour:
   energy: 10
   recoveryInterval: 4
   energyRecovered: 1
+--- !u!114 &335206759807029794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35fc24704f97f7940b044cdf7986991a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  meleeCollision: {fileID: 8915206591915020525}
+  attackEnergyCost: 0
+--- !u!114 &5428020352656730822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c43250eeeea7f064cbdfa0fd891a4683, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scriptableEvent: {fileID: 11400000, guid: 479952e79f9e27945a41e7601eb21b47, type: 2}
+  response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 9183383045216143226}
+        m_TargetAssemblyTypeName: PredictedTransform, Assembly-CSharp
+        m_MethodName: ServerUpdate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &327441760391424072
 GameObject:
   m_ObjectHideFlags: 0

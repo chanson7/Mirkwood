@@ -248,7 +248,7 @@ namespace Mirror
 
         // rpc /////////////////////////////////////////////////////////////////
         // only unreliable. see comment above of this file.
-        [ClientRpc(channel = Channels.Unreliable)]
+        [ClientRpcAttribute(channel = Channels.Unreliable)]
         void RpcServerToClientSync(Vector3? position, Quaternion? rotation, Vector3? scale) =>
             OnServerToClientSync(position, rotation, scale);
 
@@ -541,7 +541,7 @@ namespace Mirror
         // server->client teleport to force position without interpolation.
         // otherwise it would interpolate to a (far away) new position.
         // => manually calling Teleport is the only 100% reliable solution.
-        [ClientRpc]
+        [ClientRpcAttribute]
         public void RpcTeleport(Vector3 destination)
         {
             // NOTE: even in client authority mode, the server is always allowed
@@ -557,7 +557,7 @@ namespace Mirror
         // server->client teleport to force position and rotation without interpolation.
         // otherwise it would interpolate to a (far away) new position.
         // => manually calling Teleport is the only 100% reliable solution.
-        [ClientRpc]
+        [ClientRpcAttribute]
         public void RpcTeleport(Vector3 destination, Quaternion rotation)
         {
             // NOTE: even in client authority mode, the server is always allowed
@@ -572,7 +572,7 @@ namespace Mirror
 
         // Deprecated 2022-01-19
         [Obsolete("Use RpcTeleport(Vector3, Quaternion) instead.")]
-        [ClientRpc]
+        [ClientRpcAttribute]
         public void RpcTeleportAndRotate(Vector3 destination, Quaternion rotation)
         {
             OnTeleport(destination, rotation);
@@ -663,7 +663,7 @@ namespace Mirror
             // buffer limit should be at least multiplier to have enough in there
             bufferSizeLimit = Mathf.Max(bufferTimeMultiplier, bufferSizeLimit);
         }
-        
+
         public override bool OnSerialize(NetworkWriter writer, bool initialState)
         {
             // sync target component's position on spawn.
@@ -673,7 +673,7 @@ namespace Mirror
             {
                 if (syncPosition) writer.WriteVector3(targetComponent.localPosition);
                 if (syncRotation) writer.WriteQuaternion(targetComponent.localRotation);
-                if (syncScale)    writer.WriteVector3(targetComponent.localScale);
+                if (syncScale) writer.WriteVector3(targetComponent.localScale);
                 return true;
             }
             return false;
@@ -688,7 +688,7 @@ namespace Mirror
             {
                 if (syncPosition) targetComponent.localPosition = reader.ReadVector3();
                 if (syncRotation) targetComponent.localRotation = reader.ReadQuaternion();
-                if (syncScale)    targetComponent.localScale = reader.ReadVector3();
+                if (syncScale) targetComponent.localScale = reader.ReadVector3();
             }
         }
 

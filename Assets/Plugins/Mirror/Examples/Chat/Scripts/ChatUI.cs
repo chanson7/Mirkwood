@@ -34,7 +34,7 @@ namespace Mirror.Examples.Chat
                 RpcReceive(connNames[sender], message.Trim());
         }
 
-        [ClientRpc]
+        [ClientRpcAttribute]
         public void RpcReceive(string playerName, string message)
         {
             string prettyMessage = playerName == localPlayerName ?

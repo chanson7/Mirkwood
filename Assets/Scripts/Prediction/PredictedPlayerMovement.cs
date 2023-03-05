@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using Mirror;
 
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerMovement : PredictedPlayerInputProcessor
+public class PredictedPlayerMovement : PredictedPlayerTickProcessor
 {
     Vector3 currentVelocity;
     public bool isSprinting = false;
@@ -35,9 +35,9 @@ public class PredictedPlayerMovement : PredictedPlayerInputProcessor
         isSprinting = input.isPressed;
     }
 
-    public override InputPayload GatherClientInput(InputPayload movementPayload)
+    public override InputPayload GatherInput(InputPayload movementPayload)
     {
-        movementPayload.MovementSpeedMultiplier = isSprinting ? sprintSpeedMultiplier : 1f;
+        movementPayload.IsSprinting = isSprinting;
         movementPayload.MoveDirection = movementInput;
 
         return movementPayload;
@@ -46,9 +46,7 @@ public class PredictedPlayerMovement : PredictedPlayerInputProcessor
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
 
-        //clamp protects against somebody boosting the movementSpeedMultiplier.  Will need more thorough checks if later on there are different things than sprint that can effect movement speed
-        //normalizing movedirection so they can't mess with the value to change their speed
-        currentVelocity = Vector3.Lerp(currentVelocity, inputPayload.MoveDirection.normalized * movementSpeed * Mathf.Clamp(inputPayload.MovementSpeedMultiplier, 0f, sprintSpeedMultiplier), 0.2f);
+        currentVelocity = Vector3.Lerp(currentVelocity, inputPayload.MoveDirection.normalized * movementSpeed * (inputPayload.IsSprinting ? sprintSpeedMultiplier : 1f), 0.2f);
 
         currentVelocity.y = characterController.isGrounded ? Physics.gravity.y : currentVelocity.y + Physics.gravity.y;
 

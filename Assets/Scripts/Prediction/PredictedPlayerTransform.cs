@@ -6,7 +6,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 {
 
     #region private 
-    List<PredictedPlayerInputProcessor> playerInputProcessors = new List<PredictedPlayerInputProcessor>(); //these take input from a player to alter transform state
+    List<PredictedPlayerTickProcessor> playerInputProcessors = new List<PredictedPlayerTickProcessor>(); //these take input from a player to alter transform state
     int currentTick;
 
     #endregion
@@ -50,9 +50,9 @@ public class PredictedPlayerTransform : NetworkBehaviour
         base.OnStartServer();
     }
 
-    public void RegisterPlayerInputProcessor(PredictedPlayerInputProcessor playerInputProcessor)
+    public void RegisterPlayerInputProcessor(PredictedPlayerTickProcessor playerTickProcessor)
     {
-        playerInputProcessors.Add(playerInputProcessor);
+        playerInputProcessors.Add(playerTickProcessor);
     }
 
     public void ServerUpdate()
@@ -78,8 +78,8 @@ public class PredictedPlayerTransform : NetworkBehaviour
         //Add the input payload to the input buffer
         InputPayload inputPayload = new InputPayload { Tick = currentTick };
 
-        foreach (PredictedPlayerInputProcessor tickProcessor in playerInputProcessors)
-            inputPayload = tickProcessor.GatherClientInput(inputPayload);
+        foreach (PredictedPlayerTickProcessor tickProcessor in playerInputProcessors)
+            inputPayload = tickProcessor.GatherInput(inputPayload);
 
         clientInputBuffer[bufferIndex] = inputPayload;
         clientStateBuffer[bufferIndex] = ProcessMovement(inputPayload);
@@ -135,7 +135,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
         processedState.Tick = movement.Tick;
 
-        foreach (PredictedPlayerInputProcessor tickProcessor in playerInputProcessors)
+        foreach (PredictedPlayerTickProcessor tickProcessor in playerInputProcessors)
             processedState = tickProcessor.ProcessTick(processedState, movement);
 
         return processedState;

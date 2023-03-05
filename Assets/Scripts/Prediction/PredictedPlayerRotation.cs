@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
 
-public class PredictedPlayerRotation : PredictedPlayerInputProcessor
+public class PredictedPlayerRotation : PredictedPlayerTickProcessor
 {
     Ray pointerRay;
     [SerializeField] LayerMask pointerMask; //so that the player will not look at everything the pointer ray hits
@@ -26,7 +26,7 @@ public class PredictedPlayerRotation : PredictedPlayerInputProcessor
         }
     }
 
-    public override InputPayload GatherClientInput(InputPayload inputPayload)
+    public override InputPayload GatherInput(InputPayload inputPayload)
     {
         inputPayload.LookAtDirection = mouseWorldPosition;
 

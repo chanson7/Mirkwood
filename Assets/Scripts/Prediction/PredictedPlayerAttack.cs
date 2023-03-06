@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerEnergy))]
 [RequireComponent(typeof(CharacterController))]
-public class PlayerAttack : PredictedPlayerTickProcessor
+public class PredictedPlayerAttack : PredictedPlayerTickProcessor
 {
     [SerializeField] MeleeCollision meleeCollision;
     [SerializeField] uint attackEnergyCost;

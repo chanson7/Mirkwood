@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using Mirror;
 
-public class Health : NetworkBehaviour
+public class PlayerHealth : NetworkBehaviour
 {
 
     [SyncVar] int damageCounter;

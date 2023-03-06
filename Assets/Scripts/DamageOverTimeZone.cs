@@ -12,7 +12,7 @@ public class DamageOverTimeZone : NetworkBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent(typeof(Health)))
+        if (other.GetComponent(typeof(PlayerHealth)))
         {
             if (isServer)
                 objectsTakingDamage.Add(other.gameObject, StartCoroutine(DealDamageOverTime(other.gameObject)));
@@ -40,7 +40,7 @@ public class DamageOverTimeZone : NetworkBehaviour
     {
         while (true)
         {
-            obj.GetComponent<Health>().TakeDamage(damagePerSecond);
+            obj.GetComponent<PlayerHealth>().TakeDamage(damagePerSecond);
 
             yield return new WaitForSeconds(1);
         }

@@ -249,6 +249,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 640
   mouseWorldPosition: {x: 0, y: 0, z: 0}
+  rotateSpeed: 8
 --- !u!114 &7577819120482532076
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,52 +1,73 @@
 using UnityEngine;
-using Mirror;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerEnergy))]
-public class PlayerAttack : NetworkBehaviour
+[RequireComponent(typeof(CharacterController))]
+public class PlayerAttack : PredictedPlayerTickProcessor
 {
     [SerializeField] MeleeCollision meleeCollision;
     [SerializeField] uint attackEnergyCost;
+    [SerializeField] float attackMovementSpeed;
+    CharacterController characterController;
     Animator animator;
     PlayerEnergy playerEnergy;
     static int attackHash = Animator.StringToHash("Attack");
+    bool isAttacking = false;
+    bool canAttack = true;
 
-    private void Start()
+    public override void Start()
     {
         animator = gameObject.GetComponent<Animator>();
+        characterController = gameObject.GetComponent<CharacterController>();
         playerEnergy = gameObject.GetComponent<PlayerEnergy>();
+
+        base.Start();
     }
 
     void OnAttack(InputValue input)
     {
-        if (playerEnergy.GetEnergy() >= attackEnergyCost)
+        if (canAttack && playerEnergy.GetEnergy() >= attackEnergyCost)
+            isAttacking = true;
+    }
+
+    public override InputPayload GatherInput(InputPayload inputPayload)
+    {
+        if (isAttacking && inputPayload.ActiveAnimationPriority > AnimationPriority.Attack) //we aren't attacking but we should be
+            inputPayload.ActiveAnimationPriority = AnimationPriority.Attack;
+
+        else if (!isAttacking && inputPayload.ActiveAnimationPriority == AnimationPriority.Attack) //we are attacking but we shouldn't be
+            inputPayload.ActiveAnimationPriority = AnimationPriority.None;
+
+        return inputPayload;
+    }
+
+    public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
+    {
+        if (canAttack && inputPayload.ActiveAnimationPriority == AnimationPriority.Attack)
             AnimateAttack();
+
+        if (inputPayload.ActiveAnimationPriority == AnimationPriority.Attack)
+        {
+            characterController.Move(transform.forward * (1f / MirkwoodNetworkManager.singleton.serverTickRate) * attackMovementSpeed);
+        }
+
+        statePayload.Position = transform.position;
+        statePayload.CurrentVelocity = characterController.velocity;
+
+        return statePayload;
     }
 
     void AnimateAttack()
     {
-        if (playerEnergy.GetEnergy() > attackEnergyCost) //if the player has enough energy
-        {
-            animator.SetTrigger(attackHash); //the animation happens immediately for the local player
-            CmdAnimateAttack(); //tell the server to do the animation too
-        }
-    }
-
-    [Command]
-    void CmdAnimateAttack()
-    {
-        if (playerEnergy.SpendEnergy(attackEnergyCost)) //if the player has enough energy
-        {
-            animator.SetTrigger(attackHash);
-            RpcAnimateAttack(); //the server plays the animations on all the other clients
-        }
-    }
-
-    [ClientRpcAttribute(includeOwner = false)] //dont do the animation again for the local player because he already saw it
-    void RpcAnimateAttack()
-    {
         animator.SetTrigger(attackHash);
+        canAttack = false;
+    }
+
+    void EndAttack()
+    {
+        isAttacking = false;
+        canAttack = true;
     }
 
     void DealDamage(float angularDifferenceFromForwardVector)
@@ -62,10 +83,8 @@ public class PlayerAttack : NetworkBehaviour
                 {
                     Debug.Log($"..Deal damage to {collider.name} :O");
                 }
-
             }
         }
-
     }
 
 }

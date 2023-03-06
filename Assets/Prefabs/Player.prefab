@@ -50,7 +50,6 @@ GameObject:
   - component: {fileID: 9183383045216143226}
   - component: {fileID: 6365695650205679477}
   - component: {fileID: 9150179849941971224}
-  - component: {fileID: 9125753151718245912}
   - component: {fileID: 7577819120482532076}
   - component: {fileID: 335206759807029794}
   - component: {fileID: 5428020352656730822}
@@ -232,8 +231,6 @@ MonoBehaviour:
   movementInput: {x: 0, y: 0, z: 0}
   movementSpeed: 1
   sprintSpeedMultiplier: 5
-  characterController: {fileID: 8081118819086148916}
-  animator: {fileID: 8351850468574034549}
 --- !u!114 &9150179849941971224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -252,20 +249,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 640
   mouseWorldPosition: {x: 0, y: 0, z: 0}
---- !u!114 &9125753151718245912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76d33a32e5bb0c5479378fe8f0aa45b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
 --- !u!114 &7577819120482532076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,7 +281,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   meleeCollision: {fileID: 8915206591915020525}
-  attackEnergyCost: 0
+  attackEnergyCost: 3
+  attackMovementSpeed: 1.4
 --- !u!114 &5428020352656730822
 MonoBehaviour:
   m_ObjectHideFlags: 0

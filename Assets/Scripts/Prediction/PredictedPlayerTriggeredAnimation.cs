@@ -1,34 +1,26 @@
 using UnityEngine;
 using Mirror;
 
-public class PredictedPlayerTriggeredAnimation : NetworkBehaviour
+public class PredictedPlayerTriggeredAnimation : PredictedPlayerTickProcessor
 {
 
     AnimationPriority animationPriority;
-    Vector3 moveDirection;
-    float animationTime;
 
-    public void TriggerPredictedMovementAnimation(Vector3 moveDirection, float animationTime, AnimationPriority animationPriority)
+    public void TriggerPredictedMovementAnimation()
     {
-        if (animationPriority > this.animationPriority)
-        {
-            this.moveDirection = moveDirection;
-            this.animationTime = animationTime;
-            this.animationPriority = animationPriority;
-        }
+
     }
 
-    // public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
-    // {
+    public override InputPayload GatherInput(InputPayload inputPayload)
+    {
 
+        return inputPayload;
+    }
 
-    //     return statePayload;
-    // }
+    public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
+    {
 
-}
+        return statePayload;
+    }
 
-public enum AnimationPriority
-{
-    Interrupt,
-    Attack
 }

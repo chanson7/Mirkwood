@@ -6,7 +6,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 {
 
     #region private 
-    List<PredictedPlayerTickProcessor> playerInputProcessors = new List<PredictedPlayerTickProcessor>(); //these take input from a player to alter transform state
+    List<PredictedPlayerTickProcessor> playerTickProcessors = new List<PredictedPlayerTickProcessor>(); //these take input from a player to alter transform state
     int currentTick;
 
     #endregion
@@ -50,9 +50,9 @@ public class PredictedPlayerTransform : NetworkBehaviour
         base.OnStartServer();
     }
 
-    public void RegisterPlayerInputProcessor(PredictedPlayerTickProcessor playerTickProcessor)
+    public void RegisterPlayerTickProcessor(PredictedPlayerTickProcessor playerTickProcessor)
     {
-        playerInputProcessors.Add(playerTickProcessor);
+        playerTickProcessors.Add(playerTickProcessor);
     }
 
     public void ServerUpdate()
@@ -76,9 +76,13 @@ public class PredictedPlayerTransform : NetworkBehaviour
         int bufferIndex = currentTick % BUFFER_SIZE;
 
         //Add the input payload to the input buffer
-        InputPayload inputPayload = new InputPayload { Tick = currentTick };
+        InputPayload inputPayload = new InputPayload
+        {
+            Tick = currentTick,
+            ActiveAnimationPriority = AnimationPriority.None
+        };
 
-        foreach (PredictedPlayerTickProcessor tickProcessor in playerInputProcessors)
+        foreach (PredictedPlayerTickProcessor tickProcessor in playerTickProcessors)
             inputPayload = tickProcessor.GatherInput(inputPayload);
 
         clientInputBuffer[bufferIndex] = inputPayload;
@@ -135,7 +139,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
         processedState.Tick = movement.Tick;
 
-        foreach (PredictedPlayerTickProcessor tickProcessor in playerInputProcessors)
+        foreach (PredictedPlayerTickProcessor tickProcessor in playerTickProcessors)
             processedState = tickProcessor.ProcessTick(processedState, movement);
 
         return processedState;

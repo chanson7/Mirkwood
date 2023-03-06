@@ -35,6 +35,9 @@ public class PredictedPlayerRotation : PredictedPlayerTickProcessor
 
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
+        if (inputPayload.ActiveAnimationPriority < AnimationPriority.None)
+            return statePayload; //don't do any processing if there is an active animation
+
         transform.LookAt(inputPayload.LookAtDirection, Vector3.up);
         statePayload.Rotation = transform.rotation;
 

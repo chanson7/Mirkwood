@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
 
+[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
 public class PredictedPlayerMovement : PredictedPlayerTickProcessor
 {
@@ -10,11 +11,19 @@ public class PredictedPlayerMovement : PredictedPlayerTickProcessor
     public Vector3 movementInput = new Vector3();
     [SerializeField] float movementSpeed;
     [SerializeField] float sprintSpeedMultiplier;
-    [SerializeField] CharacterController characterController;
-    [SerializeField] Animator animator;
+    CharacterController characterController;
+    Animator animator;
 
     static int forwardHash = Animator.StringToHash("Forward");
     static int rightHash = Animator.StringToHash("Right");
+
+    public override void Start()
+    {
+        animator = gameObject.GetComponent<Animator>();
+        characterController = gameObject.GetComponent<CharacterController>();
+
+        base.Start();
+    }
 
     void Update()
     {
@@ -35,20 +44,21 @@ public class PredictedPlayerMovement : PredictedPlayerTickProcessor
         isSprinting = input.isPressed;
     }
 
-    public override InputPayload GatherInput(InputPayload movementPayload)
+    public override InputPayload GatherInput(InputPayload inputPayload)
     {
-        movementPayload.IsSprinting = isSprinting;
-        movementPayload.MoveDirection = movementInput;
+        inputPayload.IsSprinting = isSprinting;
+        inputPayload.MoveDirection = movementInput;
 
-        return movementPayload;
+        return inputPayload;
     }
 
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
-
-        currentVelocity = Vector3.Lerp(currentVelocity, inputPayload.MoveDirection.normalized * movementSpeed * (inputPayload.IsSprinting ? sprintSpeedMultiplier : 1f), 0.2f);
+        if (inputPayload.ActiveAnimationPriority < AnimationPriority.None)
+            return statePayload; //don't do any processing if there is an active animation
 
         currentVelocity.y = characterController.isGrounded ? Physics.gravity.y : currentVelocity.y + Physics.gravity.y;
+        currentVelocity = Vector3.Lerp(currentVelocity, inputPayload.MoveDirection.normalized * movementSpeed * (inputPayload.IsSprinting ? sprintSpeedMultiplier : 1f), 0.2f);
 
         Vector3 movementValue = currentVelocity * (1f / MirkwoodNetworkManager.singleton.serverTickRate);
 

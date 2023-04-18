@@ -46,15 +46,16 @@ GameObject:
   - component: {fileID: 6984687325368979073}
   - component: {fileID: 8081118819086148916}
   - component: {fileID: 5928123483023091589}
+  - component: {fileID: 7577819120482532076}
   - component: {fileID: 4708448802937948552}
   - component: {fileID: 9183383045216143226}
   - component: {fileID: 6365695650205679477}
   - component: {fileID: 9150179849941971224}
-  - component: {fileID: 7577819120482532076}
   - component: {fileID: 335206759807029794}
+  - component: {fileID: 403314916540155121}
   - component: {fileID: 5428020352656730822}
   m_Layer: 3
-  m_Name: Player
+  m_Name: Top Down Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -182,6 +183,23 @@ MonoBehaviour:
   syncInterval: 0.1
   localPlayerStartedEvent: {fileID: 11400000, guid: 96a89d7b06af97d4ead9e676ae05a4d0,
     type: 2}
+--- !u!114 &7577819120482532076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29a91851c019d054596ae4c90722a830, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 1
+  syncInterval: 0
+  energy: 10
+  recoveryInterval: 4
+  energyRecovered: 1
 --- !u!114 &4708448802937948552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -231,6 +249,7 @@ MonoBehaviour:
   movementInput: {x: 0, y: 0, z: 0}
   movementSpeed: 1
   sprintSpeedMultiplier: 5
+  animator: {fileID: 8351850468574034549}
 --- !u!114 &9150179849941971224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,23 +269,6 @@ MonoBehaviour:
     m_Bits: 640
   mouseWorldPosition: {x: 0, y: 0, z: 0}
   rotateSpeed: 8
---- !u!114 &7577819120482532076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29a91851c019d054596ae4c90722a830, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 1
-  syncInterval: 0
-  energy: 10
-  recoveryInterval: 4
-  energyRecovered: 1
 --- !u!114 &335206759807029794
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,6 +286,22 @@ MonoBehaviour:
   meleeCollision: {fileID: 8915206591915020525}
   attackEnergyCost: 3
   attackMovementSpeed: 1.4
+--- !u!114 &403314916540155121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40bf25de076df1d419da2c14a3c98222, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  dodgeEnergyCost: 0
+  dodgeMovementSpeed: 3
 --- !u!114 &5428020352656730822
 MonoBehaviour:
   m_ObjectHideFlags: 0

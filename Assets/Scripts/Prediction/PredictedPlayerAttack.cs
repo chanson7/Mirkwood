@@ -45,7 +45,7 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
         if (canAttack && inputPayload.ActiveAnimationPriority == AnimationPriority.Attack)
-            AnimateAttack();
+            StartAttack();
 
         if (inputPayload.ActiveAnimationPriority == AnimationPriority.Attack)
         {
@@ -58,7 +58,7 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
         return statePayload;
     }
 
-    void AnimateAttack()
+    void StartAttack()
     {
         animator.SetTrigger(attackHash);
         canAttack = false;

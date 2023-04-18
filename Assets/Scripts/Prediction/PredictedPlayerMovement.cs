@@ -11,15 +11,15 @@ public class PredictedPlayerMovement : PredictedPlayerTickProcessor
     public Vector3 movementInput = new Vector3();
     [SerializeField] float movementSpeed;
     [SerializeField] float sprintSpeedMultiplier;
+    [SerializeField] Animator animator;
     CharacterController characterController;
-    Animator animator;
 
     static int forwardHash = Animator.StringToHash("Forward");
     static int rightHash = Animator.StringToHash("Right");
 
     public override void Start()
     {
-        animator = gameObject.GetComponent<Animator>();
+        // animator = gameObject.GetComponent<Animator>();
         characterController = gameObject.GetComponent<CharacterController>();
 
         base.Start();

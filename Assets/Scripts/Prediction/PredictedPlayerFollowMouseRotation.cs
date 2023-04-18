@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
 
-public class PredictedPlayerRotation : PredictedPlayerTickProcessor
+public class PredictedPlayerFollowMouseRotation : PredictedPlayerTickProcessor
 {
     Ray pointerRay;
     [SerializeField] LayerMask pointerMask; //so that the player will not look at everything the pointer ray hits

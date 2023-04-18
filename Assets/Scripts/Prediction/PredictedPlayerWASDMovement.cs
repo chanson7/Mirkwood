@@ -4,7 +4,7 @@ using Mirror;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerMovement : PredictedPlayerTickProcessor
+public class PredictedPlayerWASDMovement : PredictedPlayerTickProcessor
 {
     Vector3 currentVelocity;
     public bool isSprinting = false;

@@ -9,9 +9,12 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
     [SerializeField] MeleeCollision meleeCollision;
     [SerializeField] uint attackEnergyCost;
     [SerializeField] float attackMovementSpeed;
-    CharacterController characterController;
+    [Tooltip("The amount of balance lost upon a missed attack.")]
+    [SerializeField] uint missPenalty;
     Animator animator;
     PlayerEnergy playerEnergy;
+    PlayerBalance playerBalance;
+    CharacterController characterController;
     static int attackHash = Animator.StringToHash("Attack");
     bool isAttacking = false;
     bool canAttack = true;
@@ -19,8 +22,9 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
     public override void Start()
     {
         animator = gameObject.GetComponent<Animator>();
-        characterController = gameObject.GetComponent<CharacterController>();
         playerEnergy = gameObject.GetComponent<PlayerEnergy>();
+        playerBalance = gameObject.GetComponent<PlayerBalance>();
+        characterController = gameObject.GetComponent<CharacterController>();
 
         base.Start();
     }
@@ -42,6 +46,7 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
         return inputPayload;
     }
 
+    //this is where "root motion" for attack animations happens
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
         if (canAttack && inputPayload.ActiveAnimationPriority == AnimationPriority.Attack)
@@ -60,8 +65,17 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
 
     void StartAttack()
     {
-        animator.SetTrigger(attackHash);
-        canAttack = false;
+        if (isServer && playerEnergy.SpendEnergy(attackEnergyCost)) //running on the server and the player has enough energy to attack
+        {
+            animator.SetTrigger(attackHash);
+            canAttack = false;
+        }
+        else //running on the local client
+        {
+            animator.SetTrigger(attackHash);
+            canAttack = false;
+        }
+
     }
 
     void EndAttack()
@@ -70,8 +84,10 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
         canAttack = true;
     }
 
-    void DealDamage(float angularDifferenceFromForwardVector)
+    void HitMeleeColliders(float angularDifferenceFromForwardVector)
     {
+        int hitCount = 0;
+
         if (isServer)
         {
             foreach (Collider collider in meleeCollision.damageableColliders)
@@ -81,9 +97,17 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
 
                 if (angle < angularDifferenceFromForwardVector)
                 {
+                    hitCount++;
                     Debug.Log($"..Deal damage to {collider.name} :O");
                 }
             }
+
+            if (hitCount < 1)
+            {
+                Debug.Log("..Attack missed");
+                playerBalance.LoseBalance(missPenalty);
+            }
+
         }
     }
 

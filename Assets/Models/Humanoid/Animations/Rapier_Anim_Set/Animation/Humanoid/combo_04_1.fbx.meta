@@ -61,13 +61,13 @@ ModelImporter:
       curves: []
       events:
       - time: 0.2527475
-        functionName: DealDamage
+        functionName: HitMeleeColliders
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 45
         intParameter: 0
         messageOptions: 0
-      - time: 0.5448276
+      - time: 0.5471264
         functionName: EndAttack
         data: 
         objectReferenceParameter: {instanceID: 0}

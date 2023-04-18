@@ -6,14 +6,17 @@ using System;
 public class PlayerEnergy : NetworkBehaviour
 {
 
-    uint maxEnergy = 10;
+    uint maxEnergy = 100;
+    [SerializeField] PlayerInterface playerInterface;
     bool isRecoveringEnergy = false;
-    [SyncVar][SerializeField] uint energy;
+
+    [SyncVar(hook = nameof(UpdateUserInterface))]
+    [SerializeField] uint energy;
 
     [Tooltip("Time in seconds for the player to recover energy")]
-    [SerializeField] float recoveryInterval = 4f;
+    [SerializeField] float recoveryIntervalSeconds = 4f;
     [Tooltip("Amount of energy recovered after each recovery interval")]
-    [SerializeField] uint energyRecovered = 1;
+    [SerializeField] uint energyRecoveredPerInterval = 1;
     public uint GetEnergy() { return energy; }
 
     public override void OnStartServer()
@@ -36,15 +39,27 @@ public class PlayerEnergy : NetworkBehaviour
             energy -= energySpent;
             Math.Clamp(energy, 0, maxEnergy);
 
-
             if (!isRecoveringEnergy)
-                StartCoroutine(RecoverEnergy(energyRecovered));
+                StartCoroutine(RecoverEnergy(energyRecoveredPerInterval));
 
-            Debug.Log($"..{this.name} spends {energySpent} and now has {energy} energy");
+            Debug.Log($"..{this.name} spends {energySpent} energy and now has {energy}");
 
             return true;
         }
 
+    }
+
+    [Server]
+    public void LoseEnergy(uint energyLost)
+    {
+        energy -= energyLost;
+
+        Math.Clamp(energy, 0, maxEnergy);
+
+        if (!isRecoveringEnergy)
+            StartCoroutine(RecoverEnergy(energyRecoveredPerInterval));
+
+        Debug.Log($"..{this.name} loses {energyLost} energy and now has {energy}");
     }
 
     [Server]
@@ -53,10 +68,15 @@ public class PlayerEnergy : NetworkBehaviour
         isRecoveringEnergy = true;
         while (energy < maxEnergy)
         {
-            yield return new WaitForSeconds(recoveryInterval);
+            yield return new WaitForSeconds(recoveryIntervalSeconds);
             energy += energyRecovered;
             Math.Clamp(energy, 0, maxEnergy);
         }
         isRecoveringEnergy = false;
+    }
+
+    void UpdateUserInterface(uint oldEnergyValue, uint newEnergyValue)
+    {
+        playerInterface.SetEnergyText(newEnergyValue);
     }
 }

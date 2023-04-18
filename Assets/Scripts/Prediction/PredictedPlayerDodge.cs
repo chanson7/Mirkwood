@@ -9,7 +9,10 @@ public class PredictedPlayerDodge : PredictedPlayerTickProcessor
     Animator animator;
     CharacterController characterController;
     PlayerEnergy playerEnergy;
+    PlayerBalance playerBalance;
+
     [SerializeField] uint dodgeEnergyCost;
+    [SerializeField] uint dodgeBalanceLoss;
     [SerializeField] float dodgeMovementSpeed;
     static int dodgeHash = Animator.StringToHash("Dodge");
     bool isDodging = false;
@@ -20,6 +23,7 @@ public class PredictedPlayerDodge : PredictedPlayerTickProcessor
         animator = gameObject.GetComponent<Animator>();
         characterController = gameObject.GetComponent<CharacterController>();
         playerEnergy = gameObject.GetComponent<PlayerEnergy>();
+        playerBalance = gameObject.GetComponent<PlayerBalance>();
 
         base.Start();
     }
@@ -60,8 +64,17 @@ public class PredictedPlayerDodge : PredictedPlayerTickProcessor
 
     void StartDodge()
     {
-        animator.SetTrigger(dodgeHash);
-        canDodge = false;
+        if (isServer && playerEnergy.SpendEnergy(dodgeEnergyCost)) //running on the server and the player has enough energy to dodge
+        {
+            playerBalance.LoseBalance(dodgeBalanceLoss);
+            animator.SetTrigger(dodgeHash);
+            canDodge = false;
+        }
+        else
+        {
+            animator.SetTrigger(dodgeHash);
+            canDodge = false;
+        }
     }
 
     void EndDodge()

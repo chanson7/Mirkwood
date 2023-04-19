@@ -11,8 +11,8 @@ public class PredictedPlayerDodge : PredictedPlayerTickProcessor
     PlayerEnergy playerEnergy;
     PlayerBalance playerBalance;
 
-    [SerializeField] uint dodgeEnergyCost;
-    [SerializeField] uint dodgeBalanceLoss;
+    [SerializeField] int dodgeEnergyCost;
+    [SerializeField] int dodgeBalanceLoss;
     [SerializeField] float dodgeMovementSpeed;
     static int dodgeHash = Animator.StringToHash("Dodge");
     bool isDodging = false;

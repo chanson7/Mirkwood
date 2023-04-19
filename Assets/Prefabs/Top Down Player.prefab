@@ -217,8 +217,9 @@ MonoBehaviour:
   syncInterval: 0
   playerInterface: {fileID: 5071985394934968945}
   balance: 100
-  recoveryIntervalSeconds: 4
+  recoveryInterval: 0.2
   balanceRecoveredPerInterval: 1
+  recoveryDelay: 5
 --- !u!114 &7577819120482532076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -233,9 +234,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 1
   syncInterval: 0
+  maxEnergy: 1000
   playerInterface: {fileID: 5071985394934968945}
-  energy: 10
-  recoveryIntervalSeconds: 4
+  energy: 1000
+  recoveryIntervalSeconds: 1
   energyRecoveredPerInterval: 1
 --- !u!114 &4708448802937948552
 MonoBehaviour:

@@ -13,12 +13,12 @@ public class PlayerInterface : MonoBehaviour
         interfaceObject.SetActive(true);
     }
 
-    public void SetBalanceText(uint balanceValue)
+    public void SetBalanceText(int balanceValue)
     {
         balanceText.SetText(balanceValue.ToString());
     }
 
-    public void SetEnergyText(uint energyValue)
+    public void SetEnergyText(int energyValue)
     {
         energyText.SetText(energyValue.ToString());
     }

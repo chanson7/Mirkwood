@@ -6,17 +6,18 @@ using System;
 public class PlayerBalance : NetworkBehaviour
 {
 
-    uint maxBalance = 100;
     [SerializeField] PlayerInterface playerInterface;
-
-    [SyncVar(hook = nameof(UpdateUserInterface))][SerializeField] uint balance = 100;
-    bool isRecoveringBalance = false;
-
+    [SyncVar(hook = nameof(UpdateUserInterface))]
+    [SerializeField] int balance = 100;
     [Tooltip("Time in seconds for the player to recover balance")]
-    [SerializeField] float recoveryIntervalSeconds = 4f;
+    [SerializeField] float recoveryInterval;
     [Tooltip("Amount of balance recovered after each recovery interval")]
-    [SerializeField] uint balanceRecoveredPerInterval = 1;
-
+    [SerializeField] int balanceRecoveredPerInterval;
+    [Tooltip("Seconds before balance recovery begins")]
+    [SerializeField] float recoveryDelay;
+    int maxBalance = 100;
+    float timeOfLastBalanceLoss = 0f;
+    bool isRecoveringBalance = false; //this can be true even if the recovery delay has not yet been passed.  In other words, this being true does not mean the player is actively restoring balance
     public override void OnStartServer()
     {
         balance = maxBalance;
@@ -25,34 +26,10 @@ public class PlayerBalance : NetworkBehaviour
     }
 
     [Server]
-    public bool SpendBalance(uint balanceSpent)
+    public void LoseBalance(int balanceLost)
     {
-        if (balance < balanceSpent)
-        {
-            Debug.Log($"..{this.name} does not have enough balance");
-            return false;
-        }
-        else
-        {
-            balance -= balanceSpent;
-            Math.Clamp(balance, 0, maxBalance);
-
-            if (!isRecoveringBalance)
-                StartCoroutine(RecoverBalance(balanceRecoveredPerInterval));
-
-            Debug.Log($"..{this.name} spends {balanceSpent} balance and now has {balance}");
-
-            return true;
-        }
-
-    }
-
-    [Server]
-    public void LoseBalance(uint balanceLost)
-    {
-        balance -= balanceLost;
-
-        Math.Clamp(balance, 0, maxBalance);
+        balance = Math.Clamp(balance -= balanceLost, 0, maxBalance);
+        timeOfLastBalanceLoss = Time.time;
 
         if (!isRecoveringBalance)
             StartCoroutine(RecoverBalance(balanceRecoveredPerInterval));
@@ -61,20 +38,25 @@ public class PlayerBalance : NetworkBehaviour
     }
 
     [Server]
-    IEnumerator RecoverBalance(uint balanceRecovered)
+    IEnumerator RecoverBalance(int balanceRecovered)
     {
         isRecoveringBalance = true;
 
         while (balance < maxBalance)
         {
-            yield return new WaitForSeconds(recoveryIntervalSeconds);
-            balance += balanceRecovered;
-            Math.Clamp(balance, 0, maxBalance);
+            yield return new WaitForSeconds(recoveryInterval);
+
+            if (timeOfLastBalanceLoss + recoveryDelay < Time.time)
+            {
+                balance += balanceRecovered;
+                Math.Clamp(balance, 0, maxBalance);
+            }
         }
+
         isRecoveringBalance = false;
     }
 
-    void UpdateUserInterface(uint oldBalanceValue, uint newBalanceValue)
+    void UpdateUserInterface(int oldBalanceValue, int newBalanceValue)
     {
         playerInterface.SetBalanceText(newBalanceValue);
     }

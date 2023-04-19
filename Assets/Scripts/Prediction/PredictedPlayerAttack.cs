@@ -7,10 +7,10 @@ using UnityEngine.InputSystem;
 public class PredictedPlayerAttack : PredictedPlayerTickProcessor
 {
     [SerializeField] MeleeCollision meleeCollision;
-    [SerializeField] uint attackEnergyCost;
+    [SerializeField] int attackEnergyCost;
     [SerializeField] float attackMovementSpeed;
     [Tooltip("The amount of balance lost upon a missed attack.")]
-    [SerializeField] uint missPenalty;
+    [SerializeField] int missPenalty;
     Animator animator;
     PlayerEnergy playerEnergy;
     PlayerBalance playerBalance;
@@ -98,7 +98,7 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
                 if (angle < angularDifferenceFromForwardVector)
                 {
                     hitCount++;
-                    Debug.Log($"..Deal damage to {collider.name} :O");
+                    Debug.Log($"..Hit {collider.name}");
                 }
             }
 

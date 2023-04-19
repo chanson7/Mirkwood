@@ -6,18 +6,16 @@ using System;
 public class PlayerEnergy : NetworkBehaviour
 {
 
-    uint maxEnergy = 100;
-    [SerializeField] PlayerInterface playerInterface;
-    bool isRecoveringEnergy = false;
-
     [SyncVar(hook = nameof(UpdateUserInterface))]
-    [SerializeField] uint energy;
-
+    [SerializeField] int energy;
+    bool isRecoveringEnergy = false;
+    [SerializeField] PlayerInterface playerInterface;
+    [SerializeField] int maxEnergy;
     [Tooltip("Time in seconds for the player to recover energy")]
     [SerializeField] float recoveryIntervalSeconds = 4f;
     [Tooltip("Amount of energy recovered after each recovery interval")]
-    [SerializeField] uint energyRecoveredPerInterval = 1;
-    public uint GetEnergy() { return energy; }
+    [SerializeField] int energyRecoveredPerInterval = 1;
+    public int GetEnergy() { return energy; }
 
     public override void OnStartServer()
     {
@@ -27,7 +25,7 @@ public class PlayerEnergy : NetworkBehaviour
     }
 
     [Server]
-    public bool SpendEnergy(uint energySpent)
+    public bool SpendEnergy(int energySpent)
     {
         if (energy < energySpent)
         {
@@ -36,8 +34,7 @@ public class PlayerEnergy : NetworkBehaviour
         }
         else
         {
-            energy -= energySpent;
-            Math.Clamp(energy, 0, maxEnergy);
+            energy = Math.Clamp(energy -= energySpent, 0, maxEnergy);
 
             if (!isRecoveringEnergy)
                 StartCoroutine(RecoverEnergy(energyRecoveredPerInterval));
@@ -50,7 +47,7 @@ public class PlayerEnergy : NetworkBehaviour
     }
 
     [Server]
-    public void LoseEnergy(uint energyLost)
+    public void LoseEnergy(int energyLost)
     {
         energy -= energyLost;
 
@@ -63,7 +60,7 @@ public class PlayerEnergy : NetworkBehaviour
     }
 
     [Server]
-    IEnumerator RecoverEnergy(uint energyRecovered)
+    IEnumerator RecoverEnergy(int energyRecovered)
     {
         isRecoveringEnergy = true;
         while (energy < maxEnergy)
@@ -75,7 +72,7 @@ public class PlayerEnergy : NetworkBehaviour
         isRecoveringEnergy = false;
     }
 
-    void UpdateUserInterface(uint oldEnergyValue, uint newEnergyValue)
+    void UpdateUserInterface(int oldEnergyValue, int newEnergyValue)
     {
         playerInterface.SetEnergyText(newEnergyValue);
     }

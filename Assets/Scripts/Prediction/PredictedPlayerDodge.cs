@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerEnergy))]
+[RequireComponent(typeof(PlayerBalance))]
 [RequireComponent(typeof(CharacterController))]
 public class PredictedPlayerDodge : PredictedPlayerTickProcessor
 {
@@ -10,37 +11,36 @@ public class PredictedPlayerDodge : PredictedPlayerTickProcessor
     CharacterController characterController;
     PlayerEnergy playerEnergy;
     PlayerBalance playerBalance;
-
     [SerializeField] int dodgeEnergyCost;
-    [SerializeField] int dodgeBalanceLoss;
     [SerializeField] float dodgeMovementSpeed;
+    [SerializeField] int dodgeBalanceLoss;
     static int dodgeHash = Animator.StringToHash("Dodge");
     bool isDodging = false;
-    bool canDodge = true;
+    Vector3 dodgeDirection = Vector3.zero;
 
     public override void Start()
     {
         animator = gameObject.GetComponent<Animator>();
-        characterController = gameObject.GetComponent<CharacterController>();
         playerEnergy = gameObject.GetComponent<PlayerEnergy>();
         playerBalance = gameObject.GetComponent<PlayerBalance>();
+        characterController = gameObject.GetComponent<CharacterController>();
 
         base.Start();
     }
 
     void OnDodge(InputValue input)
     {
-        if (canDodge && playerEnergy.GetEnergy() >= dodgeEnergyCost)
+        if (predictedPlayerTransform.canPlayerAct && playerEnergy.GetEnergy() >= dodgeEnergyCost)
             isDodging = true;
     }
 
     public override InputPayload GatherInput(InputPayload inputPayload)
     {
-        if (isDodging && inputPayload.ActiveAnimationPriority > AnimationPriority.Dodge) //we aren't dodging but we should be
-            inputPayload.ActiveAnimationPriority = AnimationPriority.Dodge;
+        if (isDodging && inputPayload.ActiveAction > PlayerAnimationEvent.Dodge) //we aren't dodging but we should be
+            inputPayload.ActiveAction = PlayerAnimationEvent.Dodge;
 
-        else if (!isDodging && inputPayload.ActiveAnimationPriority == AnimationPriority.Dodge) //we are dodging but we shouldn't be
-            inputPayload.ActiveAnimationPriority = AnimationPriority.None;
+        else if (!isDodging && inputPayload.ActiveAction == PlayerAnimationEvent.Dodge) //we are dodging but we should stop (maybe we were interrupted somehow)
+            inputPayload.ActiveAction = PlayerAnimationEvent.None;
 
         return inputPayload;
     }
@@ -48,12 +48,15 @@ public class PredictedPlayerDodge : PredictedPlayerTickProcessor
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
 
-        if (canDodge && inputPayload.ActiveAnimationPriority == AnimationPriority.Dodge)
-            StartDodge();
-
-        if (inputPayload.ActiveAnimationPriority == AnimationPriority.Dodge)
+        if (predictedPlayerTransform.canPlayerAct && inputPayload.ActiveAction == PlayerAnimationEvent.Dodge)
         {
-            characterController.Move(inputPayload.MoveDirection * (1f / MirkwoodNetworkManager.singleton.serverTickRate) * dodgeMovementSpeed);
+            dodgeDirection = inputPayload.MoveDirection.normalized;
+            StartDodge();
+        }
+
+        if (inputPayload.ActiveAction == PlayerAnimationEvent.Dodge)
+        {
+            characterController.Move(dodgeDirection * (1f / MirkwoodNetworkManager.singleton.serverTickRate) * dodgeMovementSpeed);
         }
 
         statePayload.Position = transform.position;
@@ -68,18 +71,19 @@ public class PredictedPlayerDodge : PredictedPlayerTickProcessor
         {
             playerBalance.LoseBalance(dodgeBalanceLoss);
             animator.SetTrigger(dodgeHash);
-            canDodge = false;
+            predictedPlayerTransform.canPlayerAct = false;
         }
         else
         {
             animator.SetTrigger(dodgeHash);
-            canDodge = false;
+            predictedPlayerTransform.canPlayerAct = false;
         }
     }
 
-    void EndDodge()
+    public void EndDodge()
     {
+        dodgeDirection = Vector3.zero;
         isDodging = false;
-        canDodge = true;
+        predictedPlayerTransform.canPlayerAct = true;
     }
 }

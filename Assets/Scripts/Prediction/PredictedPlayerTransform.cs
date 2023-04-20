@@ -11,6 +11,12 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     #endregion
 
+    #region public
+
+    public bool canPlayerAct = true;
+
+    #endregion
+
     #region constants
     const int BUFFER_SIZE = 1024;
 
@@ -21,7 +27,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     #region client only
     private StatePayload[] clientStateBuffer;
     private InputPayload[] clientInputBuffer;
-    [SerializeField] float acceptablePositionError = 0.001f;
+    float acceptablePositionError = 0.001f;
     public StatePayload latestServerState;
     StatePayload lastProcessedState;
 
@@ -79,7 +85,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
         InputPayload inputPayload = new InputPayload
         {
             Tick = currentTick,
-            ActiveAnimationPriority = AnimationPriority.None
+            ActiveAction = PlayerAnimationEvent.None
         };
 
         foreach (PredictedPlayerTickProcessor tickProcessor in playerTickProcessors)

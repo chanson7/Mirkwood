@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerEnergy))]
+[RequireComponent(typeof(PlayerBalance))]
 [RequireComponent(typeof(CharacterController))]
 public class PredictedPlayerAttack : PredictedPlayerTickProcessor
 {
@@ -17,7 +18,6 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
     CharacterController characterController;
     static int attackHash = Animator.StringToHash("Attack");
     bool isAttacking = false;
-    bool canAttack = true;
 
     public override void Start()
     {
@@ -31,17 +31,17 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
 
     void OnAttack(InputValue input)
     {
-        if (canAttack && playerEnergy.GetEnergy() >= attackEnergyCost)
+        if (predictedPlayerTransform.canPlayerAct && playerEnergy.GetEnergy() >= attackEnergyCost)
             isAttacking = true;
     }
 
     public override InputPayload GatherInput(InputPayload inputPayload)
     {
-        if (isAttacking && inputPayload.ActiveAnimationPriority > AnimationPriority.Attack) //we aren't attacking but we should be
-            inputPayload.ActiveAnimationPriority = AnimationPriority.Attack;
+        if (isAttacking && inputPayload.ActiveAction > PlayerAnimationEvent.Attack) //we aren't attacking but we should be
+            inputPayload.ActiveAction = PlayerAnimationEvent.Attack;
 
-        else if (!isAttacking && inputPayload.ActiveAnimationPriority == AnimationPriority.Attack) //we are attacking but we shouldn't be
-            inputPayload.ActiveAnimationPriority = AnimationPriority.None;
+        else if (!isAttacking && inputPayload.ActiveAction == PlayerAnimationEvent.Attack) //we are attacking but we shouldn't be
+            inputPayload.ActiveAction = PlayerAnimationEvent.None;
 
         return inputPayload;
     }
@@ -49,10 +49,10 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
     //this is where "root motion" for attack animations happens
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
-        if (canAttack && inputPayload.ActiveAnimationPriority == AnimationPriority.Attack)
+        if (predictedPlayerTransform.canPlayerAct && inputPayload.ActiveAction == PlayerAnimationEvent.Attack)
             StartAttack();
 
-        if (inputPayload.ActiveAnimationPriority == AnimationPriority.Attack)
+        if (inputPayload.ActiveAction == PlayerAnimationEvent.Attack)
         {
             characterController.Move(transform.forward * (1f / MirkwoodNetworkManager.singleton.serverTickRate) * attackMovementSpeed);
         }
@@ -65,23 +65,22 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
 
     void StartAttack()
     {
-        if (isServer && playerEnergy.SpendEnergy(attackEnergyCost)) //running on the server and the player has enough energy to attack
+        if (isServer && playerEnergy.SpendEnergy(attackEnergyCost)) //on the server and the player has enough energy to attack
         {
             animator.SetTrigger(attackHash);
-            canAttack = false;
+            predictedPlayerTransform.canPlayerAct = false;
         }
         else //running on the local client
         {
             animator.SetTrigger(attackHash);
-            canAttack = false;
+            predictedPlayerTransform.canPlayerAct = false;
         }
-
     }
 
     void EndAttack()
     {
         isAttacking = false;
-        canAttack = true;
+        predictedPlayerTransform.canPlayerAct = true;
     }
 
     void HitMeleeColliders(float angularDifferenceFromForwardVector)

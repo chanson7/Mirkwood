@@ -36,7 +36,7 @@ public class PredictedPlayerFollowMouseRotation : PredictedPlayerTickProcessor
 
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
-        if (inputPayload.ActiveAnimationPriority < AnimationPriority.None)
+        if (inputPayload.ActiveAction < PlayerAnimationEvent.None)
             return statePayload; //don't do any processing if there is an active animation
 
         Vector3 direction = inputPayload.LookAtDirection - transform.position;

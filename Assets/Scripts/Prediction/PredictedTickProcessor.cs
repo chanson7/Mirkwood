@@ -4,9 +4,14 @@ using UnityEngine;
 [RequireComponent(typeof(PredictedPlayerTransform))]
 public abstract class PredictedPlayerTickProcessor : NetworkBehaviour
 {
+
+    public PredictedPlayerTransform predictedPlayerTransform;
+
     public virtual void Start()
     {
-        gameObject.GetComponent<PredictedPlayerTransform>().RegisterPlayerTickProcessor(this);
+        predictedPlayerTransform = gameObject.GetComponent<PredictedPlayerTransform>();
+
+        predictedPlayerTransform.RegisterPlayerTickProcessor(this);
     }
 
     public abstract InputPayload GatherInput(InputPayload inputPayload); //only runs on the local client
@@ -18,9 +23,9 @@ public struct InputPayload
 {
     public int Tick;
     public Vector3 MoveDirection;
-    public bool IsSprinting;
+    public bool IsWalking;
     public Vector3 LookAtDirection;
-    public AnimationPriority ActiveAnimationPriority;
+    public PlayerAnimationEvent ActiveAction;
 }
 
 public struct StatePayload
@@ -31,10 +36,10 @@ public struct StatePayload
     public Vector3 CurrentVelocity;
 }
 
-public enum AnimationPriority
+public enum PlayerAnimationEvent
 {
-    Interrupt,
     Dodge,
     Attack,
+    Block,
     None
 }

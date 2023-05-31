@@ -2,7 +2,7 @@ using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(PredictedPlayerTransform))]
-public abstract class PredictedPlayerTickProcessor : NetworkBehaviour
+public abstract class PredictedStateProcessor : NetworkBehaviour
 {
 
     public PredictedPlayerTransform predictedPlayerTransform;
@@ -14,17 +14,24 @@ public abstract class PredictedPlayerTickProcessor : NetworkBehaviour
         predictedPlayerTransform.RegisterPlayerTickProcessor(this);
     }
 
-    public abstract InputPayload GatherInput(InputPayload inputPayload); //only runs on the local client
     public abstract StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload); //runs on the local client and the server
 
+    public abstract void OnInterrupt();
+
+}
+
+//just like a predicted state processor, but allows the user to input things.
+public abstract class PredictedPlayerInputProcessor : PredictedStateProcessor
+{
+    public abstract InputPayload GatherInput(InputPayload inputPayload); //only runs on the local client
 }
 
 public struct InputPayload
 {
     public int Tick;
     public Vector3 MoveDirection;
-    public bool IsWalking;
     public Vector3 LookAtDirection;
+    public bool IsWalking;
     public PlayerAnimationEvent ActiveAction;
 }
 
@@ -38,6 +45,8 @@ public struct StatePayload
 
 public enum PlayerAnimationEvent
 {
+    Voluntary,
+    Involuntary,
     Dodge,
     Attack,
     Block,

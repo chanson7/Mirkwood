@@ -4,15 +4,15 @@ using Mirror;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerWASDMovement : PredictedPlayerTickProcessor
+public class PredictedPlayerWASDMovement : PredictedPlayerInputProcessor
 {
-    Vector3 currentVelocity;
     public bool isWalking = false;
     public Vector3 movementInput = new Vector3();
     [SerializeField] float movementSpeed;
     [SerializeField] float walkSpeedMultiplier;
     [SerializeField] Animator animator;
     CharacterController characterController;
+    [SerializeField] float smoothMovementTime;
 
     static int forwardHash = Animator.StringToHash("Forward");
     static int rightHash = Animator.StringToHash("Right");
@@ -27,9 +27,9 @@ public class PredictedPlayerWASDMovement : PredictedPlayerTickProcessor
     void Update()
     {
         if (isLocalPlayer)
-            AnimateMovement(currentVelocity);
+            AnimateMovement(characterController.velocity);
         else if (isServer)
-            RpcAnimateMovement(currentVelocity);
+            RpcAnimateMovement(characterController.velocity);
     }
 
     void OnMove(InputValue input)
@@ -53,20 +53,27 @@ public class PredictedPlayerWASDMovement : PredictedPlayerTickProcessor
 
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
-        if (inputPayload.ActiveAction < PlayerAnimationEvent.None)
-            return statePayload; //don't do any processing if there is an active animation
 
-        currentVelocity.y = characterController.isGrounded ? Physics.gravity.y : currentVelocity.y + Physics.gravity.y;
-        currentVelocity = Vector3.Lerp(currentVelocity, inputPayload.MoveDirection.normalized * movementSpeed * (inputPayload.IsWalking ? walkSpeedMultiplier : 1f), 0.2f);
+        Vector3 velocity = statePayload.CurrentVelocity;
 
-        Vector3 movementValue = currentVelocity * (1f / MirkwoodNetworkManager.singleton.serverTickRate);
+        velocity = Vector3.Lerp(velocity, inputPayload.MoveDirection.normalized * movementSpeed * (inputPayload.IsWalking ? walkSpeedMultiplier : 1f), 1f);
+        // velocity = Vector3.SmoothDamp(statePayload.CurrentVelocity,
+        //                               inputPayload.MoveDirection.normalized * movementSpeed * (inputPayload.IsWalking ? walkSpeedMultiplier : 1f),
+        //                               ref velocity,
+        //                               smoothMovementTime);
 
-        characterController.Move(movementValue);
+        velocity.y = (characterController.isGrounded ? 0f : ((statePayload.CurrentVelocity.y + Physics.gravity.y) * (1f / MirkwoodNetworkManager.singleton.serverTickRate)));
+
+        characterController.Move(velocity * (1f / MirkwoodNetworkManager.singleton.serverTickRate));
 
         statePayload.Position = transform.position;
         statePayload.CurrentVelocity = characterController.velocity;
 
         return statePayload;
+    }
+
+    public override void OnInterrupt()
+    {
     }
 
     void AnimateMovement(Vector3 currentVelocity)

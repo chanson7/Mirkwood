@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
 
-public class PredictedPlayerFollowMouseRotation : PredictedPlayerTickProcessor
+public class PredictedPlayerFollowMouseRotation : PredictedPlayerInputProcessor
 {
     Ray pointerRay;
     [SerializeField] LayerMask pointerMask; //so that the player will not look at everything the pointer ray hits
@@ -36,9 +36,6 @@ public class PredictedPlayerFollowMouseRotation : PredictedPlayerTickProcessor
 
     public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
     {
-        if (inputPayload.ActiveAction < PlayerAnimationEvent.None)
-            return statePayload; //don't do any processing if there is an active animation
-
         Vector3 direction = inputPayload.LookAtDirection - transform.position;
 
         Quaternion desiredRotation = Quaternion.LookRotation(direction);
@@ -49,6 +46,10 @@ public class PredictedPlayerFollowMouseRotation : PredictedPlayerTickProcessor
         statePayload.Rotation = transform.rotation;
 
         return statePayload;
+    }
+
+    public override void OnInterrupt()
+    {
     }
 
 }

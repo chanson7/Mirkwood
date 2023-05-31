@@ -17,6 +17,16 @@
       },
       "hash": "7c126795e8dfef5b599e05cbe9f83dff55978f00"
     },
+    "com.playeveryware.eos": {
+      "version": "https://github.com/PlayEveryWare/eos_plugin_for_unity_upm.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.jsonserialize": "1.0.0",
+        "com.unity.editorcoroutines": "1.0.0"
+      },
+      "hash": "07b08690e02442cbb1ef74ed4d514bd06f62dc5e"
+    },
     "com.rlabrecque.steamworks.net": {
       "version": "https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net",
       "depth": 0,

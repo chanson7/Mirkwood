@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerEnergy))]
 [RequireComponent(typeof(PlayerBalance))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerDodge : PredictedPlayerTickProcessor
+public class PredictedPlayerDodge : PredictedPlayerInputProcessor
 {
     Animator animator;
     CharacterController characterController;
@@ -63,6 +63,11 @@ public class PredictedPlayerDodge : PredictedPlayerTickProcessor
         statePayload.CurrentVelocity = characterController.velocity;
 
         return statePayload;
+    }
+
+    public override void OnInterrupt()
+    {
+        throw new System.NotImplementedException();
     }
 
     void StartDodge()

@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerEnergy))]
 [RequireComponent(typeof(PlayerBalance))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerBlock : PredictedPlayerTickProcessor
+public class PredictedPlayerBlock : PredictedPlayerInputProcessor
 {
     Animator animator;
     CharacterController characterController;
@@ -48,6 +48,11 @@ public class PredictedPlayerBlock : PredictedPlayerTickProcessor
             StartBlock();
 
         return statePayload;
+    }
+
+    public override void OnInterrupt()
+    {
+        throw new System.NotImplementedException();
     }
 
     void StartBlock()

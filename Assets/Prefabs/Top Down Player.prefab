@@ -47,17 +47,11 @@ GameObject:
   - component: {fileID: 8081118819086148916}
   - component: {fileID: 5928123483023091589}
   - component: {fileID: 5071985394934968945}
-  - component: {fileID: 8702172353167609687}
-  - component: {fileID: 7577819120482532076}
   - component: {fileID: 4708448802937948552}
   - component: {fileID: 9183383045216143226}
   - component: {fileID: 6365695650205679477}
   - component: {fileID: 9150179849941971224}
-  - component: {fileID: 335206759807029794}
-  - component: {fileID: 403314916540155121}
-  - component: {fileID: 6703667648193289604}
   - component: {fileID: 5428020352656730822}
-  - component: {fileID: 4173230430169873056}
   m_Layer: 3
   m_Name: Top Down Player
   m_TagString: Player
@@ -203,44 +197,6 @@ MonoBehaviour:
   interfaceObject: {fileID: 8178903688682686695}
   balanceText: {fileID: 5564419803532176045}
   energyText: {fileID: 7142927945010948344}
---- !u!114 &8702172353167609687
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f731a782b99cc243b855ccf6eaf153c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 1
-  syncInterval: 0
-  playerInterface: {fileID: 5071985394934968945}
-  balance: 100
-  recoveryInterval: 0.2
-  balanceRecoveredPerInterval: 1
-  recoveryDelay: 5
---- !u!114 &7577819120482532076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29a91851c019d054596ae4c90722a830, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 1
-  syncInterval: 0
-  energy: 1000
-  playerInterface: {fileID: 5071985394934968945}
-  maxEnergy: 1000
-  recoveryIntervalSeconds: 1
-  energyRecoveredPerInterval: 1
 --- !u!114 &4708448802937948552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,7 +227,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  acceptablePositionError: 0.001
+  canPlayerAct: 1
 --- !u!114 &6365695650205679477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -286,11 +242,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  predictedPlayerTransform: {fileID: 0}
   isWalking: 0
   movementInput: {x: 0, y: 0, z: 0}
   movementSpeed: 5
   walkSpeedMultiplier: 0.2
   animator: {fileID: 8351850468574034549}
+  smoothMovementTime: 0
 --- !u!114 &9150179849941971224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -305,61 +263,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  predictedPlayerTransform: {fileID: 0}
   pointerMask:
     serializedVersion: 2
     m_Bits: 640
   mouseWorldPosition: {x: 0, y: 0, z: 0}
   rotateSpeed: 8
---- !u!114 &335206759807029794
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35fc24704f97f7940b044cdf7986991a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  meleeCollision: {fileID: 8915206591915020525}
-  attackEnergyCost: 12
-  attackMovementSpeed: 2
-  missPenalty: 12
---- !u!114 &403314916540155121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40bf25de076df1d419da2c14a3c98222, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  dodgeEnergyCost: 80
-  dodgeMovementSpeed: 5
-  dodgeBalanceLoss: 4
---- !u!114 &6703667648193289604
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13ec0928ac9163f4ea9195b58eac6072, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  blockEnergyCost: 30
 --- !u!114 &5428020352656730822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,18 +297,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &4173230430169873056
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ac968613b83ae54f820a94dda24c506, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &327441760391424072
 GameObject:
   m_ObjectHideFlags: 0

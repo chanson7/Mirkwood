@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerEnergy))]
 [RequireComponent(typeof(PlayerBalance))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerAttack : PredictedPlayerTickProcessor
+public class PredictedPlayerAttack : PredictedPlayerInputProcessor
 {
     [SerializeField] MeleeCollision meleeCollision;
     [SerializeField] int attackEnergyCost;
@@ -61,6 +61,11 @@ public class PredictedPlayerAttack : PredictedPlayerTickProcessor
         statePayload.CurrentVelocity = characterController.velocity;
 
         return statePayload;
+    }
+
+    public override void OnInterrupt()
+    {
+        throw new System.NotImplementedException();
     }
 
     void StartAttack()

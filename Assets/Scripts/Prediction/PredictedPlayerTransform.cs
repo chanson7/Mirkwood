@@ -6,7 +6,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 {
 
     #region private 
-    List<PredictedPlayerTickProcessor> playerTickProcessors = new List<PredictedPlayerTickProcessor>(); //these take input from a player to alter transform state
+    List<PredictedStateProcessor> playerStateProcessors = new List<PredictedStateProcessor>(); //these process input from a player to alter transform state
     int currentTick;
 
     #endregion
@@ -56,9 +56,9 @@ public class PredictedPlayerTransform : NetworkBehaviour
         base.OnStartServer();
     }
 
-    public void RegisterPlayerTickProcessor(PredictedPlayerTickProcessor playerTickProcessor)
+    public void RegisterPlayerTickProcessor(PredictedStateProcessor playerTickProcessor)
     {
-        playerTickProcessors.Add(playerTickProcessor);
+        playerStateProcessors.Add(playerTickProcessor);
     }
 
     public void ServerUpdate()
@@ -88,11 +88,11 @@ public class PredictedPlayerTransform : NetworkBehaviour
             ActiveAction = PlayerAnimationEvent.None
         };
 
-        foreach (PredictedPlayerTickProcessor tickProcessor in playerTickProcessors)
-            inputPayload = tickProcessor.GatherInput(inputPayload);
+        foreach (PredictedPlayerInputProcessor inputProcessor in playerStateProcessors)
+            inputPayload = inputProcessor.GatherInput(inputPayload);
 
         clientInputBuffer[bufferIndex] = inputPayload;
-        clientStateBuffer[bufferIndex] = ProcessMovement(inputPayload);
+        clientStateBuffer[bufferIndex] = ProcessInput(inputPayload);
 
         CmdOnClientInput(inputPayload);
     }
@@ -116,7 +116,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
             bufferIndex = inputPayload.Tick % BUFFER_SIZE;
 
-            StatePayload statePayload = ProcessMovement(inputPayload);
+            StatePayload statePayload = ProcessInput(inputPayload);
             serverStateBuffer[bufferIndex] = statePayload;
         }
 
@@ -139,14 +139,14 @@ public class PredictedPlayerTransform : NetworkBehaviour
         transform.rotation = latestServerState.Rotation;
     }
 
-    StatePayload ProcessMovement(InputPayload movement)
+    StatePayload ProcessInput(InputPayload input)
     {
         StatePayload processedState = new StatePayload();
 
-        processedState.Tick = movement.Tick;
+        processedState.Tick = input.Tick;
 
-        foreach (PredictedPlayerTickProcessor tickProcessor in playerTickProcessors)
-            processedState = tickProcessor.ProcessTick(processedState, movement);
+        foreach (PredictedStateProcessor stateProcessor in playerStateProcessors)
+            processedState = stateProcessor.ProcessTick(processedState, input);
 
         return processedState;
     }
@@ -160,11 +160,11 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
         float positionError = Vector3.Distance(latestServerState.Position, clientStateBuffer[serverStateBufferIndex].Position);
 
-        //this is how to find the difference between the rotations i guess
-        // Quaternion serverRotation = Quaternion.identity * Quaternion.Inverse(latestServerState.Rotation);
-        // Quaternion clientRotation = Quaternion.identity * Quaternion.Inverse(clientStateBuffer[serverStateBufferIndex].Rotation);
+        // this is how to find the difference between the rotations i guess
+        Quaternion serverRotation = Quaternion.identity * Quaternion.Inverse(latestServerState.Rotation);
+        Quaternion clientRotation = Quaternion.identity * Quaternion.Inverse(clientStateBuffer[serverStateBufferIndex].Rotation);
 
-        // Quaternion rotationError = clientRotation * Quaternion.Inverse(serverRotation);
+        Quaternion rotationError = clientRotation * Quaternion.Inverse(serverRotation);
         // Debug.Log($"euler angles magnitude{rotationError.eulerAngles}\nrotation error {rotationError}");
 
         if (positionError > acceptablePositionError)
@@ -185,7 +185,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
                 int bufferIndex = tickToProcess % BUFFER_SIZE;
 
                 // Process new movement with reconciled state
-                StatePayload statePayload = ProcessMovement(clientInputBuffer[bufferIndex]);
+                StatePayload statePayload = ProcessInput(clientInputBuffer[bufferIndex]);
 
                 // Update buffer with recalculated state
                 clientStateBuffer[bufferIndex] = statePayload;

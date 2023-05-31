@@ -2,6 +2,7 @@
   "dependencies": {
     "com.amazonaws.gamelift": "file:C:/Users/hanso/Dev/com.amazonaws.gamelift-1.2.0.tgz",
     "com.heathen.systemcore": "https://github.com/heathen-engineering/SystemCore.git?path=/com.heathen.systemcore",
+    "com.playeveryware.eos": "https://github.com/PlayEveryWare/eos_plugin_for_unity_upm.git",
     "com.rlabrecque.steamworks.net": "https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net",
     "com.unity.2d.pixel-perfect": "5.0.1",
     "com.unity.2d.sprite": "1.0.0",

@@ -8,6 +8,22 @@
         "com.unity.nuget.newtonsoft-json": "2.0.0"
       }
     },
+    "com.github.superunitybuild.buildactions": {
+      "version": "https://github.com/superunitybuild/buildactions.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.github.superunitybuild.buildtool": "6.0.0"
+      },
+      "hash": "506b5e2076e53fc2696cf858bc825647c8d322a6"
+    },
+    "com.github.superunitybuild.buildtool": {
+      "version": "https://github.com/superunitybuild/buildtool.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "e180f89f3cfbfe296f26655920f74e9eb04f6584"
+    },
     "com.heathen.systemcore": {
       "version": "https://github.com/heathen-engineering/SystemCore.git?path=/com.heathen.systemcore",
       "depth": 0,

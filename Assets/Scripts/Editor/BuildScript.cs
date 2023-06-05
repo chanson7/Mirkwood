@@ -6,8 +6,8 @@ using System;
 
 public class BuildScript
 {
-    static string[] clientScenes = new[] { "Assets/Scenes/_ClientStart.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Forest.unity", "Assets/Scenes/Testing.unity" };
-    static string[] serverScenes = new[] { "Assets/Scenes/_ServerStart.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Forest.unity", "Assets/Scenes/Testing.unity" };
+    static string[] clientScenes = new[] { "Assets/Scenes/_ClientStart.unity", "Assets/Scenes/MainMenu.unity", "Assets/Scenes/Testing.unity" };
+    static string[] serverScenes = new[] { "Assets/Scenes/_ServerStart.unity", "Assets/Scenes/Testing.unity" };
 
     [MenuItem("Client/Build Client (Windows)")]
     public static void BuildWindowsClient()
@@ -58,7 +58,9 @@ public class BuildScript
         using (Process process = new Process())
         {
             process.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Builds/Windows/Server/MirkwoodServer.exe";
-            process.StartInfo.Arguments = "-localTestServer";
+            // process.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Builds/1.0.0/DevServer/PC/Windows x64/Mono/MirkwoodServer.exe";
+
+            process.StartInfo.Arguments += "-localTestServer";
 
             process.Start();
 

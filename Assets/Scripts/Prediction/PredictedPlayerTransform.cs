@@ -6,14 +6,8 @@ public class PredictedPlayerTransform : NetworkBehaviour
 {
 
     #region private 
-    List<PredictedStateProcessor> playerStateProcessors = new List<PredictedStateProcessor>(); //these process input from a player to alter transform state
+    List<PredictedStateProcessor> playerStateProcessors = new List<PredictedStateProcessor>();
     int currentTick;
-
-    #endregion
-
-    #region public
-
-    public bool canPlayerAct = true;
 
     #endregion
 
@@ -82,13 +76,9 @@ public class PredictedPlayerTransform : NetworkBehaviour
         int bufferIndex = currentTick % BUFFER_SIZE;
 
         //Add the input payload to the input buffer
-        InputPayload inputPayload = new InputPayload
-        {
-            Tick = currentTick,
-            ActiveAction = PlayerAnimationEvent.None
-        };
+        InputPayload inputPayload = new InputPayload(currentTick);
 
-        foreach (PredictedPlayerInputProcessor inputProcessor in playerStateProcessors)
+        foreach (IPredictedInputProcessor inputProcessor in playerStateProcessors)
             inputPayload = inputProcessor.GatherInput(inputPayload);
 
         clientInputBuffer[bufferIndex] = inputPayload;
@@ -134,16 +124,14 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     void HandleTickOnOtherClient()
     {
-        //TODO interpolation should probably be done here at some point 
+        //TODO interpolation should probably be done here at some point
         transform.position = latestServerState.Position;
         transform.rotation = latestServerState.Rotation;
     }
 
     StatePayload ProcessInput(InputPayload input)
     {
-        StatePayload processedState = new StatePayload();
-
-        processedState.Tick = input.Tick;
+        StatePayload processedState = new StatePayload(input.Tick);
 
         foreach (PredictedStateProcessor stateProcessor in playerStateProcessors)
             processedState = stateProcessor.ProcessTick(processedState, input);

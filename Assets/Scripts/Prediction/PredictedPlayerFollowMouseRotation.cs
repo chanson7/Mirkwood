@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
 
-public class PredictedPlayerFollowMouseRotation : PredictedPlayerInputProcessor
+public class PredictedPlayerFollowMouseRotation : PredictedStateProcessor, IPredictedInputProcessor
 {
     Ray pointerRay;
     [SerializeField] LayerMask pointerMask; //so that the player will not look at everything the pointer ray hits
@@ -27,7 +27,7 @@ public class PredictedPlayerFollowMouseRotation : PredictedPlayerInputProcessor
         }
     }
 
-    public override InputPayload GatherInput(InputPayload inputPayload)
+    public InputPayload GatherInput(InputPayload inputPayload)
     {
         inputPayload.LookAtDirection = mouseWorldPosition;
 
@@ -46,10 +46,6 @@ public class PredictedPlayerFollowMouseRotation : PredictedPlayerInputProcessor
         statePayload.Rotation = transform.rotation;
 
         return statePayload;
-    }
-
-    public override void OnInterrupt()
-    {
     }
 
 }

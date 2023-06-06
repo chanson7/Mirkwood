@@ -4,15 +4,13 @@ using Mirror;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerWASDMovement : PredictedPlayerInputProcessor
+public class PredictedPlayerWASDMovement : PredictedStateProcessor, IPredictedInputProcessor
 {
-    public bool isWalking = false;
     public Vector3 movementInput = new Vector3();
     [SerializeField] float movementSpeed;
     [SerializeField] float walkSpeedMultiplier;
     [SerializeField] Animator animator;
     CharacterController characterController;
-    [SerializeField] float smoothMovementTime;
 
     static int forwardHash = Animator.StringToHash("Forward");
     static int rightHash = Animator.StringToHash("Right");
@@ -38,14 +36,8 @@ public class PredictedPlayerWASDMovement : PredictedPlayerInputProcessor
         movementInput.z = input.Get<Vector2>().y;
     }
 
-    void OnWalk(InputValue input)
+    public InputPayload GatherInput(InputPayload inputPayload)
     {
-        isWalking = input.isPressed;
-    }
-
-    public override InputPayload GatherInput(InputPayload inputPayload)
-    {
-        inputPayload.IsWalking = isWalking;
         inputPayload.MoveDirection = movementInput;
 
         return inputPayload;
@@ -56,13 +48,14 @@ public class PredictedPlayerWASDMovement : PredictedPlayerInputProcessor
 
         Vector3 velocity = statePayload.CurrentVelocity;
 
-        velocity = Vector3.Lerp(velocity, inputPayload.MoveDirection.normalized * movementSpeed * (inputPayload.IsWalking ? walkSpeedMultiplier : 1f), 1f);
+        velocity = Vector3.Lerp(velocity, inputPayload.MoveDirection.normalized * movementSpeed, 1f);
+
         // velocity = Vector3.SmoothDamp(statePayload.CurrentVelocity,
         //                               inputPayload.MoveDirection.normalized * movementSpeed * (inputPayload.IsWalking ? walkSpeedMultiplier : 1f),
         //                               ref velocity,
         //                               smoothMovementTime);
 
-        velocity.y = (characterController.isGrounded ? 0f : ((statePayload.CurrentVelocity.y + Physics.gravity.y) * (1f / MirkwoodNetworkManager.singleton.serverTickRate)));
+        velocity.y = characterController.isGrounded ? 0f : (statePayload.CurrentVelocity.y + Physics.gravity.y);
 
         characterController.Move(velocity * (1f / MirkwoodNetworkManager.singleton.serverTickRate));
 
@@ -70,10 +63,6 @@ public class PredictedPlayerWASDMovement : PredictedPlayerInputProcessor
         statePayload.CurrentVelocity = characterController.velocity;
 
         return statePayload;
-    }
-
-    public override void OnInterrupt()
-    {
     }
 
     void AnimateMovement(Vector3 currentVelocity)

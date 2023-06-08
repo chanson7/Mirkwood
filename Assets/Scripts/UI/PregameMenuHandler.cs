@@ -3,14 +3,11 @@ using UnityEngine.UIElements;
 using System.Linq;
 using System.Collections;
 
+
 public class PregameMenuHandler : MonoBehaviour
 {
 
-    //so we can test locally within the editor
-#if UNITY_EDITOR
-    public PlayerSession playerSession;
-#endif
-
+    [SerializeField] ScriptableEvent _matchRequestedEvent;
     [SerializeField] UIDocument uiDocument;
     VisualElement menu;
     VisualElement[] mainMenuOptions;
@@ -18,9 +15,7 @@ public class PregameMenuHandler : MonoBehaviour
     Button settingsButton;
     Button quitButton;
     Label matchmakingStatusLabel;
-    [SerializeField] GameObject matchmakingClient;
     private int _mainPopupIndex = -1;
-
     private const string POPUP_ANIMATION = "pop-animation-hide";
 
     private void Awake()
@@ -53,7 +48,7 @@ public class PregameMenuHandler : MonoBehaviour
 
     void PlayButtonPressed()
     {
-        matchmakingClient.SetActive(true);
+        _matchRequestedEvent.Raise();
     }
 
     void SettingsButtonPressed()
@@ -65,6 +60,7 @@ public class PregameMenuHandler : MonoBehaviour
     {
         Application.Quit();
     }
+
     public void UpdateMatchmakingStatusLabel(string text)
     {
         matchmakingStatusLabel.visible = true;

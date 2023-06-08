@@ -58,9 +58,8 @@ public class BuildScript
         using (Process process = new Process())
         {
             process.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Builds/Windows/Server/MirkwoodServer.exe";
-            // process.StartInfo.FileName = Directory.GetCurrentDirectory() + "/Builds/1.0.0/DevServer/PC/Windows x64/Mono/MirkwoodServer.exe";
 
-            process.StartInfo.Arguments += "-localTestServer";
+            process.StartInfo.Arguments = "-batchmode -nographics";
 
             process.Start();
 
@@ -77,7 +76,7 @@ public class BuildScript
         using (Process process = new Process())
         {
             process.StartInfo.FileName = "CMD.exe";
-            process.StartInfo.Arguments = $"/C \"aws gamelift upload-build --name MirkwoodServer --build-version {Guid.NewGuid().ToString()} --build-root {Directory.GetCurrentDirectory()}/Builds/Windows/Server --operating-system WINDOWS_2012 --region {region}";
+            process.StartInfo.Arguments = $"/C \"aws gamelift upload-build --name MirkwoodServer --build-version {Guid.NewGuid().ToString()} --build-root {Directory.GetCurrentDirectory()}/Builds/Windows/Server --operating-system WINDOWS_2016 --region {region}";
 
             process.Start();
 

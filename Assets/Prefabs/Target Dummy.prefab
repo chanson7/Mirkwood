@@ -85,9 +85,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
+  _assetId: 3190421645
   serverOnly: 0
   visible: 0
-  m_AssetId: c39ac12a56daa404e9d8ab4f94b71c96
   hasSpawned: 0
 --- !u!114 &3437259606715259750
 MonoBehaviour:
@@ -101,31 +101,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  target: {fileID: 172309495854167161}
   clientAuthority: 0
-  sendInterval: 0.05
   syncPosition: 1
   syncRotation: 1
   syncScale: 0
   interpolatePosition: 1
   interpolateRotation: 1
   interpolateScale: 0
-  bufferTimeMultiplier: 1
-  bufferSizeLimit: 64
-  catchupThreshold: 4
-  catchupMultiplier: 0.1
+  coordinateSpace: 0
+  sendIntervalMultiplier: 1
+  timelineOffset: 0
+  showGizmos: 1
+  showOverlay: 1
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   onlySyncOnChange: 1
   bufferResetMultiplier: 5
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
-  showGizmos: 1
-  showOverlay: 1
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!95 &8351850468574034549
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -142,7 +142,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!143 &783578328289596365
 CharacterController:
   m_ObjectHideFlags: 0
@@ -151,9 +152,17 @@ CharacterController:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 172309495854167157}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
@@ -1063,8 +1072,17 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3417932608771647521}
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
   m_IsTrigger: 1
+  m_ProvidesContacts: 0
   m_Enabled: 1
+  serializedVersion: 2
   m_Radius: 2
   m_Height: 6
   m_Direction: 1
@@ -1081,7 +1099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95cc4136393313d4488c3ae2bfbf235e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCollisions: []
+  damageableColliders: []
   characterControllerCollider: {fileID: 783578328289596365}
 --- !u!1 &3459066157839704854
 GameObject:
@@ -2660,6 +2678,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 6047145505795828061}
     m_Modifications:
     - target: {fileID: 4505493049928408292, guid: 38800a53eccd7134c8fd8a7296b4fa3b,
@@ -2728,6 +2747,9 @@ PrefabInstance:
       value: 90
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38800a53eccd7134c8fd8a7296b4fa3b, type: 3}
 --- !u!4 &3933323648903511702 stripped
 Transform:

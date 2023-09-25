@@ -5,46 +5,37 @@ using UnityEngine;
 public abstract class PredictedStateProcessor : NetworkBehaviour
 {
 
-    public PredictedPlayerTransform predictedPlayerTransform;
+    protected PredictedPlayerTransform predictedPlayerTransform;
 
     public virtual void Start()
     {
-        predictedPlayerTransform = gameObject.GetComponent<PredictedPlayerTransform>();
-
+        predictedPlayerTransform = GetComponent<PredictedPlayerTransform>();
         predictedPlayerTransform.RegisterPlayerTickProcessor(this);
     }
 
-    public abstract StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload); //runs on the local client and the server
+    public abstract void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload); //runs on the local client and the server
 
 }
 
 public interface IPredictedInputProcessor
 {
-    public InputPayload GatherInput(InputPayload inputPayload);
-}
-
-public interface IPredictedAction
-{
-    void OnEndOrInterrupt(); //an action ends after actionTime or upon interruption
-}
-
-public interface IPredictedInterrupt
-{
-    void OnEnd();
+    public void GatherInput(ref InputPayload inputPayload);
 }
 
 public struct InputPayload
 {
-    public InputPayload(int tick)
+    public InputPayload(int tick, float tickTime)
     {
         Tick = tick;
+        TickTime = tickTime;
         MoveDirection = Vector3.zero;
-        LookAtDirection = Vector3.zero;
+        LookAtDirection = Vector2.zero;
     }
 
     public int Tick;
+    public float TickTime;
     public Vector3 MoveDirection;
-    public Vector3 LookAtDirection;
+    public Vector2 LookAtDirection;
 }
 
 public struct StatePayload

@@ -6,18 +6,76 @@ using Mirror;
 [RequireComponent(typeof(CharacterController))]
 public class PredictedPlayerWASDMovement : PredictedStateProcessor, IPredictedInputProcessor
 {
-    public Vector3 movementInput = new Vector3();
-    [SerializeField] float movementSpeed;
-    [SerializeField] float walkSpeedMultiplier;
-    [SerializeField] Animator animator;
-    CharacterController characterController;
+    #region EDITOR EXPOSED FIELDS
 
-    static int forwardHash = Animator.StringToHash("Forward");
-    static int rightHash = Animator.StringToHash("Right");
+    [SerializeField] float _movementSpeed;
+    [SerializeField] float _walkSpeedMultiplier;
+    [SerializeField] Animator _animator;
+
+    #endregion
+    #region FIELDS
+
+    Vector3 _movementInput = Vector3.zero;
+    CharacterController _characterController;
+
+    static readonly int _forwardHash = Animator.StringToHash("Forward");
+    static readonly int _rightHash = Animator.StringToHash("Right");
+
+    #endregion
+
+    #region METHODS
+
+    void OnMove(InputValue input)
+    {
+        _movementInput.x = input.Get<Vector2>().x;
+        _movementInput.z = input.Get<Vector2>().y;
+    }
+
+    public void GatherInput(ref InputPayload inputPayload)
+    {
+        inputPayload.MoveDirection = _movementInput;
+    }
+
+    public override void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
+    {
+
+        Vector3 velocity = statePayload.CurrentVelocity;
+
+        velocity = Vector3.Lerp(velocity, inputPayload.MoveDirection.normalized * _movementSpeed, 1f);
+
+        // velocity = Vector3.SmoothDamp(statePayload.CurrentVelocity,
+        //                               inputPayload.MoveDirection.normalized * movementSpeed * (inputPayload.IsWalking ? walkSpeedMultiplier : 1f),
+        //                               ref velocity,
+        //                               smoothMovementTime);
+
+        velocity.y = _characterController.isGrounded ? 0f : (statePayload.CurrentVelocity.y + Physics.gravity.y);
+
+        _characterController.Move(velocity * inputPayload.TickTime);
+
+        statePayload.Position = transform.position;
+        statePayload.CurrentVelocity = _characterController.velocity;
+    }
+
+    void AnimateMovement(Vector3 currentVelocity)
+    {
+        _animator.SetFloat(_forwardHash, transform.InverseTransformDirection(currentVelocity).z);
+        _animator.SetFloat(_rightHash, transform.InverseTransformDirection(currentVelocity).x);
+    }
+
+    [ClientRpc(includeOwner = false)]
+    void RpcAnimateMovement(Vector3 currentVelocity)
+    {
+        _animator.SetFloat(_forwardHash, transform.InverseTransformDirection(currentVelocity).z);
+        _animator.SetFloat(_rightHash, transform.InverseTransformDirection(currentVelocity).x);
+    }
+
+    #endregion
+
+    #region MONOBEHAVIOUR
 
     public override void Start()
     {
-        characterController = gameObject.GetComponent<CharacterController>();
+        _characterController = gameObject.GetComponent<CharacterController>();
 
         base.Start();
     }
@@ -25,57 +83,11 @@ public class PredictedPlayerWASDMovement : PredictedStateProcessor, IPredictedIn
     void Update()
     {
         if (isLocalPlayer)
-            AnimateMovement(characterController.velocity);
+            AnimateMovement(_characterController.velocity);
         else if (isServer)
-            RpcAnimateMovement(characterController.velocity);
+            RpcAnimateMovement(_characterController.velocity);
     }
 
-    void OnMove(InputValue input)
-    {
-        movementInput.x = input.Get<Vector2>().x;
-        movementInput.z = input.Get<Vector2>().y;
-    }
-
-    public InputPayload GatherInput(InputPayload inputPayload)
-    {
-        inputPayload.MoveDirection = movementInput;
-
-        return inputPayload;
-    }
-
-    public override StatePayload ProcessTick(StatePayload statePayload, InputPayload inputPayload)
-    {
-
-        Vector3 velocity = statePayload.CurrentVelocity;
-
-        velocity = Vector3.Lerp(velocity, inputPayload.MoveDirection.normalized * movementSpeed, 1f);
-
-        // velocity = Vector3.SmoothDamp(statePayload.CurrentVelocity,
-        //                               inputPayload.MoveDirection.normalized * movementSpeed * (inputPayload.IsWalking ? walkSpeedMultiplier : 1f),
-        //                               ref velocity,
-        //                               smoothMovementTime);
-
-        velocity.y = characterController.isGrounded ? 0f : (statePayload.CurrentVelocity.y + Physics.gravity.y);
-
-        characterController.Move(velocity * (1f / MirkwoodNetworkManager.singleton.serverTickRate));
-
-        statePayload.Position = transform.position;
-        statePayload.CurrentVelocity = characterController.velocity;
-
-        return statePayload;
-    }
-
-    void AnimateMovement(Vector3 currentVelocity)
-    {
-        animator.SetFloat(forwardHash, transform.InverseTransformDirection(currentVelocity).z);
-        animator.SetFloat(rightHash, transform.InverseTransformDirection(currentVelocity).x);
-    }
-
-    [ClientRpcAttribute(includeOwner = false)]
-    void RpcAnimateMovement(Vector3 currentVelocity)
-    {
-        animator.SetFloat(forwardHash, transform.InverseTransformDirection(currentVelocity).z);
-        animator.SetFloat(rightHash, transform.InverseTransformDirection(currentVelocity).x);
-    }
+    #endregion
 
 }

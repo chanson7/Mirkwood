@@ -16,9 +16,9 @@ public class ServerGhost : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
 
-        playerNetworkedState = this.GetComponent<PredictedPlayerTransform>();
+        playerNetworkedState = GetComponent<PredictedPlayerTransform>();
 
-        if (this.isActiveAndEnabled)
+        if (isActiveAndEnabled)
         {
             serverGhost = Instantiate(ghostPrefab);
             ghostAnimator = serverGhost.GetComponent<Animator>();
@@ -29,10 +29,10 @@ public class ServerGhost : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            serverGhost.transform.position = playerNetworkedState.latestServerState.Position;
-            serverGhost.transform.rotation = playerNetworkedState.latestServerState.Rotation;
-            ghostAnimator.SetFloat(forwardHash, transform.InverseTransformDirection(playerNetworkedState.latestServerState.CurrentVelocity).z);
-            ghostAnimator.SetFloat(rightHash, transform.InverseTransformDirection(playerNetworkedState.latestServerState.CurrentVelocity).x);
+            serverGhost.transform.position = playerNetworkedState.LatestServerState.Position;
+            serverGhost.transform.rotation = playerNetworkedState.LatestServerState.Rotation;
+            ghostAnimator.SetFloat(forwardHash, transform.InverseTransformDirection(playerNetworkedState.LatestServerState.CurrentVelocity).z);
+            ghostAnimator.SetFloat(rightHash, transform.InverseTransformDirection(playerNetworkedState.LatestServerState.CurrentVelocity).x);
         }
     }
 

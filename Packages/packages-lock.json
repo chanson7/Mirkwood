@@ -1,13 +1,5 @@
 {
   "dependencies": {
-    "com.amazonaws.gamelift": {
-      "version": "file:C:/Users/hanso/Dev/com.amazonaws.gamelift-1.2.0.tgz",
-      "depth": 0,
-      "source": "local-tarball",
-      "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "2.0.0"
-      }
-    },
     "com.heathen.steamworkscomplete": {
       "version": "file:C:/Users/hanso/Dev/Projects/GitHub/heathen-engineering/SourceRepo/Steamworks/com.heathen.steamworkscomplete",
       "depth": 0,
@@ -86,13 +78,6 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.collab-proxy": {
-      "version": "2.0.4",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
     "com.unity.editorcoroutines": {
       "version": "1.0.0",
       "depth": 1,
@@ -131,7 +116,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.18",
+      "version": "2.0.21",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -141,7 +126,7 @@
     },
     "com.unity.ide.vscode": {
       "version": "1.2.5",
-      "depth": 0,
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -157,13 +142,6 @@
     },
     "com.unity.mathematics": {
       "version": "1.2.6",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.nuget.newtonsoft-json": {
-      "version": "3.2.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {},

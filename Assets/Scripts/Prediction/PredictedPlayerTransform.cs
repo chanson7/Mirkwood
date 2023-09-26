@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
@@ -66,9 +66,9 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     #region METHODS
 
-    public void RegisterPlayerTickProcessor(PredictedStateProcessor playerTickProcessor)
+	public void RegisterPlayerTickProcessor(PredictedStateProcessor predictedStateProcessor)
     {
-        _playerStateProcessors.Add(playerTickProcessor);
+        _playerStateProcessors.Add(predictedStateProcessor);
     }
 
     public void Tick()
@@ -91,10 +91,12 @@ public class PredictedPlayerTransform : NetworkBehaviour
         int bufferIndex = _currentTick % BUFFER_SIZE;
 
         //Add the input payload to the input buffer
-        InputPayload inputPayload = new(_currentTick, Time.time - _lastTickEndTime);
+	    InputPayload inputPayload = new InputPayload(_currentTick, Time.time - _lastTickEndTime);
 
-        foreach (IPredictedInputProcessor inputProcessor in _playerStateProcessors)
-            inputProcessor.GatherInput(ref inputPayload);
+	    foreach (PredictedStateProcessor predictedStateProcessor in _playerStateProcessors){	
+	    	if(predictedStateProcessor is IPredictedInputProcessor inputProcessor)
+		    	inputProcessor.GatherInput(ref inputPayload);
+	    }
 
         _clientInputBuffer[bufferIndex] = inputPayload;
         _clientStateBuffer[bufferIndex] = ProcessInput(inputPayload);

@@ -10,6 +10,7 @@ public class PlayerObject : NetworkBehaviour
 
     [SerializeField] CinemachineVirtualCamera _vcam;
     [SerializeField] Transform _cameraPivot;
+
     #endregion
 
     public override void OnStartLocalPlayer()

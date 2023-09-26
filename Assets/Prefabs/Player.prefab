@@ -222,9 +222,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
-  movementSpeed: 5
-  walkSpeedMultiplier: 0.2
-  animator: {fileID: 8351850468574034549}
+  _movementSpeed: 5
+  _walkSpeedMultiplier: 1
 --- !u!114 &4708448802937948552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,6 +258,7 @@ MonoBehaviour:
   syncInterval: 0
   _maxPitchAngle: 45
   _minPitchAngle: -45
+  _cameraPivot: {fileID: 8408101169331039322}
 --- !u!1 &327441760391424072
 GameObject:
   m_ObjectHideFlags: 0

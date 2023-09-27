@@ -8,9 +8,9 @@ public class PredictedPlayerMovement : PredictedStateProcessor, IPredictedInputP
 {
     #region EDITOR EXPOSED FIELDS
 
-    [SerializeField] float _movementSpeed;
-    [SerializeField] float _walkSpeedMultiplier;
-    Animator _animator;
+    [SerializeField] float _runSpeed;
+    [SerializeField] float _strafeSpeed;
+    [SerializeField] float _backpedalSpeed;
 
     #endregion
 
@@ -18,6 +18,7 @@ public class PredictedPlayerMovement : PredictedStateProcessor, IPredictedInputP
 
     Vector3 _movementInput = Vector3.zero;
     CharacterController _characterController;
+    Animator _animator;
 
     static readonly int _forwardHash = Animator.StringToHash("Forward");
     static readonly int _rightHash = Animator.StringToHash("Right");
@@ -39,7 +40,9 @@ public class PredictedPlayerMovement : PredictedStateProcessor, IPredictedInputP
 
     public override void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
-        Vector3 moveDirection = transform.right * inputPayload.MoveDirection.x + transform.forward * inputPayload.MoveDirection.z;
+        Vector3 moveDirection = _strafeSpeed * inputPayload.MoveDirection.x * transform.right + 
+                                transform.forward * Mathf.Clamp(inputPayload.MoveDirection.z * _runSpeed, -_backpedalSpeed, _runSpeed);
+
         moveDirection.y = _characterController.isGrounded ? 0f : (statePayload.CurrentVelocity.y + Physics.gravity.y);
 
         _characterController.Move(moveDirection * inputPayload.TickTime);

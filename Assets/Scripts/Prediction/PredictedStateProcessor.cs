@@ -45,11 +45,13 @@ public struct StatePayload
         Tick = tick;
         Position = Vector3.zero;
         Rotation = Quaternion.identity;
+        LookDirection = 0f;
         CurrentVelocity = Vector3.zero;
     }
 
     public int Tick;
     public Vector3 Position;
     public Quaternion Rotation;
+    public float LookDirection;
     public Vector3 CurrentVelocity;
 }

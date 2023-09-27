@@ -222,8 +222,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
-  _movementSpeed: 5
-  _walkSpeedMultiplier: 1
+  _runSpeed: 5
+  _strafeSpeed: 3
+  _backpedalSpeed: 1.5
 --- !u!114 &4708448802937948552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -256,8 +257,10 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _maxPitchAngle: 45
+  _lateralSensitivity: 1
+  _verticalSensitivity: 1
   _minPitchAngle: -45
+  _maxPitchAngle: 45
   _cameraPivot: {fileID: 8408101169331039322}
 --- !u!1 &327441760391424072
 GameObject:

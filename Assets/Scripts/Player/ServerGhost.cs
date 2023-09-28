@@ -31,8 +31,8 @@ public class ServerGhost : NetworkBehaviour
         {
             serverGhost.transform.position = playerNetworkedState.LatestServerState.Position;
             serverGhost.transform.rotation = playerNetworkedState.LatestServerState.Rotation;
-            ghostAnimator.SetFloat(forwardHash, transform.InverseTransformDirection(playerNetworkedState.LatestServerState.CurrentVelocity).z);
-            ghostAnimator.SetFloat(rightHash, transform.InverseTransformDirection(playerNetworkedState.LatestServerState.CurrentVelocity).x);
+            ghostAnimator.SetFloat(forwardHash, transform.InverseTransformDirection(playerNetworkedState.LatestServerState.Velocity).z);
+            ghostAnimator.SetFloat(rightHash, transform.InverseTransformDirection(playerNetworkedState.LatestServerState.Velocity).x);
         }
     }
 

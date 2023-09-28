@@ -4,7 +4,7 @@ using Mirror;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerMovement : PredictedStateProcessor, IPredictedInputProcessor
+public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInputRecorder, IPredictedStateProcessor
 {
     #region EDITOR EXPOSED FIELDS
 
@@ -33,22 +33,24 @@ public class PredictedPlayerMovement : PredictedStateProcessor, IPredictedInputP
         _movementInput.z = input.Get<Vector2>().y;
     }
 
-    public void GatherInput(ref InputPayload inputPayload)
+    public void RecordInput(ref InputPayload inputPayload)
     {
         inputPayload.MoveDirection = _movementInput;
     }
 
-    public override void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
+    public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
+        Vector3 initialPosition = statePayload.Position;
+
         Vector3 moveDirection = _strafeSpeed * inputPayload.MoveDirection.x * transform.right + 
                                 transform.forward * Mathf.Clamp(inputPayload.MoveDirection.z * _runSpeed, -_backpedalSpeed, _runSpeed);
 
-        moveDirection.y = _characterController.isGrounded ? 0f : (statePayload.CurrentVelocity.y + Physics.gravity.y);
+        moveDirection.y = _characterController.isGrounded ? 0f : (statePayload.Velocity.y + Physics.gravity.y);
 
         _characterController.Move(moveDirection * inputPayload.TickTime);
 
         statePayload.Position = transform.position;
-        statePayload.CurrentVelocity = _characterController.velocity;
+        statePayload.Velocity = (transform.position - initialPosition) / inputPayload.TickTime;
     }
 
     void AnimateMovement(Vector3 currentVelocity)

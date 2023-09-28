@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PredictedPlayerCursorRotation : PredictedStateProcessor, IPredictedInputProcessor
+public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredictedInputRecorder, IPredictedStateProcessor
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -30,16 +30,15 @@ public class PredictedPlayerCursorRotation : PredictedStateProcessor, IPredicted
         _rotationInput.x = input.Get<Vector2>().x;
         _rotationInput.y = input.Get<Vector2>().y;
     }
-    public void GatherInput(ref InputPayload inputPayload)
+
+    public void RecordInput(ref InputPayload inputPayload)
     {
         inputPayload.LookAtDirection = _rotationInput;
     }
 
-    public override void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
+    public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
-
-        float pitchChange = inputPayload.LookAtDirection.y * _verticalSensitivity * inputPayload.TickTime;
-        float verticalRotation = statePayload.LookDirection - pitchChange;
+        float verticalRotation = statePayload.LookDirection - inputPayload.LookAtDirection.y * _verticalSensitivity * inputPayload.TickTime;
 
         verticalRotation = Mathf.Clamp(verticalRotation, _minPitchAngle, _maxPitchAngle);
 

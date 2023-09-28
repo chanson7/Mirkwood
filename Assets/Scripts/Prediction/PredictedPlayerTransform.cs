@@ -9,24 +9,25 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     [SerializeField] float acceptablePositionError = 0.001f;
 
+    [Tooltip("Each player state processor runs the same processing function once per tick on both the client and the server")]
+    [SerializeField] List<PredictedTransformModule> _predictedTransformModules = new();
+
     #endregion
 
     #region FIELDS
 
-    List<PredictedStateProcessor> _playerStateProcessors = new();
-    int _currentTick;
     [SyncVar] float _serverTickMs;
+    StatePayload[] _stateBuffer;
+    int _currentTick;
     float _tickTimer;
 
     //client only
     float _lastTickEndTime = 0f;
-    StatePayload[] _clientStateBuffer;
     InputPayload[] _clientInputBuffer;
     StatePayload _latestServerState;
     StatePayload _lastProcessedState;
 
     //server only
-    StatePayload[] _serverStateBuffer;
     Queue<InputPayload> _inputQueue;
 
     #endregion
@@ -47,7 +48,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
 
-        _clientStateBuffer = new StatePayload[BUFFER_SIZE];
+        _stateBuffer = new StatePayload[BUFFER_SIZE];
         _clientInputBuffer = new InputPayload[BUFFER_SIZE];
 
         base.OnStartLocalPlayer();
@@ -55,7 +56,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        _serverStateBuffer = new StatePayload[BUFFER_SIZE];
+        _stateBuffer = new StatePayload[BUFFER_SIZE];
         _inputQueue = new Queue<InputPayload>();
         _serverTickMs = 1f / NetworkManager.singleton.sendRate;
 
@@ -66,11 +67,6 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     #region METHODS
 
-	public void RegisterPlayerTickProcessor(PredictedStateProcessor predictedStateProcessor)
-    {
-        _playerStateProcessors.Add(predictedStateProcessor);
-    }
-
     public void Tick()
     {
         if (isLocalPlayer)
@@ -79,7 +75,6 @@ public class PredictedPlayerTransform : NetworkBehaviour
             HandleTickOnServer();
         else if (isClient && !isLocalPlayer)
             HandleTickOnOtherClient();
-
     }
 
     [Client]
@@ -90,16 +85,14 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
         int bufferIndex = _currentTick % BUFFER_SIZE;
 
-        //Add the input payload to the input buffer
-	    InputPayload inputPayload = new InputPayload(_currentTick, Time.time - _lastTickEndTime);
+	    InputPayload inputPayload = new(_currentTick, Time.time - _lastTickEndTime);
 
-	    foreach (PredictedStateProcessor predictedStateProcessor in _playerStateProcessors){	
-	    	if(predictedStateProcessor is IPredictedInputProcessor inputProcessor)
-		    	inputProcessor.GatherInput(ref inputPayload);
-	    }
-
+	    foreach (PredictedTransformModule transformModule in _predictedTransformModules)
+	    	if(transformModule is IPredictedInputRecorder inputRecorder)
+		    	inputRecorder.RecordInput(ref inputPayload);
+	    
         _clientInputBuffer[bufferIndex] = inputPayload;
-        _clientStateBuffer[bufferIndex] = ProcessInput(inputPayload);
+        _stateBuffer[bufferIndex] = ProcessInput(inputPayload);
 
         CmdOnClientInput(inputPayload);
     }
@@ -107,7 +100,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     [Command]
     void CmdOnClientInput(InputPayload inputPayload)
     {
-        //TODO the player can just send any frequency of inputs to speed hack. this is bad and should be fixed by somebody
+        //TODO a client can just send any frequency of inputs to speed hack. this is bad
         _inputQueue.Enqueue(inputPayload);
     }
 
@@ -124,12 +117,12 @@ public class PredictedPlayerTransform : NetworkBehaviour
             bufferIndex = inputPayload.Tick % BUFFER_SIZE;
 
             StatePayload statePayload = ProcessInput(inputPayload);
-            _serverStateBuffer[bufferIndex] = statePayload;
+            _stateBuffer[bufferIndex] = statePayload;
         }
 
         //we processed all of the input!!
         if (bufferIndex != -1)
-            RpcOnServerMovementState(_serverStateBuffer[bufferIndex]);
+            RpcOnServerMovementState(_stateBuffer[bufferIndex]);
 
     }
 
@@ -146,10 +139,12 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     StatePayload ProcessInput(InputPayload input)
     {
-        StatePayload processedState = new StatePayload(input.Tick);
+        //if we're not in Tick 0, construct a state payload using the last state payload
+        StatePayload processedState = _currentTick > 0 ? new(_stateBuffer[(input.Tick - 1) % BUFFER_SIZE]) : new(_currentTick, transform);
 
-        foreach (PredictedStateProcessor stateProcessor in _playerStateProcessors)
-            stateProcessor.ProcessTick(ref processedState, input);
+        foreach (PredictedTransformModule transformModule in _predictedTransformModules)
+            if (transformModule is IPredictedStateProcessor stateProcessor)
+                stateProcessor.ProcessTick(ref processedState, input);
 
         return processedState;
     }
@@ -161,7 +156,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
         int serverStateBufferIndex = _latestServerState.Tick % BUFFER_SIZE;
 
-        float positionError = Vector3.Distance(_latestServerState.Position, _clientStateBuffer[serverStateBufferIndex].Position);
+        float positionError = Vector3.Distance(_latestServerState.Position, _stateBuffer[serverStateBufferIndex].Position);
 
         // this is how to find the difference between the rotations i guess
         //Quaternion serverRotation = Quaternion.identity * Quaternion.Inverse(_latestServerState.Rotation);
@@ -178,7 +173,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
             transform.position = _latestServerState.Position;
 
             // Update buffer at index of latest server state
-            _clientStateBuffer[serverStateBufferIndex] = _latestServerState;
+            _stateBuffer[serverStateBufferIndex] = _latestServerState;
 
             // Now re-simulate the rest of the ticks up to the current tick on the client
             int tickToProcess = _latestServerState.Tick + 1;
@@ -191,7 +186,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
                 StatePayload statePayload = ProcessInput(_clientInputBuffer[bufferIndex]);
 
                 // Update buffer with recalculated state
-                _clientStateBuffer[bufferIndex] = statePayload;
+                _stateBuffer[bufferIndex] = statePayload;
 
                 tickToProcess++;
             }

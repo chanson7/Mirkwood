@@ -10,11 +10,14 @@ public class PlayerObject : NetworkBehaviour
 
     [SerializeField] CinemachineVirtualCamera _vcam;
     [SerializeField] Transform _cameraPivot;
+    [SerializeField] GameObject _playerUI;
 
     #endregion
 
     public override void OnStartLocalPlayer()
     {
+        _playerUI.SetActive(true);
+
         GetComponent<PlayerInput>().enabled = true;
         Instantiate(_vcam, transform).Follow = _cameraPivot;
         

@@ -50,6 +50,8 @@ GameObject:
   - component: {fileID: 7318226568243036506}
   - component: {fileID: 4708448802937948552}
   - component: {fileID: 129616434980110244}
+  - component: {fileID: 3351312568587129492}
+  - component: {fileID: 4304854115397503702}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -189,6 +191,7 @@ MonoBehaviour:
   syncInterval: 0.1
   _vcam: {fileID: 5319602476891466067, guid: 4296bc0c29c51f9419511821e193512e, type: 3}
   _cameraPivot: {fileID: 8408101169331039322}
+  _playerUI: {fileID: 8178903688682686695}
 --- !u!114 &9183383045216143226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,9 +229,6 @@ MonoBehaviour:
   _runSpeed: 5
   _strafeSpeed: 3
   _backpedalSpeed: 1.5
-  _groundMask:
-    serializedVersion: 2
-    m_Bits: 128
 --- !u!114 &7318226568243036506
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -291,6 +291,46 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &3351312568587129492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f731a782b99cc243b855ccf6eaf153c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  playerUIController: {fileID: 1311882232070957788}
+  _balance: 100
+  _recoveryInterval: 0
+  _balanceRecoveredPerInterval: 0
+  _recoveryDelay: 0
+--- !u!114 &4304854115397503702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29a91851c019d054596ae4c90722a830, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  playerUIController: {fileID: 1311882232070957788}
+  _energy: 0
+  _maxEnergy: 0
+  _recoveryIntervalSeconds: 4
+  _energyRecoveredPerInterval: 1
 --- !u!1 &259584907834279752
 GameObject:
   m_ObjectHideFlags: 0
@@ -2623,6 +2663,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4887716974286648346}
   - component: {fileID: 1407431819308030847}
+  - component: {fileID: 1311882232070957788}
   m_Layer: 0
   m_Name: UI Canvas
   m_TagString: Untagged
@@ -2674,6 +2715,20 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1311882232070957788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8178903688682686695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd2ade0c87258184bbbe88078fabd657, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  balanceText: {fileID: 5564419803532176045}
+  energyText: {fileID: 7142927945010948344}
 --- !u!1 &8262665732175308058
 GameObject:
   m_ObjectHideFlags: 0

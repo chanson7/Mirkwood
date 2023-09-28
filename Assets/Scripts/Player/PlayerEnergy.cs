@@ -6,20 +6,34 @@ using System;
 public class PlayerEnergy : NetworkBehaviour
 {
 
+    #region EDITOR EXPOSED FIELDS
+
+    [SerializeField] PlayerUIController playerUIController;
     [SyncVar(hook = nameof(UpdateUserInterface))]
-    [SerializeField] int energy;
-    bool isRecoveringEnergy = false;
-    [SerializeField] PlayerInterface playerInterface;
-    [SerializeField] int maxEnergy;
+    [SerializeField] int _energy;
+    [SerializeField] int _maxEnergy;
     [Tooltip("Time in seconds for the player to recover energy")]
-    [SerializeField] float recoveryIntervalSeconds = 4f;
+    [SerializeField] float _recoveryIntervalSeconds = 4f;
     [Tooltip("Amount of energy recovered after each recovery interval")]
-    [SerializeField] int energyRecoveredPerInterval = 1;
-    public int GetEnergy() { return energy; }
+    [SerializeField] int _energyRecoveredPerInterval = 1;
+    
+    #endregion
+
+    #region FIELDS
+
+    bool _isRecoveringEnergy = false;
+
+    #endregion
+
+    #region PROPERTIES
+
+    public int Energy { get { return _energy; } }
+
+    #endregion
 
     public override void OnStartServer()
     {
-        energy = maxEnergy;
+        _energy = _maxEnergy;
 
         base.OnStartServer();
     }
@@ -27,19 +41,19 @@ public class PlayerEnergy : NetworkBehaviour
     [Server]
     public bool SpendEnergy(int energySpent)
     {
-        if (energy < energySpent)
+        if (_energy < energySpent)
         {
             Debug.Log($"..{this.name} does not have enough energy");
             return false;
         }
         else
         {
-            energy = Math.Clamp(energy -= energySpent, 0, maxEnergy);
+            _energy = Math.Clamp(_energy -= energySpent, 0, _maxEnergy);
 
-            if (!isRecoveringEnergy)
-                StartCoroutine(RecoverEnergy(energyRecoveredPerInterval));
+            if (!_isRecoveringEnergy)
+                StartCoroutine(RecoverEnergy(_energyRecoveredPerInterval));
 
-            Debug.Log($"..{this.name} spends {energySpent} energy and now has {energy}");
+            Debug.Log($"..{this.name} spends {energySpent} energy and now has {_energy}");
 
             return true;
         }
@@ -49,31 +63,31 @@ public class PlayerEnergy : NetworkBehaviour
     [Server]
     public void LoseEnergy(int energyLost)
     {
-        energy -= energyLost;
+        _energy -= energyLost;
 
-        Math.Clamp(energy, 0, maxEnergy);
+        Math.Clamp(_energy, 0, _maxEnergy);
 
-        if (!isRecoveringEnergy)
-            StartCoroutine(RecoverEnergy(energyRecoveredPerInterval));
+        if (!_isRecoveringEnergy)
+            StartCoroutine(RecoverEnergy(_energyRecoveredPerInterval));
 
-        Debug.Log($"..{this.name} loses {energyLost} energy and now has {energy}");
+        Debug.Log($"..{this.name} loses {energyLost} energy and now has {_energy}");
     }
 
     [Server]
     IEnumerator RecoverEnergy(int energyRecovered)
     {
-        isRecoveringEnergy = true;
-        while (energy < maxEnergy)
+        _isRecoveringEnergy = true;
+        while (_energy < _maxEnergy)
         {
-            yield return new WaitForSeconds(recoveryIntervalSeconds);
-            energy += energyRecovered;
-            Math.Clamp(energy, 0, maxEnergy);
+            yield return new WaitForSeconds(_recoveryIntervalSeconds);
+            _energy += energyRecovered;
+            Math.Clamp(_energy, 0, _maxEnergy);
         }
-        isRecoveringEnergy = false;
+        _isRecoveringEnergy = false;
     }
 
     void UpdateUserInterface(int oldEnergyValue, int newEnergyValue)
     {
-        playerInterface.SetEnergyText(newEnergyValue);
+        playerUIController.SetEnergyText(newEnergyValue);
     }
 }

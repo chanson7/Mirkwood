@@ -48,8 +48,10 @@ public struct StatePayload
         Rotation = transform.rotation;
         LookDirection = 0f;
         Velocity = Vector3.zero;
+        PlayerState = PlayerState.Idle;
     }
 
+    //Construct a new state based off of the previous Tick.
     public StatePayload(StatePayload previousStatePayload)
     {
         Tick = previousStatePayload.Tick + 1;
@@ -57,6 +59,7 @@ public struct StatePayload
         Rotation = previousStatePayload.Rotation;
         LookDirection = previousStatePayload.LookDirection;
         Velocity = previousStatePayload.Velocity;
+        PlayerState = previousStatePayload.PlayerState;
     }
 
     public int Tick;
@@ -64,4 +67,12 @@ public struct StatePayload
     public Quaternion Rotation;
     public float LookDirection;
     public Vector3 Velocity;
+    public PlayerState PlayerState;
+}
+
+public enum PlayerState
+{
+    Idle,
+    Falling,
+    Moving
 }

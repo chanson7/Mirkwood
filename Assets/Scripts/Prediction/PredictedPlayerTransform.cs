@@ -139,8 +139,8 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     StatePayload ProcessInput(InputPayload input)
     {
-        //if we're not in Tick 0, construct a state payload using the last state payload
-        StatePayload processedState = _currentTick > 0 ? new(_stateBuffer[(input.Tick - 1) % BUFFER_SIZE]) : new(_currentTick, transform);
+        //if we're not in Tick 0, construct a state payload using the last state payload from the buffer
+        StatePayload processedState = input.Tick > 0 ? new(_stateBuffer[(input.Tick - 1) % BUFFER_SIZE]) : new(input.Tick, transform);
 
         foreach (PredictedTransformModule transformModule in _predictedTransformModules)
             if (transformModule is IPredictedStateProcessor stateProcessor)

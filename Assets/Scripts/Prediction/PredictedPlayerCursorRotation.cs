@@ -11,7 +11,7 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
     [SerializeField] float _verticalSensitivity = 1f;
 
     [Header("")]
-    [SerializeField] float _minPitchAngle = -45f;
+    [SerializeField] float _minPitchAngle = -15f;
     [SerializeField] float _maxPitchAngle = 45f;
     [SerializeField] Transform _cameraPivot;
 

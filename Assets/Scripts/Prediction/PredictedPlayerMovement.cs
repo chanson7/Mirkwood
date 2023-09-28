@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
@@ -17,8 +18,8 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
     #region FIELDS
 
     Vector3 _movementInput = Vector3.zero;
-    CharacterController _characterController;
     Animator _animator;
+    CharacterController _characterController;
 
     static readonly int _forwardHash = Animator.StringToHash("Forward");
     static readonly int _rightHash = Animator.StringToHash("Right");
@@ -40,17 +41,22 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
-        Vector3 initialPosition = statePayload.Position;
+        
+        Vector3 previousPosition = statePayload.Position;
+        Vector3 desiredMovement = (_strafeSpeed * inputPayload.MoveDirection.x * transform.right +
+            transform.forward * Mathf.Clamp(inputPayload.MoveDirection.z * _runSpeed, -_backpedalSpeed, _runSpeed)) * inputPayload.TickTime;
 
-        Vector3 moveDirection = _strafeSpeed * inputPayload.MoveDirection.x * transform.right + 
-                                transform.forward * Mathf.Clamp(inputPayload.MoveDirection.z * _runSpeed, -_backpedalSpeed, _runSpeed);
+        _characterController.Move(desiredMovement);
 
-        moveDirection.y = _characterController.isGrounded ? 0f : (statePayload.Velocity.y + Physics.gravity.y);
+        Vector3 velocity = (transform.position - previousPosition) / inputPayload.TickTime;
 
-        _characterController.Move(moveDirection * inputPayload.TickTime);
+        if (isLocalPlayer)
+            AnimateMovement(velocity);
+        else if (isServer)
+            RpcAnimateMovement(velocity);
 
         statePayload.Position = transform.position;
-        statePayload.Velocity = (transform.position - initialPosition) / inputPayload.TickTime;
+        statePayload.Velocity = velocity;
     }
 
     void AnimateMovement(Vector3 currentVelocity)
@@ -72,18 +78,10 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     public override void Start()
     {
-        _characterController = gameObject.GetComponent<CharacterController>();
-        _animator = gameObject.GetComponent<Animator>();
+        _animator = GetComponent<Animator>();
+        _characterController = GetComponent<CharacterController>();
 
         base.Start();
-    }
-
-    void Update()
-    {
-        if (isLocalPlayer)
-            AnimateMovement(_characterController.velocity);
-        else if (isServer)
-            RpcAnimateMovement(_characterController.velocity);
     }
 
     #endregion

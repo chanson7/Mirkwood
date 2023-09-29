@@ -157,21 +157,17 @@ public class PredictedPlayerTransform : NetworkBehaviour
         lastProcessedState = _latestServerState;
 
         int serverStateBufferIndex = _latestServerState.Tick % BUFFER_SIZE;
-
         float positionError = Vector3.Distance(_latestServerState.Position, stateBuffer[serverStateBufferIndex].Position);
-
-        // this is how to find the difference between the rotations i guess
-        Quaternion serverRotation = Quaternion.identity * Quaternion.Inverse(_latestServerState.Rotation);
-        Quaternion clientRotation = Quaternion.identity * Quaternion.Inverse(stateBuffer[serverStateBufferIndex].Rotation);
-
-        float rotationError = (clientRotation * Quaternion.Inverse(serverRotation)).eulerAngles.magnitude;
+        float rotationError = (_latestServerState.Rotation * Quaternion.Inverse(stateBuffer[serverStateBufferIndex].Rotation)).eulerAngles.magnitude;
 
         if (positionError > acceptablePositionError)
         {
             Debug.Log($"Reconciling for {positionError} position error");
 
-            // Rewind & Replay
+            //reset position
             transform.position = _latestServerState.Position;
+
+            //rewind and replay
             ReconcileState(serverStateBufferIndex);
         }
 
@@ -179,8 +175,10 @@ public class PredictedPlayerTransform : NetworkBehaviour
         {
             Debug.Log($"Reconciling for {rotationError} rotation error");
 
-            // Rewind & Replay
+            //reset rotation
             transform.rotation = _latestServerState.Rotation;
+
+            //rewind and replay
             ReconcileState(serverStateBufferIndex);
         }
 

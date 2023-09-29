@@ -8,6 +8,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     #region EDITOR EXPOSED FIELDS
 
     [SerializeField] float acceptablePositionError = 0.001f;
+    [SerializeField] float acceptableRotationError = 0.001f;
 
     [Tooltip("Each module runs the same processing function once per tick on both the client and the server")]
     [SerializeField] List<PredictedTransformModule> predictedTransformModules = new();
@@ -140,7 +141,8 @@ public class PredictedPlayerTransform : NetworkBehaviour
     StatePayload ProcessInput(InputPayload input)
     {
         //if we're not in Tick 0, construct a state payload using the last state payload from the buffer
-        StatePayload processedState = input.Tick > 0 ? new(stateBuffer[(input.Tick - 1) % BUFFER_SIZE]) : new(input.Tick, transform);
+        StatePayload processedState = input.Tick > 0 ? new(stateBuffer[(input.Tick - 1) % BUFFER_SIZE]) : 
+                                                       new(input.Tick, transform);
 
         foreach (PredictedTransformModule transformModule in predictedTransformModules)
             if (transformModule is IPredictedStateProcessor stateProcessor)
@@ -159,19 +161,31 @@ public class PredictedPlayerTransform : NetworkBehaviour
         float positionError = Vector3.Distance(_latestServerState.Position, stateBuffer[serverStateBufferIndex].Position);
 
         // this is how to find the difference between the rotations i guess
-        //Quaternion serverRotation = Quaternion.identity * Quaternion.Inverse(_latestServerState.Rotation);
-        //Quaternion clientRotation = Quaternion.identity * Quaternion.Inverse(_clientStateBuffer[serverStateBufferIndex].Rotation);
+        Quaternion serverRotation = Quaternion.identity * Quaternion.Inverse(_latestServerState.Rotation);
+        Quaternion clientRotation = Quaternion.identity * Quaternion.Inverse(stateBuffer[serverStateBufferIndex].Rotation);
 
-        //Quaternion rotationError = clientRotation * Quaternion.Inverse(serverRotation);
-        // Debug.Log($"euler angles magnitude{rotationError.eulerAngles}\nrotation error {rotationError}");
+        float rotationError = (clientRotation * Quaternion.Inverse(serverRotation)).eulerAngles.magnitude;
 
         if (positionError > acceptablePositionError)
         {
-            Debug.Log($"..Reconciling for {positionError} position error");
+            Debug.Log($"Reconciling for {positionError} position error");
 
             // Rewind & Replay
             transform.position = _latestServerState.Position;
+            ReconcileState(serverStateBufferIndex);
+        }
 
+        if (rotationError > acceptableRotationError)
+        {
+            Debug.Log($"Reconciling for {rotationError} rotation error");
+
+            // Rewind & Replay
+            transform.rotation = _latestServerState.Rotation;
+            ReconcileState(serverStateBufferIndex);
+        }
+
+        void ReconcileState(int serverStateBufferIndex)
+        {
             // Update buffer at index of latest server state
             stateBuffer[serverStateBufferIndex] = _latestServerState;
 

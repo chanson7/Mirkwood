@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 8351850468574034549}
   - component: {fileID: 783578328289596365}
   m_Layer: 3
-  m_Name: Target Dummy
+  m_Name: AI Duelist
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -981,7 +981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageableColliders: []
-  characterControllerCollider: {fileID: 0}
+  characterControllerCollider: {fileID: 783578328289596365}
 --- !u!1 &3459066157839704854
 GameObject:
   m_ObjectHideFlags: 0

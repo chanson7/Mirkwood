@@ -31,12 +31,14 @@ public struct InputPayload
         TickTime = tickTime;
         MoveDirection = Vector3.zero;
         LookAtDirection = Vector2.zero;
+        AttackPressed = false;
     }
 
     public int Tick;
     public float TickTime;
     public Vector3 MoveDirection;
     public Vector2 LookAtDirection;
+    public bool AttackPressed;
 }
 
 public struct StatePayload
@@ -48,7 +50,7 @@ public struct StatePayload
         Rotation = transform.rotation;
         LookDirection = 0f;
         Velocity = Vector3.zero;
-        PlayerState = PlayerState.Balanced;
+        PlayerState = PlayerState.Upright;
     }
 
     //Construct a new state based off of the previous Tick.
@@ -72,5 +74,6 @@ public struct StatePayload
 
 public enum PlayerState
 {
-    Balanced
+    Upright,
+    Attacking
 }

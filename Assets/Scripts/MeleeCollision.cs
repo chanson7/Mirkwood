@@ -4,12 +4,12 @@ using UnityEngine;
 public class MeleeCollision : MonoBehaviour
 {
 
-    public List<Collider> damageableColliders = new List<Collider>();
+    public List<Collider> damageableColliders = new();
     [SerializeField] Collider characterControllerCollider;
 
     private void Start()
     {
-        Physics.IgnoreCollision(this.GetComponent<Collider>(), characterControllerCollider, true);
+        Physics.IgnoreCollision(GetComponent<Collider>(), characterControllerCollider, true);
     }
 
     private void OnTriggerEnter(Collider other)

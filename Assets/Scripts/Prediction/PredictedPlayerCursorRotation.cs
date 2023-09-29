@@ -7,19 +7,19 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
     #region EDITOR EXPOSED FIELDS
 
     [Header("Player Preferences")]
-    [SerializeField] float _lateralSensitivity = 1f;
-    [SerializeField] float _verticalSensitivity = 1f;
+    [SerializeField] float lateralSensitivity = 1f;
+    [SerializeField] float verticalSensitivity = 1f;
 
     [Header("")]
-    [SerializeField] float _minPitchAngle = -15f;
-    [SerializeField] float _maxPitchAngle = 45f;
-    [SerializeField] Transform _cameraPivot;
+    [SerializeField] float minPitchAngle = -15f;
+    [SerializeField] float maxPitchAngle = 45f;
+    [SerializeField] Transform cameraPivot;
 
     #endregion
 
     #region FIELDS
 
-    Vector2 _rotationInput = Vector3.zero;
+    Vector2 rotationInput = Vector3.zero;
 
     #endregion
 
@@ -27,23 +27,23 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
 
     void OnLook(InputValue input)
     {
-        _rotationInput.x = input.Get<Vector2>().x;
-        _rotationInput.y = input.Get<Vector2>().y;
+        rotationInput.x = input.Get<Vector2>().x;
+        rotationInput.y = input.Get<Vector2>().y;
     }
 
     public void RecordInput(ref InputPayload inputPayload)
     {
-        inputPayload.LookAtDirection = _rotationInput;
+        inputPayload.LookAtDirection = rotationInput;
     }
 
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
-        float verticalRotation = statePayload.LookDirection - inputPayload.LookAtDirection.y * _verticalSensitivity * inputPayload.TickTime;
+        float verticalRotation = statePayload.LookDirection - inputPayload.LookAtDirection.y * verticalSensitivity * inputPayload.TickTime;
 
-        verticalRotation = Mathf.Clamp(verticalRotation, _minPitchAngle, _maxPitchAngle);
+        verticalRotation = Mathf.Clamp(verticalRotation, minPitchAngle, maxPitchAngle);
 
-        _cameraPivot.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-        transform.Rotate(Vector3.up, inputPayload.LookAtDirection.x * inputPayload.TickTime * _lateralSensitivity);
+        cameraPivot.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+        transform.Rotate(Vector3.up, inputPayload.LookAtDirection.x * inputPayload.TickTime * lateralSensitivity);
 
         statePayload.Rotation = transform.rotation;
         statePayload.LookDirection = verticalRotation;

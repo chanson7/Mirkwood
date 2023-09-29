@@ -163,7 +163,7 @@ public class SteamNetworkManager : NetworkManager
     /// <param name="conn">Connection from client.</param>
     public override void OnServerConnect(NetworkConnectionToClient conn) 
     {
-        Debug.Log($"OnServerConnect() called for client {conn.connectionId}");
+        base.OnServerConnect(conn);    
     }
 
     /// <summary>
@@ -173,8 +173,6 @@ public class SteamNetworkManager : NetworkManager
     /// <param name="conn">Connection from client.</param>
     public override void OnServerReady(NetworkConnectionToClient conn)
     {
-        Debug.Log($"OnServerReady() called for client {conn.connectionId}");
-
         base.OnServerReady(conn);
     }
 
@@ -185,8 +183,6 @@ public class SteamNetworkManager : NetworkManager
     /// <param name="conn">Connection from client.</param>
     public override void OnServerAddPlayer(NetworkConnectionToClient conn)
     {
-        Debug.Log($"OnServerAddPlayer() called for client {conn.connectionId}");
-
         base.OnServerAddPlayer(conn);
     }
 
@@ -210,11 +206,7 @@ public class SteamNetworkManager : NetworkManager
     /// </summary>
     public override void OnClientConnect()
     {
-        Debug.Log("OnClientConnect() called");
-        if (!NetworkClient.ready)
-            NetworkClient.Ready();
-
-        NetworkClient.AddPlayer();
+        base.OnClientConnect();
     }
 
     /// <summary>

@@ -10,27 +10,27 @@ public class PlayerBalance : NetworkBehaviour
 
     [SerializeField] PlayerUIController playerUIController;
     [SyncVar(hook = nameof(UpdateUserInterface))]
-    [SerializeField] int _balance = 100;
+    [SerializeField] int balance;
     [Tooltip("Time in seconds for the player to recover balance")]
-    [SerializeField] float _recoveryInterval;
+    [SerializeField] float recoveryInterval;
     [Tooltip("Amount of balance recovered after each recovery interval")]
-    [SerializeField] int _balanceRecoveredPerInterval;
+    [SerializeField] int balanceRecoveredPerInterval;
     [Tooltip("Seconds before balance recovery begins")]
-    [SerializeField] float _recoveryDelay;
+    [SerializeField] float recoveryDelay;
 
     #endregion
 
     #region FIELDS
 
-    int _maxBalance = 100;
-    float _timeOfLastBalanceLoss = 0f;
-    bool _isRecoveringBalance = false; //this can be true even if the recovery delay has not yet been passed.  In other words, this being true does not mean the player is actively restoring balance
+    int maxBalance = 100;
+    float timeOfLastBalanceLoss = 0f;
+    bool isRecoveringBalance = false; //this can be true even if the recovery delay has not yet been passed.  In other words, this being true does not mean the player is actively restoring balance
 
     #endregion
 
     public override void OnStartServer()
     {
-        _balance = _maxBalance;
+        balance = maxBalance;
 
         base.OnStartServer();
     }
@@ -38,32 +38,32 @@ public class PlayerBalance : NetworkBehaviour
     [Server]
     public void LoseBalance(int balanceLost)
     {
-        _balance = Math.Clamp(_balance -= balanceLost, 0, _maxBalance);
-        _timeOfLastBalanceLoss = Time.time;
+        balance = Math.Clamp(balance -= balanceLost, 0, maxBalance);
+        timeOfLastBalanceLoss = Time.time;
 
-        if (!_isRecoveringBalance)
-            StartCoroutine(RecoverBalance(_balanceRecoveredPerInterval));
+        if (!isRecoveringBalance)
+            StartCoroutine(RecoverBalance(balanceRecoveredPerInterval));
 
-        Debug.Log($"..{name} loses {balanceLost} balance and now has {_balance}");
+        Debug.Log($"..{name} loses {balanceLost} balance and now has {balance}");
     }
 
     [Server]
     IEnumerator RecoverBalance(int balanceRecovered)
     {
-        _isRecoveringBalance = true;
+        isRecoveringBalance = true;
 
-        while (_balance < _maxBalance)
+        while (balance < maxBalance)
         {
-            yield return new WaitForSeconds(_recoveryInterval);
+            yield return new WaitForSeconds(recoveryInterval);
 
-            if (_timeOfLastBalanceLoss + _recoveryDelay < Time.time)
+            if (timeOfLastBalanceLoss + recoveryDelay < Time.time)
             {
-                _balance += balanceRecovered;
-                Math.Clamp(_balance, 0, _maxBalance);
+                balance += balanceRecovered;
+                Math.Clamp(balance, 0, maxBalance);
             }
         }
 
-        _isRecoveringBalance = false;
+        isRecoveringBalance = false;
     }
 
     void UpdateUserInterface(int oldBalanceValue, int newBalanceValue)

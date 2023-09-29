@@ -189,9 +189,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
-  _vcam: {fileID: 5319602476891466067, guid: 4296bc0c29c51f9419511821e193512e, type: 3}
-  _cameraPivot: {fileID: 8408101169331039322}
-  _playerUI: {fileID: 8178903688682686695}
+  vcam: {fileID: 5319602476891466067, guid: 4296bc0c29c51f9419511821e193512e, type: 3}
+  cameraPivot: {fileID: 8408101169331039322}
+  playerUI: {fileID: 8178903688682686695}
 --- !u!114 &9183383045216143226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,7 +208,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   acceptablePositionError: 0.001
-  _predictedTransformModules:
+  predictedTransformModules:
   - {fileID: 6365695650205679477}
   - {fileID: 7318226568243036506}
 --- !u!114 &6365695650205679477
@@ -244,11 +244,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _lateralSensitivity: 4
-  _verticalSensitivity: 1
-  _minPitchAngle: -15
-  _maxPitchAngle: 45
-  _cameraPivot: {fileID: 8408101169331039322}
+  lateralSensitivity: 1
+  verticalSensitivity: 1
+  minPitchAngle: -15
+  maxPitchAngle: 45
+  cameraPivot: {fileID: 8408101169331039322}
 --- !u!114 &4708448802937948552
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,9 +264,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 1
   syncInterval: 0
-  _ghostPrefab: {fileID: 255875150686203505, guid: cddc15c91329aee4abfab1aa8a3451f9,
+  ghostPrefab: {fileID: 255875150686203505, guid: cddc15c91329aee4abfab1aa8a3451f9,
     type: 3}
-  _uiController: {fileID: 1703985622041249448, guid: 0a7340c1982055146a76b9964b68d98c,
+  uiController: {fileID: 1703985622041249448, guid: 0a7340c1982055146a76b9964b68d98c,
     type: 3}
 --- !u!136 &129616434980110244
 CapsuleCollider:
@@ -307,10 +307,10 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   playerUIController: {fileID: 1311882232070957788}
-  _balance: 100
-  _recoveryInterval: 0
-  _balanceRecoveredPerInterval: 0
-  _recoveryDelay: 0
+  balance: 0
+  recoveryInterval: 0
+  balanceRecoveredPerInterval: 0
+  recoveryDelay: 0
 --- !u!114 &4304854115397503702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -328,9 +328,9 @@ MonoBehaviour:
   syncInterval: 0
   playerUIController: {fileID: 1311882232070957788}
   _energy: 0
-  _maxEnergy: 0
-  _recoveryIntervalSeconds: 4
-  _energyRecoveredPerInterval: 1
+  maxEnergy: 20
+  recoveryIntervalSeconds: 4
+  energyRecoveredPerInterval: 1
 --- !u!1 &259584907834279752
 GameObject:
   m_ObjectHideFlags: 0

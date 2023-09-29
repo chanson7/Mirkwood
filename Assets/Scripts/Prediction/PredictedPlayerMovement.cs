@@ -17,12 +17,12 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     #region FIELDS
 
-    Vector3 _movementInput = Vector3.zero;
-    Animator _animator;
-    CharacterController _characterController;
+    Vector3 movementInput = Vector3.zero;
+    Animator animator;
+    CharacterController characterController;
 
-    static readonly int _forwardHash = Animator.StringToHash("Forward");
-    static readonly int _rightHash = Animator.StringToHash("Right");
+    static readonly int forwardHash = Animator.StringToHash("Forward");
+    static readonly int rightHash = Animator.StringToHash("Right");
 
     #endregion
 
@@ -30,13 +30,13 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     void OnMove(InputValue input)
     {
-        _movementInput.x = input.Get<Vector2>().x;
-        _movementInput.z = input.Get<Vector2>().y;
+        movementInput.x = input.Get<Vector2>().x;
+        movementInput.z = input.Get<Vector2>().y;
     }
 
     public void RecordInput(ref InputPayload inputPayload)
     {
-        inputPayload.MoveDirection = _movementInput;
+        inputPayload.MoveDirection = movementInput;
     }
 
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
@@ -46,7 +46,7 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
         Vector3 desiredMovement = (_strafeSpeed * inputPayload.MoveDirection.x * transform.right +
             transform.forward * Mathf.Clamp(inputPayload.MoveDirection.z * _runSpeed, -_backpedalSpeed, _runSpeed)) * inputPayload.TickTime;
 
-        _characterController.Move(desiredMovement);
+        characterController.Move(desiredMovement);
 
         Vector3 velocity = (transform.position - previousPosition) / inputPayload.TickTime;
 
@@ -61,15 +61,15 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     void AnimateMovement(Vector3 currentVelocity)
     {
-        _animator.SetFloat(_forwardHash, transform.InverseTransformDirection(currentVelocity).z);
-        _animator.SetFloat(_rightHash, transform.InverseTransformDirection(currentVelocity).x);
+        animator.SetFloat(forwardHash, transform.InverseTransformDirection(currentVelocity).z);
+        animator.SetFloat(rightHash, transform.InverseTransformDirection(currentVelocity).x);
     }
 
     [ClientRpc(includeOwner = false)]
     void RpcAnimateMovement(Vector3 currentVelocity)
     {
-        _animator.SetFloat(_forwardHash, transform.InverseTransformDirection(currentVelocity).z);
-        _animator.SetFloat(_rightHash, transform.InverseTransformDirection(currentVelocity).x);
+        animator.SetFloat(forwardHash, transform.InverseTransformDirection(currentVelocity).z);
+        animator.SetFloat(rightHash, transform.InverseTransformDirection(currentVelocity).x);
     }
 
     #endregion
@@ -78,8 +78,8 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     public override void Start()
     {
-        _animator = GetComponent<Animator>();
-        _characterController = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+        characterController = GetComponent<CharacterController>();
 
         base.Start();
     }

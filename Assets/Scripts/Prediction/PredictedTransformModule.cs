@@ -25,20 +25,22 @@ public interface IPredictedStateProcessor
 
 public struct InputPayload
 {
-    public InputPayload(int tick, float tickTime)
+    public InputPayload(int tick, float tickDuration)
     {
         Tick = tick;
-        TickTime = tickTime;
-        MoveDirection = Vector3.zero;
+        TickDuration = tickDuration;
+        ClientTime = Time.time;
+        MoveDirection = Vector2.zero;
         LookAtDirection = Vector2.zero;
         AttackPressed = false;
     }
 
     public int Tick;
-    public float TickTime;
-    public Vector3 MoveDirection;
+    public float TickDuration;
+    public float ClientTime;
+    public Vector2 MoveDirection;
     public Vector2 LookAtDirection;
-    public bool AttackPressed;
+    public bool AttackPressed; 
 }
 
 public struct StatePayload
@@ -50,7 +52,7 @@ public struct StatePayload
         Rotation = transform.rotation;
         LookDirection = 0f;
         Velocity = Vector3.zero;
-        PlayerState = PlayerState.Upright;
+        PlayerState = PlayerState.Balanced;
     }
 
     //Construct a new state based off of the previous Tick.
@@ -74,6 +76,6 @@ public struct StatePayload
 
 public enum PlayerState
 {
-    Upright,
+    Balanced,
     Attacking
 }

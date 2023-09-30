@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using Mirror;
-using Unity.VisualScripting;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
@@ -17,7 +16,7 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     #region FIELDS
 
-    Vector3 movementInput = Vector3.zero;
+    Vector2 movementInput = Vector2.zero;
     Animator animator;
     CharacterController characterController;
 
@@ -31,7 +30,7 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
     void OnMove(InputValue input)
     {
         movementInput.x = input.Get<Vector2>().x;
-        movementInput.z = input.Get<Vector2>().y;
+        movementInput.y = input.Get<Vector2>().y;
     }
 
     public void RecordInput(ref InputPayload inputPayload)
@@ -44,11 +43,11 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
         
         Vector3 previousPosition = statePayload.Position;
         Vector3 desiredMovement = (_strafeSpeed * inputPayload.MoveDirection.x * transform.right +
-            transform.forward * Mathf.Clamp(inputPayload.MoveDirection.z * _runSpeed, -_backpedalSpeed, _runSpeed)) * inputPayload.TickTime;
+            transform.forward * Mathf.Clamp(inputPayload.MoveDirection.y * _runSpeed, -_backpedalSpeed, _runSpeed)) * inputPayload.TickDuration;
 
         characterController.Move(desiredMovement);
 
-        Vector3 velocity = (transform.position - previousPosition) / inputPayload.TickTime;
+        Vector3 velocity = (transform.position - previousPosition) / inputPayload.TickDuration;
 
         if (isLocalPlayer)
             AnimateMovement(velocity);

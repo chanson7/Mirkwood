@@ -19,7 +19,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     [SyncVar] float serverTickMs;
     StatePayload[] stateBuffer;
-    int currentTick;
+    int _currentTick;
     float tickTimer;
 
     //client only
@@ -29,7 +29,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     StatePayload lastProcessedState;
 
     //server only
-    Queue<InputPayload> _inputQueue;
+    Queue<InputPayload> inputQueue;
 
     #endregion
 
@@ -48,7 +48,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-
+        
         stateBuffer = new StatePayload[BUFFER_SIZE];
         clientInputBuffer = new InputPayload[BUFFER_SIZE];
 
@@ -58,7 +58,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     public override void OnStartServer()
     {
         stateBuffer = new StatePayload[BUFFER_SIZE];
-        _inputQueue = new Queue<InputPayload>();
+        inputQueue = new Queue<InputPayload>();
         serverTickMs = 1f / NetworkManager.singleton.sendRate;
 
         base.OnStartServer();
@@ -84,14 +84,14 @@ public class PredictedPlayerTransform : NetworkBehaviour
         if (!_latestServerState.Equals(default(StatePayload)) && (lastProcessedState.Equals(default(StatePayload)) || !_latestServerState.Equals(lastProcessedState)))
             HandleServerReconciliation();
 
-        int bufferIndex = currentTick % BUFFER_SIZE;
+        int bufferIndex = _currentTick % BUFFER_SIZE;
 
-	    InputPayload inputPayload = new(currentTick, Time.time - lastTickEndTime);
+        InputPayload inputPayload = new(_currentTick, Time.time - lastTickEndTime);
 
-	    foreach (PredictedTransformModule transformModule in predictedTransformModules)
-	    	if(transformModule is IPredictedInputRecorder inputRecorder)
-		    	inputRecorder.RecordInput(ref inputPayload);
-	    
+        foreach (PredictedTransformModule transformModule in predictedTransformModules)
+            if (transformModule is IPredictedInputRecorder inputRecorder)
+                inputRecorder.RecordInput(ref inputPayload);
+
         clientInputBuffer[bufferIndex] = inputPayload;
         stateBuffer[bufferIndex] = ProcessInput(inputPayload);
 
@@ -101,8 +101,10 @@ public class PredictedPlayerTransform : NetworkBehaviour
     [Command]
     void CmdOnClientInput(InputPayload inputPayload)
     {
+        Debug.Log($"Received Tick: {inputPayload.Tick} Current Tick: {_currentTick}");
+
         //TODO a client can just send any frequency of inputs to speed hack. this is bad
-        _inputQueue.Enqueue(inputPayload);
+        inputQueue.Enqueue(inputPayload);
     }
 
     [Server]
@@ -111,9 +113,9 @@ public class PredictedPlayerTransform : NetworkBehaviour
         int bufferIndex = -1;
 
         //server has some movements to process
-        while (_inputQueue.Count > 0)
+        while (inputQueue.Count > 0)
         {
-            InputPayload inputPayload = _inputQueue.Dequeue();
+            InputPayload inputPayload = inputQueue.Dequeue();
 
             bufferIndex = inputPayload.Tick % BUFFER_SIZE;
 
@@ -190,7 +192,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
             // Now re-simulate the rest of the ticks up to the current tick on the client
             int tickToProcess = _latestServerState.Tick + 1;
 
-            while (tickToProcess < currentTick)
+            while (tickToProcess < _currentTick)
             {
                 int bufferIndex = tickToProcess % BUFFER_SIZE;
 
@@ -219,7 +221,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
             Tick();
 
             lastTickEndTime = Time.time;
-            currentTick++;
+            _currentTick++;
         }
     }
 

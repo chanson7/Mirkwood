@@ -38,12 +38,12 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
 
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
-        float verticalRotation = statePayload.LookDirection - inputPayload.LookAtDirection.y * verticalSensitivity * inputPayload.TickTime;
+        float verticalRotation = statePayload.LookDirection - inputPayload.LookAtDirection.y * verticalSensitivity * inputPayload.TickDuration;
 
         verticalRotation = Mathf.Clamp(verticalRotation, minPitchAngle, maxPitchAngle);
 
         cameraPivot.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-        transform.Rotate(Vector3.up, inputPayload.LookAtDirection.x * inputPayload.TickTime * lateralSensitivity);
+        transform.Rotate(Vector3.up, inputPayload.LookAtDirection.x * inputPayload.TickDuration * lateralSensitivity);
 
         statePayload.Rotation = transform.rotation;
         statePayload.LookDirection = verticalRotation;

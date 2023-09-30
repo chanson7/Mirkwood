@@ -3229,7 +3229,6 @@ GameObject:
   - component: {fileID: 1766148513}
   - component: {fileID: 1766148519}
   - component: {fileID: 1766148522}
-  - component: {fileID: 1766148523}
   m_Layer: 0
   m_Name: Steam Network Manager
   m_TagString: Untagged
@@ -3310,26 +3309,7 @@ MonoBehaviour:
     dynamicAdjustmentTolerance: 1
     deliveryTimeEmaDuration: 2
   connectionQualityInterval: 3
-  timeInterpolationGui: 0
---- !u!114 &1766148523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1766148510}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96b149f511061407fb54895c057b7736, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wrap: {fileID: 1766148519}
-  jitter: 0.02
-  jitterSpeed: 1
-  reliableLatency: 100
-  unreliableLoss: 2
-  unreliableLatency: 100
-  unreliableScramble: 2
+  timeInterpolationGui: 1
 --- !u!1 &1808148974
 GameObject:
   m_ObjectHideFlags: 0

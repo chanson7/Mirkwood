@@ -20,15 +20,12 @@ public class PredictedPlayerAttack : PredictedTransformModule, IPredictedInputRe
 
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
-        if (statePayload.PlayerState.Equals(PlayerState.Upright) && inputPayload.AttackPressed)
+        if (statePayload.PlayerState.Equals(PlayerState.Balanced) && inputPayload.AttackPressed)
         {
             Debug.Log($"Attack started at {NetworkTime.time} for tick {statePayload.Tick}");
-            if(isLocalPlayer)
-                Debug.Log($"estimate of network time: {NetworkTime.time + (NetworkTime.rtt / 2f)} for tick {statePayload.Tick}");
-            //statePayload.PlayerState = PlayerState.Attacking;
+            statePayload.PlayerState = PlayerState.Attacking;
         }
         else return;
-        
     }
 
 }

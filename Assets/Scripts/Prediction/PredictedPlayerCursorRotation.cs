@@ -10,10 +10,20 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
     [SerializeField] float lateralSensitivity = 1f;
     [SerializeField] float verticalSensitivity = 1f;
 
-    [Header("")]
-    [SerializeField] float minPitchAngle = -15f;
-    [SerializeField] float maxPitchAngle = 45f;
-    [SerializeField] Transform cameraPivot;
+    [Header("Rotation Settings")]
+
+    [SerializeField] 
+    float minPitchAngle = -15f;
+    [SerializeField] 
+    float maxPitchAngle = 45f;
+
+    [Range(1f, 10f)]
+    [Tooltip("A multiplier that slows down rotation speed during attacks.")]
+    [SerializeField] 
+    float attackRotationReduction = 1f;
+
+    [SerializeField] 
+    Transform cameraPivot;
 
     #endregion
 
@@ -43,7 +53,8 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
         verticalRotation = Mathf.Clamp(verticalRotation, minPitchAngle, maxPitchAngle);
 
         cameraPivot.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-        transform.Rotate(Vector3.up, inputPayload.LookAtDirection.x * inputPayload.TickDuration * lateralSensitivity);
+        transform.Rotate(Vector3.up, inputPayload.LookAtDirection.x * inputPayload.TickDuration * lateralSensitivity / 
+            (statePayload.PlayerState.Equals(PlayerState.Attacking) ? attackRotationReduction : 1f)); //slow down rotation if we're attacking
 
         statePayload.Rotation = transform.rotation;
         statePayload.LookDirection = verticalRotation;

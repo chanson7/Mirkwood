@@ -7,9 +7,6 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     #region EDITOR EXPOSED FIELDS
 
-    [SerializeField] float acceptablePositionError = 0.001f;
-    [SerializeField] float acceptableRotationError = 0.001f;
-
     [Tooltip("Each module runs the same processing function once per tick on both the client and the server")]
     [SerializeField] List<PredictedTransformModule> predictedTransformModules = new();
 
@@ -17,12 +14,14 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     #region FIELDS
 
-    [SyncVar] float serverTickMs;
+    [SyncVar] float _serverTickMs;
     StatePayload[] stateBuffer;
     int _currentTick;
     float tickTimer;
 
     //client only
+    float acceptablePositionError = 0.001f;
+    float acceptableRotationError = 0.001f;
     float lastTickEndTime = 0f;
     InputPayload[] clientInputBuffer;
     StatePayload _latestServerState;
@@ -34,7 +33,9 @@ public class PredictedPlayerTransform : NetworkBehaviour
     #endregion
 
     #region PROPERTIES
-    public StatePayload LatestServerState { get { return _latestServerState; } }
+
+    public StatePayload LatestServerState { get => _latestServerState; }
+    public float ServerTickMs { get => _serverTickMs; }
 
     #endregion
 
@@ -48,7 +49,6 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        
         stateBuffer = new StatePayload[BUFFER_SIZE];
         clientInputBuffer = new InputPayload[BUFFER_SIZE];
 
@@ -59,7 +59,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     {
         stateBuffer = new StatePayload[BUFFER_SIZE];
         inputQueue = new Queue<InputPayload>();
-        serverTickMs = 1f / NetworkManager.singleton.sendRate;
+        _serverTickMs = 1f / NetworkManager.singleton.sendRate;
 
         base.OnStartServer();
     }
@@ -101,8 +101,6 @@ public class PredictedPlayerTransform : NetworkBehaviour
     [Command]
     void CmdOnClientInput(InputPayload inputPayload)
     {
-        Debug.Log($"Received Tick: {inputPayload.Tick} Current Tick: {_currentTick}");
-
         //TODO a client can just send any frequency of inputs to speed hack. this is bad
         inputQueue.Enqueue(inputPayload);
     }
@@ -145,10 +143,15 @@ public class PredictedPlayerTransform : NetworkBehaviour
         //if we're not in Tick 0, construct a state payload using the last state payload from the buffer
         StatePayload processedState = input.Tick > 0 ? new(stateBuffer[(input.Tick - 1) % BUFFER_SIZE]) : 
                                                        new(input.Tick, transform);
+        Vector3 previousPosition = processedState.Position;
 
+        //let all the state processors do their thing
         foreach (PredictedTransformModule transformModule in predictedTransformModules)
             if (transformModule is IPredictedStateProcessor stateProcessor)
                 stateProcessor.ProcessTick(ref processedState, input);
+
+        //then calculate the velocity
+        processedState.Velocity = (processedState.Position - previousPosition) / input.TickDuration;
 
         return processedState;
     }
@@ -215,11 +218,11 @@ public class PredictedPlayerTransform : NetworkBehaviour
     {
         tickTimer += Time.deltaTime;
 
-        while (tickTimer >= serverTickMs)
+        while (tickTimer >= _serverTickMs)
         {
-            tickTimer -= serverTickMs;
+            tickTimer -= _serverTickMs;
             Tick();
-
+            
             lastTickEndTime = Time.time;
             _currentTick++;
         }

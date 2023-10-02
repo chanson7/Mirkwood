@@ -8,8 +8,8 @@ public class PlayerObject : NetworkBehaviour
 {
     #region EDITOR EXPOSED FIELDS
 
-    [SerializeField] CinemachineVirtualCamera vcam;
-    [SerializeField] Transform cameraPivot;
+    [SerializeField] CinemachineVirtualCamera virtualCamera;
+    [SerializeField] Transform cameraTargetTransform;
     [SerializeField] GameObject playerUI;
 
     #endregion
@@ -19,8 +19,9 @@ public class PlayerObject : NetworkBehaviour
         playerUI.SetActive(true);
 
         GetComponent<PlayerInput>().enabled = true;
-        Instantiate(vcam, transform).Follow = cameraPivot;
-        
+        Instantiate(virtualCamera, transform).Follow = cameraTargetTransform;
+
         Cursor.lockState = CursorLockMode.Locked;
     }
+
 }

@@ -50,7 +50,6 @@ GameObject:
   - component: {fileID: 6365695650205679477}
   - component: {fileID: 7318226568243036506}
   - component: {fileID: 4708448802937948552}
-  - component: {fileID: 129616434980110244}
   - component: {fileID: 3351312568587129492}
   - component: {fileID: 4304854115397503702}
   m_Layer: 3
@@ -78,6 +77,7 @@ Transform:
   - {fileID: 8415424949443270407}
   - {fileID: 2119531213881341116}
   - {fileID: 4625080935920202484}
+  - {fileID: 5497403216314526294}
   - {fileID: 4887716974286648346}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -191,8 +191,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
-  vcam: {fileID: 5319602476891466067, guid: 4296bc0c29c51f9419511821e193512e, type: 3}
-  cameraPivot: {fileID: 8408101169331039322}
+  virtualCamera: {fileID: 5319602476891466067, guid: 4296bc0c29c51f9419511821e193512e,
+    type: 3}
+  cameraTargetTransform: {fileID: 8408101169331039322}
   playerUI: {fileID: 8178903688682686695}
 --- !u!114 &9183383045216143226
 MonoBehaviour:
@@ -209,9 +210,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
-  acceptablePositionError: 0.001
-  acceptableRotationError: 0.001
   predictedTransformModules:
+  - {fileID: 0}
   - {fileID: 5277178614359865480}
   - {fileID: 6365695650205679477}
   - {fileID: 7318226568243036506}
@@ -230,6 +230,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  attackDuration: 0.5
+  lungeDistance: 1
+  damageApplicationPoint: 0.5
+  forwardMeleeCollider: {fileID: 7779213831635987867}
+  aoeMeleeCollider: {fileID: 775725471944012768}
 --- !u!114 &6365695650205679477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,6 +272,7 @@ MonoBehaviour:
   verticalSensitivity: 1
   minPitchAngle: -15
   maxPitchAngle: 45
+  attackRotationReduction: 8
   cameraPivot: {fileID: 8408101169331039322}
 --- !u!114 &4708448802937948552
 MonoBehaviour:
@@ -287,29 +293,7 @@ MonoBehaviour:
     type: 3}
   uiController: {fileID: 1703985622041249448, guid: 0a7340c1982055146a76b9964b68d98c,
     type: 3}
---- !u!136 &129616434980110244
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Material: {fileID: 13400000, guid: 176724f165ed631408775764c436d474, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.5, z: 0}
+  enableGhost: 0
 --- !u!114 &3351312568587129492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1590,7 +1574,7 @@ GameObject:
   - component: {fileID: 1706526409521008380}
   - component: {fileID: 7779213831635987867}
   m_Layer: 6
-  m_Name: Melee Collider
+  m_Name: Forward Melee Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1630,10 +1614,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 2
+  m_Radius: 1
   m_Height: 6
   m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
+  m_Center: {x: 0, y: 1, z: 0.5}
 --- !u!114 &7779213831635987867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1646,8 +1630,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95cc4136393313d4488c3ae2bfbf235e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageableColliders: []
   characterControllerCollider: {fileID: 8979417501271799584}
+  _damageableColliders: []
 --- !u!1 &4830552844058500984
 GameObject:
   m_ObjectHideFlags: 0
@@ -1810,6 +1794,76 @@ Transform:
   - {fileID: 2034954726563646623}
   m_Father: {fileID: 5694046447161773067}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5504331431923805596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5497403216314526294}
+  - component: {fileID: 1275613258698999079}
+  - component: {fileID: 775725471944012768}
+  m_Layer: 6
+  m_Name: AOE Melee Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5497403216314526294
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5504331431923805596}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 172309495854167161}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &1275613258698999079
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5504331431923805596}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 2
+  m_Height: 6
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &775725471944012768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5504331431923805596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95cc4136393313d4488c3ae2bfbf235e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  characterControllerCollider: {fileID: 8979417501271799584}
+  _damageableColliders: []
 --- !u!1 &5636313688569499697
 GameObject:
   m_ObjectHideFlags: 0
@@ -2362,7 +2416,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8408101169331039322}
   m_Layer: 3
-  m_Name: Camera Pivot
+  m_Name: Camera Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

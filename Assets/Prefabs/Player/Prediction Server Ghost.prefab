@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 632436565493183691}
   - component: {fileID: 1982403176578658282}
   m_Layer: 0
-  m_Name: Server Ghost
+  m_Name: Prediction Server Ghost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

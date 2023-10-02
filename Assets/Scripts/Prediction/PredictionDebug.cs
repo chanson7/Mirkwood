@@ -9,8 +9,11 @@ public class PredictionDebug : NetworkBehaviour
     
     [SerializeField] GameObject ghostPrefab;
     [SerializeField] PredictionDebugUIController uiController;
+    [SerializeField] bool enableGhost = true;
 
     #endregion
+
+    #region FIELDS
 
     PredictedPlayerTransform predictedPlayerTransform;
     GameObject serverGhost;
@@ -19,6 +22,7 @@ public class PredictionDebug : NetworkBehaviour
     static readonly int forwardHash = Animator.StringToHash("Forward");
     static readonly int rightHash = Animator.StringToHash("Right");
 
+    #endregion
 
     public override void OnStartLocalPlayer()
     {
@@ -27,6 +31,8 @@ public class PredictionDebug : NetworkBehaviour
             serverGhost = Instantiate(ghostPrefab);
             uiController = Instantiate(uiController, transform);
             ghostAnimator = serverGhost.GetComponent<Animator>();
+
+            if(!enableGhost) { serverGhost.SetActive(false); }
         }
     }
 

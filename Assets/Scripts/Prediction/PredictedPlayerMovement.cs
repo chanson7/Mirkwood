@@ -8,6 +8,7 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 {
     #region EDITOR EXPOSED FIELDS
 
+    [Header("Movement Settings")]
     [SerializeField] float _runSpeed;
     [SerializeField] float _strafeSpeed;
     [SerializeField] float _backpedalSpeed;
@@ -25,13 +26,17 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     #endregion
 
-    #region METHODS
+    #region INPUT
 
     void OnMove(InputValue input)
     {
         movementInput.x = input.Get<Vector2>().x;
         movementInput.y = input.Get<Vector2>().y;
     }
+
+    #endregion
+
+    #region METHODS
 
     public void RecordInput(ref InputPayload inputPayload)
     {
@@ -40,22 +45,25 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
-        
-        Vector3 previousPosition = statePayload.Position;
-        Vector3 desiredMovement = (_strafeSpeed * inputPayload.MoveDirection.x * transform.right +
-            transform.forward * Mathf.Clamp(inputPayload.MoveDirection.y * _runSpeed, -_backpedalSpeed, _runSpeed)) * inputPayload.TickDuration;
+        Vector3 movementVelocity = Vector3.zero;
 
-        characterController.Move(desiredMovement);
+        if (statePayload.PlayerState.Equals(PlayerState.Balanced))
+        {
+            Vector3 previousPosition = statePayload.Position;
+            Vector3 desiredMovement = (_strafeSpeed * inputPayload.MoveDirection.x * transform.right +
+                transform.forward * Mathf.Clamp(inputPayload.MoveDirection.y * _runSpeed, -_backpedalSpeed, _runSpeed)) * inputPayload.TickDuration;
 
-        Vector3 velocity = (transform.position - previousPosition) / inputPayload.TickDuration;
+            characterController.Move(desiredMovement);
+
+            movementVelocity = (transform.position - previousPosition) / inputPayload.TickDuration;
+            statePayload.Position = transform.position;
+        }
 
         if (isLocalPlayer)
-            AnimateMovement(velocity);
+            AnimateMovement(movementVelocity);
         else if (isServer)
-            RpcAnimateMovement(velocity);
+            RpcAnimateMovement(movementVelocity);
 
-        statePayload.Position = transform.position;
-        statePayload.Velocity = velocity;
     }
 
     void AnimateMovement(Vector3 currentVelocity)

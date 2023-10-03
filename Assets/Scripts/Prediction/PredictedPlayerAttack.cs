@@ -21,20 +21,22 @@ public class PredictedPlayerAttack : PredictedTransformModule, IPredictedInputRe
     [Tooltip("The tick at which damage should be applied, as a percentage of the attack duration")]
     float damageApplicationPoint = 0.5f;
 
-    [Header("Melee Colliders")]
-    [SerializeField] MeleeCollider forwardMeleeCollider;
-    [SerializeField] MeleeCollider aoeMeleeCollider;
+    [Header("")]
+    [SerializeField] MeleeHitZone meleeHitZone;
 
     #endregion
 
     #region FIELDS
 
-    bool attackButtonPressedThisTick;
-    bool damageApplied = false;
+    bool isAttackButtonPressed;
+    bool isDamageApplied = true;
     CharacterController characterController;
     Animator animator;
 
-    static readonly int attackHash = Animator.StringToHash("Attack");
+    static readonly int attack1Hash = Animator.StringToHash("Attack1");
+    static readonly int attack2Hash = Animator.StringToHash("Attack2");
+    static readonly int attack3Hash = Animator.StringToHash("Attack3");
+
 
     #endregion
 
@@ -42,51 +44,175 @@ public class PredictedPlayerAttack : PredictedTransformModule, IPredictedInputRe
 
     void OnAttack(InputValue input)
     {
-        attackButtonPressedThisTick = input.isPressed;
+        isAttackButtonPressed = input.isPressed;
     }
 
     #endregion
 
     public void RecordInput(ref InputPayload inputPayload)
     {
-        inputPayload.AttackPressed = attackButtonPressedThisTick;
-        attackButtonPressedThisTick = false;
+        inputPayload.AttackPressed = isAttackButtonPressed;
     }
 
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
 
-        //Begin Attack
+        //Start First Attack
         if (inputPayload.AttackPressed && statePayload.PlayerState.Equals(PlayerState.Balanced))
         {
-            statePayload.PlayerState = PlayerState.Attacking;
-            statePayload.LastStateChangeTick = inputPayload.Tick;
+            statePayload.PlayerState = PlayerState.Attack1;
+            statePayload.LastStateChangeTick = statePayload.Tick;
 
-            damageApplied = false;
+            isDamageApplied = false;
 
             if (isLocalPlayer)
-                TriggerAttackAnimation();
+                TriggerAttackAnimation(attack1Hash);
             else if (isServer)
-                RpcTriggerAttackAnimation();
+                RpcTriggerAttackAnimation(attack1Hash);
         }
 
-        //During Attack
-        if (statePayload.PlayerState.Equals(PlayerState.Attacking))
+        //During First Attack
+        if (statePayload.PlayerState.Equals(PlayerState.Attack1))
         {
+            //Exit First Attack
+            if (!inputPayload.AttackPressed)
+            {
+                statePayload.PlayerState = PlayerState.Balanced;
+                statePayload.LastStateChangeTick = statePayload.Tick;
+                //if (isLocalPlayer)
+                //    TriggerAttackAnimation();
+                //else if (isServer)
+                //    RpcTriggerAttackAnimation();
+                return;
+            }
 
             //Damage Tick
-            if(damageApplied == false && damageApplicationPoint <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            if (isDamageApplied == false && damageApplicationPoint <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
                 if (isServer)
                     ServerApplyMeleeDamage();
 
-                damageApplied = true;
+                isDamageApplied = true;
             }
 
-            //End attack
-            if(attackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
+            //End First attack
+            if (attackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
+            {
+                //Start second attack
+                if (inputPayload.AttackPressed)
+                {
+                    isDamageApplied = false;
+                    statePayload.PlayerState = PlayerState.Attack2;
+
+                    if (isLocalPlayer)
+                        TriggerAttackAnimation(attack2Hash);
+                    else if (isServer)
+                        RpcTriggerAttackAnimation(attack2Hash);
+                }
+                else
+                    statePayload.PlayerState = PlayerState.Balanced;
+
+                statePayload.LastStateChangeTick = statePayload.Tick;
+                return;
+            }
+
+            characterController.Move(lungeDistance * inputPayload.TickDuration * transform.forward / attackDuration);
+
+            statePayload.Position = transform.position;
+        }
+
+        //During Second Attack
+        if (statePayload.PlayerState.Equals(PlayerState.Attack2))
+        {
+            //Exit Second Attack
+            if (!inputPayload.AttackPressed)
             {
                 statePayload.PlayerState = PlayerState.Balanced;
+                statePayload.LastStateChangeTick = statePayload.Tick;
+                //if (isLocalPlayer)
+                //    TriggerAttackAnimation();
+                //else if (isServer)
+                //    RpcTriggerAttackAnimation();
+                return;
+            }
+
+            //Damage Tick
+            if (isDamageApplied == false && damageApplicationPoint <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            {
+                if (isServer)
+                    ServerApplyMeleeDamage();
+
+                isDamageApplied = true;
+            }
+
+            //End Second attack
+            if (attackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
+            {
+                //Start Third attack
+                if (inputPayload.AttackPressed)
+                {
+                    isDamageApplied = false;
+                    statePayload.PlayerState = PlayerState.Attack3;
+
+                    if (isLocalPlayer)
+                        TriggerAttackAnimation(attack3Hash);
+                    else if (isServer)
+                        RpcTriggerAttackAnimation(attack3Hash);
+                }
+                else
+                    statePayload.PlayerState = PlayerState.Balanced;
+
+                statePayload.LastStateChangeTick = inputPayload.Tick;
+                return;
+            }
+
+            characterController.Move(lungeDistance * inputPayload.TickDuration * transform.forward / attackDuration);
+
+            statePayload.Position = transform.position;
+        }
+
+        //During Final Attack
+        if (statePayload.PlayerState.Equals(PlayerState.Attack3))
+        {
+
+            //Exit Final Attack
+            if (!inputPayload.AttackPressed)
+            {
+                statePayload.PlayerState = PlayerState.Balanced;
+
+                //if (isLocalPlayer)
+                //    TriggerAttackAnimation();
+                //else if (isServer)
+                //    RpcTriggerAttackAnimation();
+                return;
+            }
+
+            //Damage Tick
+            if (isDamageApplied == false && damageApplicationPoint <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            {
+                if (isServer)
+                    ServerApplyMeleeDamage();
+
+                isDamageApplied = true;
+            }
+
+            //End Third attack
+            if (attackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
+            {
+                //Start First attack
+                if (inputPayload.AttackPressed)
+                {
+
+                    statePayload.PlayerState = PlayerState.Attack1;
+
+                    if (isLocalPlayer)
+                        TriggerAttackAnimation(attack1Hash);
+                    else if (isServer)
+                        RpcTriggerAttackAnimation(attack1Hash);
+                }
+                else
+                    statePayload.PlayerState = PlayerState.Balanced;
+
                 statePayload.LastStateChangeTick = inputPayload.Tick;
                 return;
             }
@@ -100,21 +226,19 @@ public class PredictedPlayerAttack : PredictedTransformModule, IPredictedInputRe
     [Server]
     void ServerApplyMeleeDamage()
     {
-        foreach (Collider collider in forwardMeleeCollider.DamageableColliders)
-        {
-            if (collider.enabled) {
-                Debug.Log($"Dealing damage to {collider.gameObject.name}");
-            }
-        }
+        //foreach (Damageable damageable in meleeAttack.DamageableObjectsInRange)
+        //{
+        //    damageable.TakeDamage();
+        //}
     }
 
-    void TriggerAttackAnimation()
+    void TriggerAttackAnimation(int attackHash)
     {
         animator.SetTrigger(attackHash);
     }
 
     [ClientRpc(includeOwner = false)]
-    void RpcTriggerAttackAnimation()
+    void RpcTriggerAttackAnimation(int attackHash)
     {
         animator.SetTrigger(attackHash);
     }

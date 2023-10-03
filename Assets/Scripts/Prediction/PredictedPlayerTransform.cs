@@ -20,8 +20,8 @@ public class PredictedPlayerTransform : NetworkBehaviour
     float tickTimer;
 
     //client only
-    float acceptablePositionError = 0.001f;
-    float acceptableRotationError = 0.001f;
+    readonly float acceptablePositionError = 0.001f;
+    readonly float acceptableRotationError = 0.001f;
     float lastTickEndTime = 0f;
     InputPayload[] clientInputBuffer;
     StatePayload _latestServerState;
@@ -142,7 +142,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     {
         //if we're not in Tick 0, construct a state payload using the last state payload from the buffer
         StatePayload processedState = input.Tick > 0 ? new(stateBuffer[(input.Tick - 1) % BUFFER_SIZE]) : 
-                                                       new(input.Tick, transform);
+                                                       new(transform);
         Vector3 previousPosition = processedState.Position;
 
         //let all the state processors do their thing

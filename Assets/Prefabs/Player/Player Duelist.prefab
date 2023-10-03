@@ -77,7 +77,7 @@ Transform:
   - {fileID: 8415424949443270407}
   - {fileID: 2119531213881341116}
   - {fileID: 4625080935920202484}
-  - {fileID: 5497403216314526294}
+  - {fileID: 6720457108877000407}
   - {fileID: 4887716974286648346}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -211,7 +211,6 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   predictedTransformModules:
-  - {fileID: 0}
   - {fileID: 5277178614359865480}
   - {fileID: 6365695650205679477}
   - {fileID: 7318226568243036506}
@@ -233,8 +232,7 @@ MonoBehaviour:
   attackDuration: 0.5
   lungeDistance: 1
   damageApplicationPoint: 0.5
-  forwardMeleeCollider: {fileID: 7779213831635987867}
-  aoeMeleeCollider: {fileID: 775725471944012768}
+  meleeHitZone: {fileID: 7779213831635987867}
 --- !u!114 &6365695650205679477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1209,6 +1207,74 @@ Transform:
   - {fileID: 3508270704319704568}
   m_Father: {fileID: 4955990259701692463}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3491865449800661573
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6720457108877000407}
+  - component: {fileID: 5979815713330191229}
+  - component: {fileID: 1662724663764777043}
+  m_Layer: 7
+  m_Name: Damageable
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6720457108877000407
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3491865449800661573}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 172309495854167161}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &5979815713330191229
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3491865449800661573}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &1662724663764777043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3491865449800661573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27eb0c07b45b1a745957a8a13cce3e41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3494978589305214563
 GameObject:
   m_ObjectHideFlags: 0
@@ -1574,7 +1640,7 @@ GameObject:
   - component: {fileID: 1706526409521008380}
   - component: {fileID: 7779213831635987867}
   m_Layer: 6
-  m_Name: Forward Melee Collider
+  m_Name: Melee Hit Zone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1630,8 +1696,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95cc4136393313d4488c3ae2bfbf235e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _attackDuration: 1
+  _lungeDistance: 1
+  _damageApplicationPoint: 0.5
   characterControllerCollider: {fileID: 8979417501271799584}
-  _damageableColliders: []
+  _damageableObjectsInRange: []
 --- !u!1 &4830552844058500984
 GameObject:
   m_ObjectHideFlags: 0
@@ -1794,76 +1863,6 @@ Transform:
   - {fileID: 2034954726563646623}
   m_Father: {fileID: 5694046447161773067}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5504331431923805596
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5497403216314526294}
-  - component: {fileID: 1275613258698999079}
-  - component: {fileID: 775725471944012768}
-  m_Layer: 6
-  m_Name: AOE Melee Collider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5497403216314526294
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5504331431923805596}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 172309495854167161}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &1275613258698999079
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5504331431923805596}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 2
-  m_Height: 6
-  m_Direction: 1
-  m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &775725471944012768
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5504331431923805596}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95cc4136393313d4488c3ae2bfbf235e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterControllerCollider: {fileID: 8979417501271799584}
-  _damageableColliders: []
 --- !u!1 &5636313688569499697
 GameObject:
   m_ObjectHideFlags: 0

@@ -34,7 +34,6 @@ public struct InputPayload
         MoveDirection = Vector2.zero;
         LookAtDirection = Vector2.zero;
         AttackPressed = false;
-        TargetPressed = false;
     }
 
     public int Tick;
@@ -45,22 +44,20 @@ public struct InputPayload
 
     //todo combine all buttons into single ButtonsPressed enum
     public bool AttackPressed;
-    public bool TargetPressed;
 
 }
 
 public struct StatePayload
 {
-    public StatePayload(int tick, Transform transform)
+    public StatePayload(Transform transform)
     {
-        Tick = tick;
+        Tick = 0;
         Position = transform.position;
         Rotation = transform.rotation;
         LookDirection = 0f;
-        TargetPosition = Vector3.zero;
         Velocity = Vector3.zero;
-        PlayerState = PlayerState.Balanced;
         LastStateChangeTick = 0;
+        /*_playerState*/ PlayerState = PlayerState.Balanced;
     }
 
     //Construct a new state based off of the previous Tick.
@@ -70,25 +67,38 @@ public struct StatePayload
         Position = previousStatePayload.Position;
         Rotation = previousStatePayload.Rotation;
         LookDirection = previousStatePayload.LookDirection;
-        TargetPosition = previousStatePayload.TargetPosition;
         Velocity = previousStatePayload.Velocity;
-        PlayerState = previousStatePayload.PlayerState;
         LastStateChangeTick = previousStatePayload.LastStateChangeTick;
+        /*_playerState*/ PlayerState = previousStatePayload.PlayerState;
     }
+
+    //PlayerState _playerState;
 
     public int Tick;
     public Vector3 Position;
     public Quaternion Rotation;
     public float LookDirection;
-    public Vector3 TargetPosition;
     public Vector3 Velocity;
-    public PlayerState PlayerState;
     public int LastStateChangeTick;
+    public PlayerState PlayerState;
+    //public PlayerState PlayerState {
+    //    readonly get 
+    //    {
+    //        return _playerState; 
+    //    }
+    //    set 
+    //    {
+    //        LastStateChangeTick = Tick;
+    //        _playerState = value;
+    //    } 
+    //}
 }
 
 public enum PlayerState : byte
 {
     Balanced = 1,
-    Attacking = 2,
-    KnockBack = 4
+    Attack1 = 2,
+    Attack2 = 4,
+    Attack3 = 8,
+    Hit2 = 16
 }

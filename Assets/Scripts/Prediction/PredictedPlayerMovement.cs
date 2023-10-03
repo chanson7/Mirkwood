@@ -9,8 +9,14 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
     #region EDITOR EXPOSED FIELDS
 
     [Header("Movement Settings")]
+
+    [Tooltip("The speed multiplier for when the player moves forward")]
     [SerializeField] float _runSpeed;
+
+    [Tooltip("The speed multiplier for when the player strafes sideways")]
     [SerializeField] float _strafeSpeed;
+
+    [Tooltip("The speed multiplier for when the player moves backwards")]
     [SerializeField] float _backpedalSpeed;
 
     #endregion

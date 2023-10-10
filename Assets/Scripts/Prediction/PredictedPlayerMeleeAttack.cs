@@ -2,7 +2,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PredictedPlayerAttack : PredictedTransformModule, IPredictedInputRecorder, IPredictedStateProcessor
+public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedInputRecorder, IPredictedStateProcessor
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -37,7 +37,6 @@ public class PredictedPlayerAttack : PredictedTransformModule, IPredictedInputRe
     static readonly int attack2Hash = Animator.StringToHash("Attack2");
     static readonly int attack3Hash = Animator.StringToHash("Attack3");
 
-
     #endregion
 
     #region INPUT
@@ -47,12 +46,12 @@ public class PredictedPlayerAttack : PredictedTransformModule, IPredictedInputRe
         isAttackButtonPressed = input.isPressed;
     }
 
-    #endregion
-
     public void RecordInput(ref InputPayload inputPayload)
     {
         inputPayload.AttackPressed = isAttackButtonPressed;
     }
+
+    #endregion
 
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
@@ -226,10 +225,7 @@ public class PredictedPlayerAttack : PredictedTransformModule, IPredictedInputRe
     [Server]
     void ServerApplyMeleeDamage()
     {
-        //foreach (Damageable damageable in meleeAttack.DamageableObjectsInRange)
-        //{
-        //    damageable.TakeDamage();
-        //}
+        
     }
 
     void TriggerAttackAnimation(int attackHash)

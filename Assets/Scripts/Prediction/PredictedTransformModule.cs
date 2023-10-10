@@ -57,6 +57,7 @@ public struct StatePayload
         LookDirection = 0f;
         Velocity = Vector3.zero;
         LastStateChangeTick = 0;
+        HitVector = Vector3.zero;
         /*_playerState*/ PlayerState = PlayerState.Balanced;
     }
 
@@ -69,6 +70,7 @@ public struct StatePayload
         LookDirection = previousStatePayload.LookDirection;
         Velocity = previousStatePayload.Velocity;
         LastStateChangeTick = previousStatePayload.LastStateChangeTick;
+        HitVector = previousStatePayload.HitVector;
         /*_playerState*/ PlayerState = previousStatePayload.PlayerState;
     }
 
@@ -79,6 +81,7 @@ public struct StatePayload
     public Quaternion Rotation;
     public float LookDirection;
     public Vector3 Velocity;
+    public Vector3 HitVector;
     public int LastStateChangeTick;
     public PlayerState PlayerState;
     //public PlayerState PlayerState {
@@ -100,5 +103,5 @@ public enum PlayerState : byte
     Attack1 = 2,
     Attack2 = 4,
     Attack3 = 8,
-    Hit2 = 16
+    Hit = 16
 }

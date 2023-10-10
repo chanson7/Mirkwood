@@ -22,7 +22,7 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
     float attackRotationReduction = 1f;
 
     [SerializeField] 
-    Transform cameraPivot;
+    Transform cameraTarget;
 
     #endregion
 
@@ -51,7 +51,7 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
 
         verticalRotation = Mathf.Clamp(verticalRotation, minPitchAngle, maxPitchAngle);
 
-        cameraPivot.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+        cameraTarget.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
         transform.Rotate(Vector3.up, inputPayload.LookAtDirection.x * inputPayload.TickDuration * lateralSensitivity / 
             (statePayload.PlayerState.Equals(PlayerState.Attack1) ? attackRotationReduction : 1f)); //slow down rotation if we're attacking
 

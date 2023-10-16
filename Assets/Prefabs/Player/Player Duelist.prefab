@@ -793,7 +793,7 @@ MonoBehaviour:
     type: 3}
   uiController: {fileID: 1703985622041249448, guid: 0a7340c1982055146a76b9964b68d98c,
     type: 3}
-  enableGhost: 0
+  enableGhost: 1
 --- !u!4 &172309495854167161 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3493533285326876435, guid: 46c98452d8723f247be7594a6628114c,

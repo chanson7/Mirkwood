@@ -67,7 +67,7 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
         if (isLocalPlayer)
             AnimateMovement(movementVelocity);
-        else if (isServer)
+        else if (isServerOnly)
             RpcAnimateMovement(movementVelocity);
 
     }
@@ -89,12 +89,10 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     #region MONOBEHAVIOUR
 
-    public override void Start()
+    public void Awake()
     {
         animator = GetComponent<Animator>();
         characterController = GetComponent<CharacterController>();
-
-        base.Start();
     }
 
     #endregion

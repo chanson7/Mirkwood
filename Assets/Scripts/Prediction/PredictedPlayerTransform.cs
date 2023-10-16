@@ -72,7 +72,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     {
         if (isLocalPlayer)
             HandleTickOnLocalClient();
-        else if (isServer)
+        else if (isServerOnly)
             HandleTickOnServer();
         else if (isClient && !isLocalPlayer)
             HandleTickOnOtherClient();

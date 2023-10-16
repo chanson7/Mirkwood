@@ -49,6 +49,8 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
+        Debug.Log("On Start Local Player");
+
         stateBuffer = new StatePayload[BUFFER_SIZE];
         clientInputBuffer = new InputPayload[BUFFER_SIZE];
 
@@ -57,6 +59,8 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     public override void OnStartServer()
     {
+        Debug.Log("On Start Server");
+
         stateBuffer = new StatePayload[BUFFER_SIZE];
         inputQueue = new Queue<InputPayload>();
         _serverTickMs = 1f / NetworkManager.singleton.sendRate;
@@ -70,17 +74,18 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     public void Tick()
     {
-        if (isLocalPlayer)
-            HandleTickOnLocalClient();
-        else if (isServerOnly)
-            HandleTickOnServer();
-        else if (isClient && !isLocalPlayer)
-            HandleTickOnOtherClient();
+        if (isLocalPlayer)  
+            if(isServer) HandleTickOnHost();            //local client & host
+            else HandleTickOnLocalClient();             //local client but not host
+        else if (isServer) HandleTickOnServer();        //server
+        else if (isClient) HandleTickOnOtherClient();   //other player
     }
 
     [Client]
     void HandleTickOnLocalClient()
     {
+        Debug.Log($"Current Tick on Client: {_currentTick}");
+
         if (!_latestServerState.Equals(default(StatePayload)) && (lastProcessedState.Equals(default(StatePayload)) || !_latestServerState.Equals(lastProcessedState)))
             HandleServerReconciliation();
 
@@ -108,6 +113,8 @@ public class PredictedPlayerTransform : NetworkBehaviour
     [Server]
     void HandleTickOnServer()
     {
+        Debug.Log($"Current Tick on Server: {_currentTick}");
+
         int bufferIndex = -1;
 
         //server has some movements to process
@@ -125,6 +132,20 @@ public class PredictedPlayerTransform : NetworkBehaviour
         if (bufferIndex != -1)
             RpcOnServerMovementState(stateBuffer[bufferIndex]);
 
+    }
+
+    void HandleTickOnHost()
+    {
+        InputPayload inputPayload = new(_currentTick, Time.time - lastTickEndTime);
+        int bufferIndex = inputPayload.Tick % BUFFER_SIZE;
+
+        foreach (PredictedTransformModule transformModule in predictedTransformModules)
+            if (transformModule is IPredictedInputRecorder inputRecorder)
+                inputRecorder.RecordInput(ref inputPayload);
+
+        stateBuffer[bufferIndex] = ProcessInput(inputPayload);
+
+        RpcOnServerMovementState(stateBuffer[bufferIndex]);
     }
 
     [ClientRpc]

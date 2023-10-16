@@ -66,7 +66,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
 
             if (isLocalPlayer)
                 TriggerAttackAnimation(attack1Hash);
-            else if (isServer)
+            if (isServer)
                 RpcTriggerAttackAnimation(attack1Hash);
         }
 
@@ -80,7 +80,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 statePayload.LastStateChangeTick = statePayload.Tick;
                 //if (isLocalPlayer)
                 //    TriggerAttackAnimation();
-                //else if (isServer)
+                //if (isServer)
                 //    RpcTriggerAttackAnimation();
                 return;
             }
@@ -105,7 +105,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
 
                     if (isLocalPlayer)
                         TriggerAttackAnimation(attack2Hash);
-                    else if (isServer)
+                    if (isServer)
                         RpcTriggerAttackAnimation(attack2Hash);
                 }
                 else
@@ -130,7 +130,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 statePayload.LastStateChangeTick = statePayload.Tick;
                 //if (isLocalPlayer)
                 //    TriggerAttackAnimation();
-                //else if (isServer)
+                //if (isServer)
                 //    RpcTriggerAttackAnimation();
                 return;
             }
@@ -155,7 +155,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
 
                     if (isLocalPlayer)
                         TriggerAttackAnimation(attack3Hash);
-                    else if (isServer)
+                    if (isServer)
                         RpcTriggerAttackAnimation(attack3Hash);
                 }
                 else
@@ -181,7 +181,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
 
                 //if (isLocalPlayer)
                 //    TriggerAttackAnimation();
-                //else if (isServer)
+                //if (isServer)
                 //    RpcTriggerAttackAnimation();
                 return;
             }
@@ -201,12 +201,11 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 //Start First attack
                 if (inputPayload.AttackPressed)
                 {
-
                     statePayload.PlayerState = PlayerState.Attack1;
 
                     if (isLocalPlayer)
                         TriggerAttackAnimation(attack1Hash);
-                    else if (isServer)
+                    if (isServer)
                         RpcTriggerAttackAnimation(attack1Hash);
                 }
                 else

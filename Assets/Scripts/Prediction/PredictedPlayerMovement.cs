@@ -67,7 +67,7 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
         if (isLocalPlayer)
             AnimateMovement(movementVelocity);
-        else if (isServerOnly)
+        if (isServer)
             RpcAnimateMovement(movementVelocity);
 
     }
@@ -81,6 +81,7 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
     [ClientRpc(includeOwner = false)]
     void RpcAnimateMovement(Vector3 currentVelocity)
     {
+        Debug.Log($"{currentVelocity}");
         animator.SetFloat(forwardHash, transform.InverseTransformDirection(currentVelocity).z);
         animator.SetFloat(rightHash, transform.InverseTransformDirection(currentVelocity).x);
     }

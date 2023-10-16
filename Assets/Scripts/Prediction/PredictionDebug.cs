@@ -42,6 +42,7 @@ public class PredictionDebug : NetworkBehaviour
     {
         predictedPlayerTransform = GetComponent<PredictedPlayerTransform>();
     }
+
     void Update()
     {
         if (isLocalPlayer)

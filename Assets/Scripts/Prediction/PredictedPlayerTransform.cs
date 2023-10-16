@@ -49,8 +49,6 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     public override void OnStartLocalPlayer()
     {
-        Debug.Log("On Start Local Player");
-
         stateBuffer = new StatePayload[BUFFER_SIZE];
         clientInputBuffer = new InputPayload[BUFFER_SIZE];
 
@@ -59,8 +57,6 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        Debug.Log("On Start Server");
-
         stateBuffer = new StatePayload[BUFFER_SIZE];
         inputQueue = new Queue<InputPayload>();
         _serverTickMs = 1f / NetworkManager.singleton.sendRate;
@@ -84,8 +80,6 @@ public class PredictedPlayerTransform : NetworkBehaviour
     [Client]
     void HandleTickOnLocalClient()
     {
-        Debug.Log($"Current Tick on Client: {_currentTick}");
-
         if (!_latestServerState.Equals(default(StatePayload)) && (lastProcessedState.Equals(default(StatePayload)) || !_latestServerState.Equals(lastProcessedState)))
             HandleServerReconciliation();
 
@@ -113,8 +107,6 @@ public class PredictedPlayerTransform : NetworkBehaviour
     [Server]
     void HandleTickOnServer()
     {
-        Debug.Log($"Current Tick on Server: {_currentTick}");
-
         int bufferIndex = -1;
 
         //server has some movements to process

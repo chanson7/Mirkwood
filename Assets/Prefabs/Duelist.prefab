@@ -682,7 +682,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95cc4136393313d4488c3ae2bfbf235e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterControllerCollider: {fileID: 0}
+  characterControllerCollider: {fileID: 4089401258389817511}
   _damageableObjectsInRange: []
 --- !u!1 &3109005183963147016
 GameObject:

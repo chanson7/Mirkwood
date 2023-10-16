@@ -515,8 +515,13 @@ PrefabInstance:
     - target: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
       propertyPath: m_Name
-      value: Player Duelist 1
+      value: Player Duelist
       objectReference: {fileID: 0}
+    - target: {fileID: 3924781910590134620, guid: 46c98452d8723f247be7594a6628114c,
+        type: 3}
+      propertyPath: characterControllerCollider
+      value: 
+      objectReference: {fileID: 783578328289596365}
     - target: {fileID: 4777347572255766615, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
       propertyPath: m_Name
@@ -792,6 +797,12 @@ MonoBehaviour:
 --- !u!4 &172309495854167161 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3493533285326876435, guid: 46c98452d8723f247be7594a6628114c,
+    type: 3}
+  m_PrefabInstance: {fileID: 3611795167649536874}
+  m_PrefabAsset: {fileID: 0}
+--- !u!143 &783578328289596365 stripped
+CharacterController:
+  m_CorrespondingSourceObject: {fileID: 4089401258389817511, guid: 46c98452d8723f247be7594a6628114c,
     type: 3}
   m_PrefabInstance: {fileID: 3611795167649536874}
   m_PrefabAsset: {fileID: 0}

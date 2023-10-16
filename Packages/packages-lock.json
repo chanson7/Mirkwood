@@ -1,10 +1,11 @@
 {
   "dependencies": {
     "com.heathen.steamworkscomplete": {
-      "version": "file:E:/Dev/Packages/HeathenSourceRepo/Unity/Steamworks/com.heathen.steamworkscomplete",
+      "version": "git@github.com:chanson7/SteamworksCompleteUnity.git",
       "depth": 0,
-      "source": "local",
-      "dependencies": {}
+      "source": "git",
+      "dependencies": {},
+      "hash": "692f6e33e3ad44a132124e35c35700cfd49c5317"
     },
     "com.heathen.systemcore": {
       "version": "https://github.com/heathen-engineering/SystemCore.git?path=/com.heathen.systemcore",
@@ -311,7 +312,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "f45424822189ebd875d864a17d7f03b72eafbff7"
+      "hash": "141b4e1e31966242a6fb7c495b52ac3d1221bc75"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

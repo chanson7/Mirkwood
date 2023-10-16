@@ -68,7 +68,7 @@ public class SteamNetworkManager : NetworkManager
         {
             Debug.Log($"Starting the Host");
 
-            lobby.SetJoinable(false);
+            //lobby.SetJoinable(false);
             lobby.SetGameServer();
 
             this.lobby = lobby;

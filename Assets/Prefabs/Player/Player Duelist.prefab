@@ -455,7 +455,7 @@ PrefabInstance:
     - target: {fileID: 238781133252028645, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
       propertyPath: _assetId
-      value: 3190421645
+      value: 2151845104
       objectReference: {fileID: 0}
     - target: {fileID: 2922580119562246620, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
@@ -515,7 +515,7 @@ PrefabInstance:
     - target: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
       propertyPath: m_Name
-      value: Player Duelist
+      value: Player Duelist 1
       objectReference: {fileID: 0}
     - target: {fileID: 4777347572255766615, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}

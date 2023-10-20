@@ -5,17 +5,17 @@ public class LobbyUIController : MonoBehaviour
 {
 
     [SerializeField] TMP_Text statusText;
-    [SerializeField] QuickMatchLobbyControl lobbyControl;
+    QuickMatchLobbyControl quickMatchLobbyControl;
 
     public void UpdateStatusText()
     {
-        switch (lobbyControl.WorkingStatus)
+        switch (quickMatchLobbyControl.WorkingStatus)
         {
             case QuickMatchLobbyControl.Status.Searching:
                 statusText.SetText($"Searching...");
                 break;
             case QuickMatchLobbyControl.Status.WaitingForStart:
-                statusText.SetText($"{lobbyControl.Lobby.Members.Length}/{lobbyControl.Lobby.MaxMembers} Players Found");
+                statusText.SetText($"{quickMatchLobbyControl.Lobby.Members.Length}/{quickMatchLobbyControl.Lobby.MaxMembers} Players Found");
                 break;
             case QuickMatchLobbyControl.Status.Starting:
                 statusText.SetText($"Match Starting!");
@@ -23,6 +23,17 @@ public class LobbyUIController : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void StartQuickMatchLobby(int numPlayers)
+    {
+        quickMatchLobbyControl.createArguments.slots = numPlayers;
+        quickMatchLobbyControl.RunQuckMatch();
+    }
+
+    private void Awake()
+    {
+        quickMatchLobbyControl = GetComponent<QuickMatchLobbyControl>();
     }
 
 }

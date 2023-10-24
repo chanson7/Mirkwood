@@ -67,11 +67,11 @@ public class PanelManager : MonoBehaviour {
 
 		m_Open.SetBool(m_OpenParameterId, false);
 		SetSelected(m_PreviouslySelected);
-		StartCoroutine(DisablePanelDeleyed(m_Open));
+		StartCoroutine(DisablePanelDelayed(m_Open));
 		m_Open = null;
 	}
 
-	IEnumerator DisablePanelDeleyed(Animator anim)
+	IEnumerator DisablePanelDelayed(Animator anim)
 	{
 		bool closedStateReached = false;
 		bool wantToClose = true;

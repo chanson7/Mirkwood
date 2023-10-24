@@ -36,8 +36,8 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
 
     void OnLook(InputValue input)
     {
-        rotationInput.x = input.Get<Vector2>().x;
-        rotationInput.y = input.Get<Vector2>().y;
+        rotationInput.x = input.Get<Vector2>().x * lateralSensitivity;
+        rotationInput.y = input.Get<Vector2>().y * verticalSensitivity;
     }
 
     public void RecordInput(ref InputPayload inputPayload)
@@ -47,12 +47,12 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
 
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
-        float verticalRotation = statePayload.LookDirection - inputPayload.LookAtDirection.y * verticalSensitivity * inputPayload.TickDuration;
+        float verticalRotation = statePayload.LookDirection - inputPayload.LookAtDirection.y * inputPayload.TickDuration;
 
         verticalRotation = Mathf.Clamp(verticalRotation, minPitchAngle, maxPitchAngle);
 
         cameraTarget.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-        transform.Rotate(Vector3.up, inputPayload.LookAtDirection.x * inputPayload.TickDuration * lateralSensitivity / 
+        transform.Rotate(Vector3.up, inputPayload.LookAtDirection.x * inputPayload.TickDuration / 
             (statePayload.PlayerState.Equals(PlayerState.Attack1) ? attackRotationReduction : 1f)); //slow down rotation if we're attacking
 
         statePayload.Rotation = transform.rotation;

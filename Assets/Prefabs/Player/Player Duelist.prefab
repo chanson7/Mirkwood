@@ -462,6 +462,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: d9c63b895ec93434eb2594a251031c83, type: 2}
+    - target: {fileID: 3082480724180203295, guid: 46c98452d8723f247be7594a6628114c,
+        type: 3}
+      propertyPath: m_Name
+      value: Melee Area Of Effect
+      objectReference: {fileID: 0}
     - target: {fileID: 3493533285326876435, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -559,7 +564,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5587943912322670215}
+      addedObject: {fileID: 5180325795512186896}
     - targetCorrespondingSourceObject: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
       insertIndex: -1
@@ -567,7 +572,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5180325795512186896}
+      addedObject: {fileID: 5587943912322670215}
     - targetCorrespondingSourceObject: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
       insertIndex: -1
@@ -661,6 +666,40 @@ MonoBehaviour:
   - {fileID: 8053095096711657322}
   - {fileID: 5587943912322670215}
   - {fileID: 2897233537494777786}
+--- !u!114 &5180325795512186896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c553aebb5198ab49b979a3113e0a62f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+--- !u!114 &8053095096711657322
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2eb7d2b59f02ef40a30a8ab494759dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  attackDuration: 0.5
+  lungeDistance: 1
+  damageApplicationTime: 0.5
+  meleeAreaOfEffect: {fileID: 7322397342994585109}
 --- !u!114 &5587943912322670215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -679,40 +718,6 @@ MonoBehaviour:
   _runSpeed: 5
   _strafeSpeed: 3
   _backpedalSpeed: 1.5
---- !u!114 &8053095096711657322
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2eb7d2b59f02ef40a30a8ab494759dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  attackDuration: 0.5
-  lungeDistance: 1
-  damageApplicationPoint: 0.5
-  meleeHitZone: {fileID: 0}
---- !u!114 &5180325795512186896
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c553aebb5198ab49b979a3113e0a62f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
 --- !u!114 &2897233537494777786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -750,10 +755,10 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   playerUIController: {fileID: 3897475669117118997}
-  balance: 0
-  recoveryInterval: 0
-  balanceRecoveredPerInterval: 0
-  recoveryDelay: 0
+  balance: 100
+  recoveryInterval: 1
+  balanceRecoveredPerInterval: 1
+  recoveryDelay: 5
 --- !u!114 &6808766660584634746
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -806,3 +811,15 @@ CharacterController:
     type: 3}
   m_PrefabInstance: {fileID: 3611795167649536874}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7322397342994585109 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6305546386805738879, guid: 46c98452d8723f247be7594a6628114c,
+    type: 3}
+  m_PrefabInstance: {fileID: 3611795167649536874}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 232dffcb0e0957b4ebd0354f0546afe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -19,10 +19,11 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
     [SerializeField]
     [Range(0f,1f)]
     [Tooltip("The tick at which damage should be applied, as a percentage of the attack duration")]
-    float damageApplicationPoint = 0.5f;
+    float damageApplicationTime = 0.5f;
 
     [Header("")]
-    [SerializeField] MeleeHitZone meleeHitZone;
+    [SerializeField]
+    AreaOfEffect meleeAreaOfEffect;
 
     #endregion
 
@@ -85,11 +86,10 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 return;
             }
 
-            //Damage Tick
-            if (isDamageApplied == false && damageApplicationPoint <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            //First Attack Damage Tick
+            if (isDamageApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
-                if (isServer)
-                    ServerApplyMeleeDamage();
+                ApplyKnockback();
 
                 isDamageApplied = true;
             }
@@ -135,11 +135,10 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 return;
             }
 
-            //Damage Tick
-            if (isDamageApplied == false && damageApplicationPoint <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            //Second Attack Damage Tick
+            if (isDamageApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
-                if (isServer)
-                    ServerApplyMeleeDamage();
+                ApplyKnockback();
 
                 isDamageApplied = true;
             }
@@ -186,11 +185,10 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 return;
             }
 
-            //Damage Tick
-            if (isDamageApplied == false && damageApplicationPoint <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            //Final Attack Damage Tick
+            if (isDamageApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
-                if (isServer)
-                    ServerApplyMeleeDamage();
+                ApplyKnockback();
 
                 isDamageApplied = true;
             }
@@ -221,10 +219,15 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
         }
     }
 
-    [Server]
-    void ServerApplyMeleeDamage()
+    void ApplyKnockback()
     {
-        
+        foreach (Transform other in meleeAreaOfEffect.Collisions)
+        {
+            //math here
+            if(other.GetComponent<PredictedPlayerHit>() != null) {
+                other.GetComponent<PredictedPlayerHit>().HitVector = Vector3.forward;
+            }
+        }
     }
 
     void TriggerAttackAnimation(int attackHash)

@@ -1069,6 +1069,70 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 928992391}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &524375987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 524375982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ced20e1e84113b47961e5298f765f14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  idleGroup: {fileID: 0}
+  processingGroup: {fileID: 0}
+  updateRichPresenceGroupData: 1
+  kickWhen: 0600000008000000070000000400000002000000090000000100000003000000
+  searchArguments:
+    slots: -1
+    distance: 1
+    nearValues: []
+    numericFilters: []
+    stringFilters: []
+  createArguments:
+    usageHint: 0
+    name: 
+    slots: 2
+    type: 0
+    metadata: []
+  evtProcessStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  evtProcessStopped:
+    m_PersistentCalls:
+      m_Calls: []
+  evtLobbyFull:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2091692962}
+        m_TargetAssemblyTypeName: SteamNetworkManager, Assembly-CSharp
+        m_MethodName: StartSteamQuickMatch
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  evtGameCreated:
+    m_PersistentCalls:
+      m_Calls: []
+  evtEnterSuccess:
+    m_PersistentCalls:
+      m_Calls: []
+  evtEnterFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  evtCreateFailed:
+    m_PersistentCalls:
+      m_Calls: []
+  evtStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &546146672
 GameObject:
   m_ObjectHideFlags: 0
@@ -2344,7 +2408,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 100004, guid: 05a81c3d5091440058129444d28322f3,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 524375987}
   m_SourcePrefab: {fileID: 100100000, guid: 05a81c3d5091440058129444d28322f3, type: 3}
 --- !u!1 &964286307
 GameObject:

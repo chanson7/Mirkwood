@@ -4,9 +4,10 @@ using UnityEngine;
 public class AppInitializer : MonoBehaviour
 {
 
-    public void LoadScene(string sceneName)
+    public void LoadMainScene()
     {
-        SceneManager.LoadScene(sceneName);
+        Debug.Log("Loading Main Scene");
+        SceneManager.LoadScene("Main");
     }
 
 }

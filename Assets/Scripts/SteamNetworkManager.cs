@@ -62,7 +62,7 @@ public class SteamNetworkManager : NetworkManager
 
     #region Steam
 
-    public void StartSteamQuickMatch(LobbyData lobby)
+    public void StartSteamMatch(LobbyData lobby)
     {
         if (lobby.IsOwner)
         {
@@ -76,7 +76,7 @@ public class SteamNetworkManager : NetworkManager
         }
     }
 
-    public void JoinSteamQuickMatch(LobbyGameServer gameServer)
+    public void JoinSteamMatch(LobbyGameServer gameServer)
     {
         if (transport.GetType() != typeof(FizzySteamworks))
             return;

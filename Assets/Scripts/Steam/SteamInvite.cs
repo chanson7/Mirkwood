@@ -12,8 +12,6 @@ public class SteamInvite : MonoBehaviour
     {
         friend = GetComponent<FriendProfile>();
         lobby = GetComponentInParent<LobbyManager>().Lobby;
-
-        Debug.Log($"friend: {friend.UserData.Nickname} lobby: {lobby.Name}");
     }
 
     public void InviteFriendToGroupLobby()

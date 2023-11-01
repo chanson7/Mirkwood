@@ -178,7 +178,6 @@ GameObject:
   - component: {fileID: 1533198723}
   - component: {fileID: 1533198725}
   - component: {fileID: 1533198724}
-  - component: {fileID: 1533198726}
   m_Layer: 0
   m_Name: Steamworks
   m_TagString: Untagged
@@ -234,19 +233,7 @@ MonoBehaviour:
       m_Calls: []
   evtLobbyInviteArgumentDetected:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1533198726}
-        m_TargetAssemblyTypeName: SteamInviteManager, Assembly-CSharp
-        m_MethodName: HandleSteamInviteReceived
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1533198725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,18 +244,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 145b8a8b4f1f25d41ad3b96e446193e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1533198726
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1533198722}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26464b565140aae468e304e214bd9c5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807

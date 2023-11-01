@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SteamInviteManager : MonoBehaviour
 {
-    public void HandleSteamInviteReceived(LobbyData lobbyData)
+    public void HandleLaunchFromLobbyInvitation(LobbyData lobbyData)
     {
         Debug.Log($"{lobbyData.Name} invite received!");
     }

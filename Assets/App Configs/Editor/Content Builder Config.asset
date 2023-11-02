@@ -18,7 +18,11 @@ MonoBehaviour:
   targetApp: 836430
   lastDepot: 0
   depots:
-  - name: Mirkwood
+  - name: Windows Content
     id: 836431
-    target: 19
+    target: 2
+    extension: .exe
+  - name: Mac Content
+    id: 836432
+    target: 2
     extension: .exe

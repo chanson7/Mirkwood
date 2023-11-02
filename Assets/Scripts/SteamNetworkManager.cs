@@ -14,7 +14,7 @@ public class SteamNetworkManager : NetworkManager
     // Overrides the base singleton so we don't
     // have to cast to this type everywhere.
     public static new SteamNetworkManager singleton { get; private set; }
-    LobbyData lobby;
+    [SerializeField] LobbyManager lobbyManager;
 
     #region Unity Callbacks
 
@@ -62,16 +62,14 @@ public class SteamNetworkManager : NetworkManager
 
     #region Steam
 
-    public void StartSteamMatch(LobbyData lobby)
+    public void StartSteamMatch()
     {
-        if (lobby.IsOwner)
+        if (lobbyManager.Lobby.IsOwner)
         {
             Debug.Log($"Starting the Host");
 
-            //lobby.SetJoinable(false);
-            lobby.SetGameServer();
+            lobbyManager.Lobby.SetGameServer();
 
-            this.lobby = lobby;
             StartHost();
         }
     }

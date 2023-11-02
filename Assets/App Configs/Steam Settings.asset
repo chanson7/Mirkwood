@@ -15,7 +15,7 @@ MonoBehaviour:
   applicationId:
     m_AppId: 836430
   callbackTick_Milliseconds: 15
-  isDebugging: 1
+  isDebugging: 0
   server:
     autoInitialize: 0
     autoLogon: 0

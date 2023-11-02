@@ -64,3 +64,4 @@ crashlytics-build.properties
 
 # Local Files
 GameLiftSettings.yaml
+Assets/App Configs/Editor/Content Builder Config.asset

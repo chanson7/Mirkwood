@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class ApplicationManager : MonoBehaviour {
+[CreateAssetMenu(fileName = "App Manager", menuName = "ScriptableObjects/App Manager", order = 1)]
+public class ApplicationManager : ScriptableObject {
 	
-
 	public void Quit () 
 	{
 		#if UNITY_EDITOR

@@ -21,4 +21,10 @@ public class PartyLobbyControl : MonoBehaviour
         });
     }
 
+    private void OnApplicationQuit()
+    {
+        if (lobbyManager.Lobby != null)
+            lobbyManager.Lobby.Leave();
+    }
+
 }

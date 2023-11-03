@@ -20,9 +20,5 @@ MonoBehaviour:
   depots:
   - name: Windows Content
     id: 836431
-    target: 2
-    extension: .exe
-  - name: Mac Content
-    id: 836432
-    target: 2
+    target: 19
     extension: .exe

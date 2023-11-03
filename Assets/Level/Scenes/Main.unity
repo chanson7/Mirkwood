@@ -1607,7 +1607,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 909739171}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0000000055622356, y: -0.9463082, z: 0.32326588, w: 0.000000016282542}
+  m_LocalRotation: {x: -0.0000000055622356, y: -0.9463082, z: 0.32326588, w: -0.000000016282542}
   m_LocalPosition: {x: 0, y: 2.5, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2101,7 +2101,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1106365021
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8013,13 +8013,15 @@ ParticleSystemRenderer:
   m_RenderAlignment: 0
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
-  m_UseCustomVertexStreams: 0
   m_EnableGPUInstancing: 0
   m_ApplyActiveColorSpace: 0
   m_AllowRoll: 1
   m_FreeformStretching: 0
   m_RotateWithStretchDirection: 1
+  m_UseCustomVertexStreams: 0
   m_VertexStreams: 0001030405
+  m_UseCustomTrailVertexStreams: 0
+  m_TrailVertexStreams: 00010304
   m_Mesh: {fileID: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
@@ -8853,12 +8855,12 @@ PrefabInstance:
     - target: {fileID: 2407787416415939635, guid: 9626c8a0965f3304f8abe9ef342c568e,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2407787416415939635, guid: 9626c8a0965f3304f8abe9ef342c568e,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2407787416415939635, guid: 9626c8a0965f3304f8abe9ef342c568e,
         type: 3}
@@ -8868,22 +8870,22 @@ PrefabInstance:
     - target: {fileID: 5060085604931214620, guid: 9626c8a0965f3304f8abe9ef342c568e,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5060085604931214620, guid: 9626c8a0965f3304f8abe9ef342c568e,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5060085604931214620, guid: 9626c8a0965f3304f8abe9ef342c568e,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 5627923676409373637, guid: 9626c8a0965f3304f8abe9ef342c568e,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7120607169523300163, guid: 9626c8a0965f3304f8abe9ef342c568e,
         type: 3}

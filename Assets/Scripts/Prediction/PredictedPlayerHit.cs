@@ -2,9 +2,20 @@ using UnityEngine;
 
 public class PredictedPlayerHit : PredictedTransformModule, IPredictedStateProcessor
 {
+
+    #region EDITOR EXPOSED FIELDS
+
+    [Header("Knockback Settings")]
+    [SerializeField]
+    [Tooltip("The length of time a knockback lasts (in seconds)")]
+    float knockbackDuration = 0.2f;
+
+    #endregion
+
     #region FIELDS
-    
+
     Vector3 _hitVector = Vector3.zero;
+    CharacterController characterController;
     
     #endregion
 
@@ -25,26 +36,42 @@ public class PredictedPlayerHit : PredictedTransformModule, IPredictedStateProce
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
 
-        statePayload.HitVector += _hitVector;
-        _hitVector = Vector3.zero;
-
         //start Hit
-        if (!statePayload.PlayerState.Equals(PlayerState.Hit) && statePayload.HitVector.magnitude > 0)
+        if (!statePayload.PlayerState.Equals(PlayerState.Hit) && _hitVector.magnitude > 0)
         {
             Debug.Log($"Player has been hit! {statePayload.HitVector}");
+
+            statePayload.HitVector += _hitVector;
+            _hitVector = Vector3.zero;
             statePayload.PlayerState = PlayerState.Hit;
             statePayload.LastStateChangeTick = statePayload.Tick;
         }
 
-        //end Hit
-        if (statePayload.PlayerState.Equals(PlayerState.Hit))
+        //during Hit
+        else if (statePayload.PlayerState.Equals(PlayerState.Hit))
         {
-            HitVector = Vector3.zero;
+            Vector3 tickKnockback = inputPayload.TickDuration * statePayload.HitVector / knockbackDuration;
 
-            statePayload.HitVector = HitVector;
-            statePayload.PlayerState = PlayerState.Balanced;
-            statePayload.LastStateChangeTick = statePayload.Tick;
+            characterController.Move(tickKnockback);
+
+            statePayload.HitVector -= tickKnockback;
+
+            //end hit
+            if(statePayload.HitVector.magnitude <= 0f)
+            {
+                statePayload.PlayerState = PlayerState.Balanced;
+                statePayload.LastStateChangeTick = statePayload.Tick;
+            }
         }
     }
-    
+
+    #region MONOBEHAVIOUR
+
+    public void Awake()
+    {
+        characterController = GetComponent<CharacterController>();
+    }
+
+    #endregion
+
 }

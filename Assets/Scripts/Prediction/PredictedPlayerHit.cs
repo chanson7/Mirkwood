@@ -26,7 +26,6 @@ public class PredictedPlayerHit : PredictedTransformModule, IPredictedStateProce
         private get { return _hitVector; }
         set 
         {
-            Debug.Log("I got hit!");
             _hitVector += value;
         }
     }

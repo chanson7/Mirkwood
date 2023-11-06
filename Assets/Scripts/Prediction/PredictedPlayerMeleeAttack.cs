@@ -89,7 +89,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             //First Attack Damage Tick
             if (isDamageApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
-                ApplyKnockback();
+                ApplyHit();
 
                 isDamageApplied = true;
             }
@@ -138,7 +138,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             //Second Attack Damage Tick
             if (isDamageApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
-                ApplyKnockback();
+                ApplyHit();
 
                 isDamageApplied = true;
             }
@@ -188,7 +188,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             //Final Attack Damage Tick
             if (isDamageApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
-                ApplyKnockback();
+                ApplyHit();
 
                 isDamageApplied = true;
             }
@@ -219,10 +219,11 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
         }
     }
 
-    void ApplyKnockback()
+    void ApplyHit()
     {
         foreach (Transform other in meleeAreaOfEffect.Collisions)
         {
+
             //math here
             if(other.GetComponent<PredictedPlayerHit>() != null) {
                 other.GetComponent<PredictedPlayerHit>().HitVector = Vector3.forward;

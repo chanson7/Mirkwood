@@ -15,7 +15,8 @@ public class PredictedPlayerHit : PredictedTransformModule, IPredictedStateProce
         private get { return _hitVector; }
         set 
         {
-            _hitVector = value;
+            Debug.Log("I got hit!");
+            _hitVector += value;
         }
     }
 
@@ -23,6 +24,10 @@ public class PredictedPlayerHit : PredictedTransformModule, IPredictedStateProce
 
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
+
+        statePayload.HitVector += _hitVector;
+        _hitVector = Vector3.zero;
+
         //start Hit
         if (!statePayload.PlayerState.Equals(PlayerState.Hit) && statePayload.HitVector.magnitude > 0)
         {

@@ -359,7 +359,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 34614218}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.000000008283737, y: -0.9402716, z: 0.34042525, w: 0.0000000228801}
+  m_LocalRotation: {x: -0.000000008283735, y: -0.9402716, z: 0.34042525, w: -0.00000002288009}
   m_LocalPosition: {x: 0, y: 2.5, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -438,7 +438,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 155089871}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0000000074471513, y: -0.952017, z: 0.3060453, w: 0.000000023165901}
+  m_LocalRotation: {x: -0.0000000074471513, y: -0.952017, z: 0.3060453, w: -0.000000023165901}
   m_LocalPosition: {x: 0, y: 2.5, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -928,7 +928,7 @@ PrefabInstance:
     - target: {fileID: 2934707004437603361, guid: 2fb5e6b490175724ba0acc8ab1cbef53,
         type: 3}
       propertyPath: onClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2934707004437603361, guid: 2fb5e6b490175724ba0acc8ab1cbef53,
         type: 3}
@@ -1607,7 +1607,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 909739171}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0000000055622356, y: -0.9463082, z: 0.32326588, w: -0.000000016282542}
+  m_LocalRotation: {x: 0.0000000055622356, y: -0.9463082, z: 0.32326588, w: 0.000000016282542}
   m_LocalPosition: {x: 0, y: 2.5, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8886,6 +8886,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 6104370049761098636, guid: 9626c8a0965f3304f8abe9ef342c568e,
+        type: 3}
+      propertyPath: filter
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7120607169523300163, guid: 9626c8a0965f3304f8abe9ef342c568e,
         type: 3}

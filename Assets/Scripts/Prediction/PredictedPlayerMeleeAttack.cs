@@ -30,7 +30,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
     #region FIELDS
 
     bool isAttackButtonPressed;
-    bool isDamageApplied = true;
+    bool isHitApplied = true;
     CharacterController characterController;
     Animator animator;
 
@@ -63,7 +63,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             statePayload.PlayerState = PlayerState.Attack1;
             statePayload.LastStateChangeTick = statePayload.Tick;
 
-            isDamageApplied = false;
+            isHitApplied = false;
 
             if (isLocalPlayer)
                 TriggerAttackAnimation(attack1Hash);
@@ -79,19 +79,13 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             {
                 statePayload.PlayerState = PlayerState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;
-                //if (isLocalPlayer)
-                //    TriggerAttackAnimation();
-                //if (isServer)
-                //    RpcTriggerAttackAnimation();
                 return;
             }
 
             //First Attack Damage Tick
-            if (isDamageApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            if (isHitApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
-                ApplyHit();
-
-                isDamageApplied = true;
+                ApplyHit(statePayload.Position);
             }
 
             //End First attack
@@ -100,7 +94,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 //Start second attack
                 if (inputPayload.AttackPressed)
                 {
-                    isDamageApplied = false;
+                    isHitApplied = false;
                     statePayload.PlayerState = PlayerState.Attack2;
 
                     if (isLocalPlayer)
@@ -128,19 +122,13 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             {
                 statePayload.PlayerState = PlayerState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;
-                //if (isLocalPlayer)
-                //    TriggerAttackAnimation();
-                //if (isServer)
-                //    RpcTriggerAttackAnimation();
                 return;
             }
 
             //Second Attack Damage Tick
-            if (isDamageApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            if (isHitApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
-                ApplyHit();
-
-                isDamageApplied = true;
+                ApplyHit(statePayload.Position);
             }
 
             //End Second attack
@@ -149,7 +137,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 //Start Third attack
                 if (inputPayload.AttackPressed)
                 {
-                    isDamageApplied = false;
+                    isHitApplied = false;
                     statePayload.PlayerState = PlayerState.Attack3;
 
                     if (isLocalPlayer)
@@ -178,19 +166,13 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             {
                 statePayload.PlayerState = PlayerState.Balanced;
 
-                //if (isLocalPlayer)
-                //    TriggerAttackAnimation();
-                //if (isServer)
-                //    RpcTriggerAttackAnimation();
                 return;
             }
 
             //Final Attack Damage Tick
-            if (isDamageApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            if (isHitApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
-                ApplyHit();
-
-                isDamageApplied = true;
+                ApplyHit(statePayload.Position);
             }
 
             //End Third attack
@@ -219,16 +201,16 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
         }
     }
 
-    void ApplyHit()
+    void ApplyHit(Vector3 myPosition)
     {
         foreach (Transform other in meleeAreaOfEffect.Collisions)
         {
-
-            //math here
             if(other.GetComponent<PredictedPlayerHit>() != null) {
-                other.GetComponent<PredictedPlayerHit>().HitVector = Vector3.forward;
+                other.GetComponent<PredictedPlayerHit>().HitVector = (other.transform.position - myPosition).normalized;
             }
         }
+
+        isHitApplied = true;
     }
 
     void TriggerAttackAnimation(int attackHash)

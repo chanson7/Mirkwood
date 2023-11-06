@@ -10,6 +10,9 @@ public class PredictedPlayerHit : PredictedTransformModule, IPredictedStateProce
     [Tooltip("The length of time a knockback lasts (in seconds)")]
     float knockbackDuration = 0.2f;
 
+    [Tooltip("The point at which we consider the knockback finished, needed because a Vector3 magnitude will not reach zero")]
+    [SerializeField] float knockbackEndMagnitude = 0.0001f;
+
     #endregion
 
     #region FIELDS
@@ -35,13 +38,12 @@ public class PredictedPlayerHit : PredictedTransformModule, IPredictedStateProce
     public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
     {
 
-        //start Hit
-        if (!statePayload.PlayerState.Equals(PlayerState.Hit) && _hitVector.magnitude > 0)
-        {
-            Debug.Log($"Player has been hit! {statePayload.HitVector}");
+        statePayload.HitVector += _hitVector;
+        _hitVector = Vector3.zero;
 
-            statePayload.HitVector += _hitVector;
-            _hitVector = Vector3.zero;
+        //start Hit
+        if (!statePayload.PlayerState.Equals(PlayerState.Hit) && statePayload.HitVector.magnitude > 0)
+        {
             statePayload.PlayerState = PlayerState.Hit;
             statePayload.LastStateChangeTick = statePayload.Tick;
         }
@@ -49,15 +51,17 @@ public class PredictedPlayerHit : PredictedTransformModule, IPredictedStateProce
         //during Hit
         else if (statePayload.PlayerState.Equals(PlayerState.Hit))
         {
-            Vector3 tickKnockback = inputPayload.TickDuration * statePayload.HitVector / knockbackDuration;
+            Vector3 tickKnockback = inputPayload.TickDuration * (statePayload.HitVector / knockbackDuration);
 
             characterController.Move(tickKnockback);
 
             statePayload.HitVector -= tickKnockback;
+            statePayload.Position = transform.position;
 
             //end hit
-            if(statePayload.HitVector.magnitude <= 0f)
+            if(statePayload.HitVector.magnitude <= knockbackEndMagnitude)
             {
+                statePayload.HitVector = Vector3.zero;
                 statePayload.PlayerState = PlayerState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;
             }

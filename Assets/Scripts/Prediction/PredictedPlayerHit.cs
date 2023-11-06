@@ -31,7 +31,7 @@ public class PredictedPlayerHit : PredictedTransformModule, IPredictedStateProce
         //start Hit
         if (!statePayload.PlayerState.Equals(PlayerState.Hit) && statePayload.HitVector.magnitude > 0)
         {
-            Debug.Log($"Player has been hit! {statePayload.HitVector.magnitude}");
+            Debug.Log($"Player has been hit! {statePayload.HitVector}");
             statePayload.PlayerState = PlayerState.Hit;
             statePayload.LastStateChangeTick = statePayload.Tick;
         }

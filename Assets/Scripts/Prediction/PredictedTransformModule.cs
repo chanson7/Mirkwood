@@ -1,5 +1,4 @@
 using Mirror;
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(PredictedPlayerTransform))]
@@ -20,9 +19,9 @@ public interface IPredictedInputRecorder
     public void RecordInput(ref InputPayload inputPayload);
 }
 
-public interface IPredictedStateProcessor
+public interface IPredictedInputProcessor
 {
-    public abstract void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload);
+    public abstract void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload);
 }
 
 public struct InputPayload
@@ -55,11 +54,12 @@ public struct StatePayload
         Tick = 0;
         Position = transform.position;
         Rotation = transform.rotation;
+        /*_playerState*/ PlayerState = PlayerState.Balanced;
+        LastStateChangeTick = 0;
         LookDirection = 0f;
         Velocity = Vector3.zero;
-        LastStateChangeTick = 0;
-        HitVector = Vector3.zero;
-        /*_playerState*/ PlayerState = PlayerState.Balanced;
+        effectDisable = 0f;
+        effectTranslate = Vector3.zero;
     }
 
     //Construct a new state based off of the previous Tick.
@@ -68,11 +68,12 @@ public struct StatePayload
         Tick = previousStatePayload.Tick + 1;
         Position = previousStatePayload.Position;
         Rotation = previousStatePayload.Rotation;
+        /*_playerState*/ PlayerState = previousStatePayload.PlayerState;
+        LastStateChangeTick = previousStatePayload.LastStateChangeTick;
         LookDirection = previousStatePayload.LookDirection;
         Velocity = previousStatePayload.Velocity;
-        LastStateChangeTick = previousStatePayload.LastStateChangeTick;
-        HitVector = previousStatePayload.HitVector;
-        /*_playerState*/ PlayerState = previousStatePayload.PlayerState;
+        effectDisable  = previousStatePayload.effectDisable;
+        effectTranslate = previousStatePayload.effectTranslate;
     }
 
     //PlayerState _playerState;
@@ -80,11 +81,12 @@ public struct StatePayload
     public int Tick;
     public Vector3 Position;
     public Quaternion Rotation;
+    public PlayerState PlayerState;
+    public int LastStateChangeTick;
     public float LookDirection;
     public Vector3 Velocity;
-    public Vector3 HitVector;
-    public int LastStateChangeTick;
-    public PlayerState PlayerState;
+    public float effectDisable;
+    public Vector3 effectTranslate;
     //public PlayerState PlayerState {
     //    readonly get 
     //    {
@@ -104,5 +106,5 @@ public enum PlayerState : byte
     Attack1 = 2,
     Attack2 = 4,
     Attack3 = 8,
-    Hit = 16
+    Disabled = 16
 }

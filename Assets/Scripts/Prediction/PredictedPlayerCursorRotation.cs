@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredictedInputRecorder, IPredictedStateProcessor
+public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredictedInputRecorder, IPredictedInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -45,7 +45,7 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
         inputPayload.LookAtDirection = rotationInput;
     }
 
-    public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
+    public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
         float verticalRotation = statePayload.LookDirection - inputPayload.LookAtDirection.y * inputPayload.TickDuration;
 

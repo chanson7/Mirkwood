@@ -4,7 +4,7 @@ using Mirror;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInputRecorder, IPredictedStateProcessor
+public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInputRecorder, IPredictedInputProcessor
 {
     #region EDITOR EXPOSED FIELDS
 
@@ -49,7 +49,7 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
         inputPayload.MoveDirection = movementInput;
     }
 
-    public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
+    public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
         Vector3 movementVelocity = Vector3.zero;
 

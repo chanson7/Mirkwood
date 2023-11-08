@@ -2,7 +2,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedInputRecorder, IPredictedStateProcessor
+public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedInputRecorder, IPredictedInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -18,8 +18,16 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
 
     [SerializeField]
     [Range(0f,1f)]
-    [Tooltip("The tick at which damage should be applied, as a percentage of the attack duration")]
-    float damageApplicationTime = 0.5f;
+    [Tooltip("The time at which the hit should be applied, as a percentage of the attack duration")]
+    float hitApplicationTime = 0.5f;
+
+    [SerializeField]
+    [Tooltip("Multiplier for the distance that the player is knocked back")]
+    float knockbackMultiplier = 1f;
+
+    [SerializeField]
+    [Tooltip("The duration of the stun effect")]
+    float stunDuration = 0.2f;
 
     [Header("")]
     [SerializeField]
@@ -54,7 +62,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
 
     #endregion
 
-    public void ProcessTick(ref StatePayload statePayload, InputPayload inputPayload)
+    public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
 
         //Start First Attack
@@ -83,7 +91,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             }
 
             //First Attack Damage Tick
-            if (isHitApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            if (isHitApplied == false && hitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
                 ApplyHit(statePayload.Position);
             }
@@ -126,7 +134,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             }
 
             //Second Attack Damage Tick
-            if (isHitApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            if (isHitApplied == false && hitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
                 ApplyHit(statePayload.Position);
             }
@@ -170,7 +178,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             }
 
             //Final Attack Damage Tick
-            if (isHitApplied == false && damageApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
+            if (isHitApplied == false && hitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / attackDuration)
             {
                 ApplyHit(statePayload.Position);
             }
@@ -205,8 +213,10 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
     {
         foreach (Transform other in meleeAreaOfEffect.Collisions)
         {
-            if(other.GetComponent<PredictedPlayerHit>() != null) {
-                other.GetComponent<PredictedPlayerHit>().HitVector = (other.transform.position - myPosition).normalized;
+            if (other.GetComponent<PredictedPlayerDisable>() != null)
+            {
+                if(isServer)
+                    other.GetComponent<PredictedPlayerDisable>().ServerTriggerInterrupt((other.transform.position - myPosition).normalized * knockbackMultiplier, stunDuration);
             }
         }
 

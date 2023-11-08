@@ -698,7 +698,9 @@ MonoBehaviour:
   syncInterval: 0
   attackDuration: 0.5
   lungeDistance: 1
-  damageApplicationTime: 0.5
+  hitApplicationTime: 0.5
+  knockbackMultiplier: 1
+  stunDuration: 0.2
   meleeAreaOfEffect: {fileID: 7322397342994585109}
 --- !u!114 &5587943912322670215
 MonoBehaviour:

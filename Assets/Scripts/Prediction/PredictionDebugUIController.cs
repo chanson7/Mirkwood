@@ -9,7 +9,6 @@ public class PredictionDebugUIController : MonoBehaviour
     [SerializeField] TMP_Text lookDirectionText;
     [SerializeField] TMP_Text velocityText;
     [SerializeField] TMP_Text playerStateText;
-    [SerializeField] TMP_Text hitVectorText;
     [SerializeField] TMP_Text lastStateChangeTickText;
 
     public void UpdateTextUI(StatePayload statePayload)
@@ -20,7 +19,6 @@ public class PredictionDebugUIController : MonoBehaviour
         lookDirectionText.text = "Look Direction: " + statePayload.LookDirection.ToString();
         velocityText.text = "Velocity: " + statePayload.Velocity.ToString();
         playerStateText.text = "Player State: " + statePayload.PlayerState.ToString();
-        hitVectorText.text = "Hit Vector: " + statePayload.HitVector.ToString();
         lastStateChangeTickText.text = "Last State Change Tick: " + statePayload.LastStateChangeTick.ToString();
     }
 }

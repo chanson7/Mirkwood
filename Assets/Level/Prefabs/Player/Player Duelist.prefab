@@ -700,6 +700,7 @@ MonoBehaviour:
   secondAttack: {fileID: 11400000, guid: d49d0b54bf6fe7742a52395add4b297b, type: 2}
   thirdAttack: {fileID: 11400000, guid: c6af6123916a13d44bd814cae6656f46, type: 2}
   meleeAreaOfEffect: {fileID: 7322397342994585109}
+  animationCancelRate: 0.1
 --- !u!114 &5587943912322670215
 MonoBehaviour:
   m_ObjectHideFlags: 0

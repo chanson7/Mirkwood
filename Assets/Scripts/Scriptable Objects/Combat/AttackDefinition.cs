@@ -41,3 +41,21 @@ public class AttackDefinition : ScriptableObject
     [Range(0f, 5f)]
     public float StunDuration;
 }
+
+//[CreateAssetMenu(fileName = "Primary Attack Definition", menuName = "Combat/Primary Attack Definition", order = 1)]
+//public class PrimaryAttackDefinition : AttackDefinition
+//{
+
+//}
+
+//[CreateAssetMenu(fileName = "Secondary Attack Definition", menuName = "Combat/Secondary Attack Definition", order = 2)]
+//public class SecondaryAttackDefinition : AttackDefinition
+//{
+
+//}
+
+//[CreateAssetMenu(fileName = "Tertiary Attack Definition", menuName = "Combat/Tertiary Attack Definition", order = 3)]
+//public class TertiaryAttackDefinition : AttackDefinition
+//{
+
+//}

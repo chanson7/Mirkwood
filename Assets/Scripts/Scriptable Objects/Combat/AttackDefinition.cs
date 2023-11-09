@@ -16,21 +16,21 @@ public class AttackDefinition : ScriptableObject
     [Range(0f, 5f)]
     public float LungeDistance;
 
-    [Tooltip("The distance a player should move forwards during the attack animation")]
-    public float LungeDuration { get { return LungeEndTime - LungeStartTime; } }
 
-    [Header("Timing Checkpoints")]
+    [Header("Tick Checkpoints")]
     [Range(0f, 1f)]
-    [Tooltip("The time at which the hit should be applied, as a percentage of the attack duration")]
+    [Tooltip("The tick at which the hit should be applied, as a percentage of the attack duration")]
     public float HitApplicationTime = 0.5f;
 
     [Range(0f, 1f)]
-    [Tooltip("The time at which the lunge movement begins, as a percentage of the attack duration")]
+    [Tooltip("The tick at which the lunge movement begins, as a percentage of the attack duration")]
     public float LungeStartTime = 0.5f;
 
     [Range(0f, 1f)]
-    [Tooltip("The time at which the lunge movement ends, as a percentage of the attack duration")]
+    [Tooltip("The tick at which the lunge movement ends, as a percentage of the attack duration")]
     public float LungeEndTime = 0.5f;
+    
+    public float LungeDuration { get { return LungeEndTime - LungeStartTime; } }
 
     [Header("On Hit Effects")]
     [Tooltip("Multiplier for the distance that the player is knocked back")]

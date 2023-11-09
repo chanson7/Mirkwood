@@ -27,8 +27,8 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
     Animator animator;
     CharacterController characterController;
 
-    static readonly int forwardHash = Animator.StringToHash("Forward");
-    static readonly int rightHash = Animator.StringToHash("Right");
+    static readonly int moveForwardHash = Animator.StringToHash("MoveForward");
+    static readonly int moveRightHash = Animator.StringToHash("MoveRight");
 
     #endregion
 
@@ -51,10 +51,11 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
-        Vector3 movementVelocity = Vector3.zero;
 
         if (statePayload.PlayerState.Equals(PlayerState.Balanced))
         {
+
+            Vector3 movementVelocity;
             Vector3 previousPosition = statePayload.Position;
             Vector3 desiredMovement = (_strafeSpeed * inputPayload.MoveDirection.x * transform.right +
                 transform.forward * Mathf.Clamp(inputPayload.MoveDirection.y * _runSpeed, -_backpedalSpeed, _runSpeed)) * inputPayload.TickDuration;
@@ -63,26 +64,31 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
 
             movementVelocity = (transform.position - previousPosition) / inputPayload.TickDuration;
             statePayload.Position = transform.position;
-        }
-
-        if (isLocalPlayer)
+        
             AnimateMovement(movementVelocity);
-        if (isServer)
-            RpcAnimateMovement(movementVelocity);
+        }
 
     }
 
     void AnimateMovement(Vector3 currentVelocity)
     {
-        animator.SetFloat(forwardHash, transform.InverseTransformDirection(currentVelocity).z);
-        animator.SetFloat(rightHash, transform.InverseTransformDirection(currentVelocity).x);
-    }
+        if (isLocalPlayer)
+        {
+            animator.SetFloat(moveForwardHash, transform.InverseTransformDirection(currentVelocity).z);
+            animator.SetFloat(moveRightHash, transform.InverseTransformDirection(currentVelocity).x);
+        }
+        
+        if (isServer)
+            RpcAnimateMovement(currentVelocity);
+        
 
-    [ClientRpc(includeOwner = false)]
-    void RpcAnimateMovement(Vector3 currentVelocity)
-    {
-        animator.SetFloat(forwardHash, transform.InverseTransformDirection(currentVelocity).z);
-        animator.SetFloat(rightHash, transform.InverseTransformDirection(currentVelocity).x);
+        [ClientRpc(includeOwner = false)]
+        void RpcAnimateMovement(Vector3 currentVelocity)
+        {
+            animator.SetFloat(moveForwardHash, transform.InverseTransformDirection(currentVelocity).z);
+            animator.SetFloat(moveRightHash, transform.InverseTransformDirection(currentVelocity).x);
+        }
+
     }
 
     #endregion

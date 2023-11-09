@@ -19,8 +19,8 @@ public class PredictionDebug : NetworkBehaviour
     GameObject serverGhost;
     Animator ghostAnimator;
 
-    static readonly int forwardHash = Animator.StringToHash("Forward");
-    static readonly int rightHash = Animator.StringToHash("Right");
+    static readonly int forwardHash = Animator.StringToHash("MoveForward");
+    static readonly int rightHash = Animator.StringToHash("MoveRight");
 
     #endregion
 

@@ -8,9 +8,9 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
     #region EDITOR EXPOSED FIELDS
 
     [Header("Attacks")]
-    [SerializeField] AttackDefinition firstAttack;
-    [SerializeField] AttackDefinition secondAttack;
-    [SerializeField] AttackDefinition thirdAttack;
+    [SerializeField] AttackDefinition primaryAttack;
+    [SerializeField] AttackDefinition secondaryAttack;
+    [SerializeField] AttackDefinition tertiaryAttack;
 
     [Header("Settings")]
     [SerializeField]
@@ -49,23 +49,23 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
 
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {        
-        //Start First Attack
+        //Start Primary Attack
         if (inputPayload.AttackPressed && statePayload.PlayerState.Equals(PlayerState.Balanced))
         {
             isHitApplied = false;
 
-            statePayload.PlayerState = PlayerState.Attack1;
+            statePayload.PlayerState = PlayerState.Attacking_Primary;
             statePayload.LastStateChangeTick = statePayload.Tick;
 
-            TriggerAttackAnimation(firstAttack.AnimationHash);
+            TriggerAttackAnimation(primaryAttack.AnimationHash);
         }
 
-        //During First Attack
-        if (statePayload.PlayerState.Equals(PlayerState.Attack1))
+        //During Primary Attack
+        if (statePayload.PlayerState.Equals(PlayerState.Attacking_Primary))
         {
-            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / firstAttack.AttackDuration;
+            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / primaryAttack.AttackDuration;
 
-            //Exit First Attack
+            //Exit Primary Attack
             if (!inputPayload.AttackPressed && !isHitApplied)
             {
                 CancelAttackAnimation();
@@ -75,21 +75,21 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 return;
             }
 
-            //First Attack Damage Tick
-            if (isHitApplied == false && firstAttack.HitApplicationTime <= attackCompletionPercentage)
+            //Primary Attack Damage Tick
+            if (isHitApplied == false && primaryAttack.HitApplicationTime <= attackCompletionPercentage)
             {
-                ApplyHit(statePayload.Position, firstAttack);
+                ApplyHit(statePayload.Position, primaryAttack);
             }
 
-            //End First attack
-            if (firstAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
+            //End Primary attack
+            if (primaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
             {
-                //Start second attack
+                //Start Secondary attack
                 if (inputPayload.AttackPressed)
                 {
                     isHitApplied = false;
-                    statePayload.PlayerState = PlayerState.Attack2;
-                    TriggerAttackAnimation(secondAttack.AnimationHash);
+                    statePayload.PlayerState = PlayerState.Attacking_Secondary;
+                    TriggerAttackAnimation(secondaryAttack.AnimationHash);
                 }
                 else
                     statePayload.PlayerState = PlayerState.Balanced;
@@ -98,18 +98,18 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 return;
             }
 
-            if((firstAttack.LungeStartTime <= attackCompletionPercentage && firstAttack.LungeEndTime >= attackCompletionPercentage))
-                characterController.Move(firstAttack.LungeDistance * inputPayload.TickDuration * transform.forward / firstAttack.LungeDuration);
+            if((primaryAttack.LungeStartTime <= attackCompletionPercentage && primaryAttack.LungeEndTime >= attackCompletionPercentage))
+                characterController.Move(primaryAttack.LungeDistance * inputPayload.TickDuration * transform.forward / primaryAttack.LungeDuration);
 
             statePayload.Position = transform.position;
         }
 
-        //During Second Attack
-        if (statePayload.PlayerState.Equals(PlayerState.Attack2))
+        //During Secondary Attack
+        if (statePayload.PlayerState.Equals(PlayerState.Attacking_Secondary))
         {
-            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / firstAttack.AttackDuration;
+            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / primaryAttack.AttackDuration;
 
-            //Exit Second Attack
+            //Exit Secondary Attack
             if (!inputPayload.AttackPressed && !isHitApplied)
             {
                 statePayload.PlayerState = PlayerState.Balanced;
@@ -120,22 +120,22 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 return;
             }
 
-            //Second Attack Damage Tick
-            if (isHitApplied == false && secondAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / secondAttack.AttackDuration)
+            //Secondary Attack Damage Tick
+            if (isHitApplied == false && secondaryAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / secondaryAttack.AttackDuration)
             {
-                ApplyHit(statePayload.Position, secondAttack);
+                ApplyHit(statePayload.Position, secondaryAttack);
             }
 
-            //End Second attack
-            if (secondAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
+            //End Secondary attack
+            if (secondaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
             {
-                //Start Third attack
+                //Start Tertiary attack
                 if (inputPayload.AttackPressed)
                 {
                     isHitApplied = false;
-                    statePayload.PlayerState = PlayerState.Attack3;
+                    statePayload.PlayerState = PlayerState.Attacking_Tertiary;
 
-                    TriggerAttackAnimation(thirdAttack.AnimationHash);
+                    TriggerAttackAnimation(tertiaryAttack.AnimationHash);
 
                 }
                 else
@@ -145,18 +145,18 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 return;
             }
 
-            if ((secondAttack.LungeStartTime <= attackCompletionPercentage && secondAttack.LungeEndTime >= attackCompletionPercentage))
-                characterController.Move(secondAttack.LungeDistance * inputPayload.TickDuration * transform.forward / secondAttack.LungeDuration);
+            if ((secondaryAttack.LungeStartTime <= attackCompletionPercentage && secondaryAttack.LungeEndTime >= attackCompletionPercentage))
+                characterController.Move(secondaryAttack.LungeDistance * inputPayload.TickDuration * transform.forward / secondaryAttack.LungeDuration);
 
             statePayload.Position = transform.position;
         }
 
-        //During Third Attack
-        if (statePayload.PlayerState.Equals(PlayerState.Attack3))
+        //During Tertiary Attack
+        if (statePayload.PlayerState.Equals(PlayerState.Attacking_Tertiary))
         {
-            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / firstAttack.AttackDuration;
+            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / primaryAttack.AttackDuration;
 
-            //Exit Third Attack
+            //Exit Tertiary Attack
             if (!inputPayload.AttackPressed && !isHitApplied)
             {
                 statePayload.PlayerState = PlayerState.Balanced;
@@ -165,21 +165,21 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 return;
             }
 
-            //Third Attack Damage Tick
-            if (isHitApplied == false && thirdAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / thirdAttack.AttackDuration)
+            //Tertiary Attack Damage Tick
+            if (isHitApplied == false && tertiaryAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs / tertiaryAttack.AttackDuration)
             {
-                ApplyHit(statePayload.Position, thirdAttack);
+                ApplyHit(statePayload.Position, tertiaryAttack);
             }
 
-            //End Third attack
-            if (thirdAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
+            //End Tertiary attack
+            if (tertiaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
             {
-                //Restart from First attack
+                //Restart from Primary attack
                 if (inputPayload.AttackPressed)
                 {
-                    statePayload.PlayerState = PlayerState.Attack1;
+                    statePayload.PlayerState = PlayerState.Attacking_Primary;
 
-                    TriggerAttackAnimation(firstAttack.AnimationHash);
+                    TriggerAttackAnimation(primaryAttack.AnimationHash);
                 }
                 else
                     statePayload.PlayerState = PlayerState.Balanced;
@@ -188,8 +188,8 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
                 return;
             }
 
-            if ((thirdAttack.LungeStartTime <= attackCompletionPercentage && thirdAttack.LungeEndTime >= attackCompletionPercentage))
-                characterController.Move(thirdAttack.LungeDistance * inputPayload.TickDuration * transform.forward / thirdAttack.LungeDuration);
+            if ((tertiaryAttack.LungeStartTime <= attackCompletionPercentage && tertiaryAttack.LungeEndTime >= attackCompletionPercentage))
+                characterController.Move(tertiaryAttack.LungeDistance * inputPayload.TickDuration * transform.forward / tertiaryAttack.LungeDuration);
 
             statePayload.Position = transform.position;
         }
@@ -214,7 +214,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
         if (isLocalPlayer)
             animator.SetTrigger(attackHash);
         
-        else if(isServer)
+        if(isServer)
             RpcTriggerAttackAnimation(attackHash);
 
 
@@ -230,7 +230,7 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
         if (isLocalPlayer)
             animator.CrossFade(defaultAnimationState, animationCancelRate);
 
-        else if (isServer)
+        if (isServer)
             RpcCancelAttackAnimation();
 
         [ClientRpc(includeOwner = false)]

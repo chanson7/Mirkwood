@@ -34,6 +34,7 @@ public struct InputPayload
         MoveDirection = Vector2.zero;
         LookAtDirection = Vector2.zero;
         AttackPressed = false;
+        DodgePressed = false;
     }
 
     public int Tick;
@@ -44,6 +45,7 @@ public struct InputPayload
 
     //todo combine all buttons into single ButtonsPressed enum
     public bool AttackPressed;
+    public bool DodgePressed;
 
 }
 
@@ -103,8 +105,9 @@ public struct StatePayload
 public enum PlayerState : byte
 {
     Balanced = 1,
-    Attack1 = 2,
-    Attack2 = 4,
-    Attack3 = 8,
-    Disabled = 16
+    Attacking_Primary = 2,
+    Attacking_Secondary = 4,
+    Attacking_Tertiary = 8,
+    Dodging = 16,
+    Disabled = 32
 }

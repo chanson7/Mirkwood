@@ -53,7 +53,7 @@ public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredicte
 
         cameraTarget.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
         transform.Rotate(Vector3.up, inputPayload.LookAtDirection.x * inputPayload.TickDuration / 
-            (statePayload.PlayerState.Equals(PlayerState.Attack1) ? attackRotationReduction : 1f)); //slow down rotation if we're attacking
+            (statePayload.PlayerState.Equals(PlayerState.Attacking_Primary) ? attackRotationReduction : 1f)); //slow down rotation if we're attacking
 
         statePayload.Rotation = transform.rotation;
         statePayload.LookDirection = verticalRotation;

@@ -52,7 +52,7 @@
                 },
                 {
                     "name": "Dodge",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "b1f50845-df91-4a32-bf87-12ddf3de775c",
                     "expectedControlType": "Button",
                     "processors": "",

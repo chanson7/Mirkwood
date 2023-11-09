@@ -589,6 +589,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 3113187297178717713}
+    - targetCorrespondingSourceObject: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3412247205610316002}
   m_SourcePrefab: {fileID: 100100000, guid: 46c98452d8723f247be7594a6628114c, type: 3}
 --- !u!1 &172309495854167157 stripped
 GameObject:
@@ -664,6 +668,7 @@ MonoBehaviour:
   predictedTransformModules:
   - {fileID: 5180325795512186896}
   - {fileID: 8053095096711657322}
+  - {fileID: 3412247205610316002}
   - {fileID: 5587943912322670215}
   - {fileID: 2897233537494777786}
 --- !u!114 &5180325795512186896
@@ -696,9 +701,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  firstAttack: {fileID: 11400000, guid: b41bb376b02b097459946a5b1009a286, type: 2}
-  secondAttack: {fileID: 11400000, guid: d49d0b54bf6fe7742a52395add4b297b, type: 2}
-  thirdAttack: {fileID: 11400000, guid: c6af6123916a13d44bd814cae6656f46, type: 2}
+  primaryAttack: {fileID: 11400000, guid: b41bb376b02b097459946a5b1009a286, type: 2}
+  secondaryAttack: {fileID: 11400000, guid: d49d0b54bf6fe7742a52395add4b297b, type: 2}
+  tertiaryAttack: {fileID: 11400000, guid: c6af6123916a13d44bd814cae6656f46, type: 2}
   meleeAreaOfEffect: {fileID: 7322397342994585109}
   animationCancelRate: 0.1
 --- !u!114 &5587943912322670215
@@ -799,7 +804,23 @@ MonoBehaviour:
     type: 3}
   uiController: {fileID: 1703985622041249448, guid: 0a7340c1982055146a76b9964b68d98c,
     type: 3}
-  enableGhost: 1
+  enableGhost: 0
+--- !u!114 &3412247205610316002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36b188fbc9fda5469ea19cd74cc89a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  dodge: {fileID: 11400000, guid: ae9936d740588ef47a465d8bf8fd4e19, type: 2}
 --- !u!4 &172309495854167161 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3493533285326876435, guid: 46c98452d8723f247be7594a6628114c,

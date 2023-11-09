@@ -213,10 +213,10 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
     {
         foreach (Transform other in meleeAreaOfEffect.Collisions)
         {
-            if (other.GetComponent<PredictedPlayerDisable>() != null)
+            if (other.GetComponent<PredictedPlayerReceiveHit>() != null)
             {
                 if(isServer)
-                    other.GetComponent<PredictedPlayerDisable>().ServerTriggerInterrupt((other.transform.position - myPosition).normalized * knockbackMultiplier, stunDuration);
+                    other.GetComponent<PredictedPlayerReceiveHit>().ServerTriggerHitReceived((other.transform.position - myPosition).normalized * knockbackMultiplier, stunDuration);
             }
         }
 

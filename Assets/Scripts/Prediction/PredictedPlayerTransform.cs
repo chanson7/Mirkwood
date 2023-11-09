@@ -2,7 +2,7 @@
 using UnityEngine;
 using Mirror;
 
-[RequireComponent(typeof(PredictedPlayerDisable), typeof(NetworkIdentity))]
+[RequireComponent(typeof(PredictedPlayerReceiveHit), typeof(NetworkIdentity))]
 public class PredictedPlayerTransform : NetworkBehaviour
 {
 

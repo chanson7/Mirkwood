@@ -696,11 +696,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  attackDuration: 0.5
-  lungeDistance: 1
-  hitApplicationTime: 0.5
-  knockbackMultiplier: 1
-  stunDuration: 0.2
+  firstAttack: {fileID: 11400000, guid: b41bb376b02b097459946a5b1009a286, type: 2}
+  secondAttack: {fileID: 11400000, guid: d49d0b54bf6fe7742a52395add4b297b, type: 2}
+  thirdAttack: {fileID: 11400000, guid: c6af6123916a13d44bd814cae6656f46, type: 2}
   meleeAreaOfEffect: {fileID: 7322397342994585109}
 --- !u!114 &5587943912322670215
 MonoBehaviour:

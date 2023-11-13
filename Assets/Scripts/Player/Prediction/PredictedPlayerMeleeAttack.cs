@@ -50,12 +50,13 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {        
         //Start Primary Attack
-        if (inputPayload.AttackPressed && statePayload.PlayerState.Equals(PlayerState.Balanced))
+        if (inputPayload.AttackPressed && statePayload.PlayerState.Equals(PlayerState.Balanced) && statePayload.Energy >= primaryAttack.EnergyCost)
         {
             isHitApplied = false;
 
             statePayload.PlayerState = PlayerState.Attacking_Primary;
             statePayload.LastStateChangeTick = statePayload.Tick;
+            statePayload.Energy -= primaryAttack.EnergyCost;
 
             TriggerAttackAnimation(primaryAttack.AnimationHash);
         }
@@ -85,10 +86,11 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             if (primaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
             {
                 //Start Secondary attack
-                if (inputPayload.AttackPressed)
+                if (inputPayload.AttackPressed && statePayload.Energy >= secondaryAttack.EnergyCost)
                 {
                     isHitApplied = false;
                     statePayload.PlayerState = PlayerState.Attacking_Secondary;
+                    statePayload.Energy -= secondaryAttack.EnergyCost;
                     TriggerAttackAnimation(secondaryAttack.AnimationHash);
                 }
                 else
@@ -130,13 +132,12 @@ public class PredictedPlayerMeleeAttack : PredictedTransformModule, IPredictedIn
             if (secondaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
             {
                 //Start Tertiary attack
-                if (inputPayload.AttackPressed)
+                if (inputPayload.AttackPressed && statePayload.Energy >= tertiaryAttack.EnergyCost)
                 {
                     isHitApplied = false;
                     statePayload.PlayerState = PlayerState.Attacking_Tertiary;
-
+                    statePayload.Energy -= tertiaryAttack.EnergyCost;
                     TriggerAttackAnimation(tertiaryAttack.AnimationHash);
-
                 }
                 else
                     statePayload.PlayerState = PlayerState.Balanced;

@@ -2,7 +2,7 @@
 using UnityEngine;
 using Mirror;
 
-[RequireComponent(typeof(PredictedPlayerReceiveHit), typeof(NetworkIdentity))]
+[RequireComponent(typeof(PredictedPlayerReceiveHit), typeof(NetworkIdentity), typeof(PlayerObject))]
 public class PredictedPlayerTransform : NetworkBehaviour
 {
 
@@ -20,6 +20,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     int currentTick;
     float tickTimer;
     Queue<UnpredictedTransformEffect> unpredictedEffectsQueue;
+    PlayerObject playerObject;
 
     //client only
     readonly float acceptablePositionError = 0.001f;
@@ -126,8 +127,9 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
         //we processed all of the input!!
         if (bufferIndex != -1)
+        {
             RpcOnServerStateUpdated(stateBuffer[bufferIndex]);
-
+        }
     }
 
     [Server]
@@ -136,13 +138,14 @@ public class PredictedPlayerTransform : NetworkBehaviour
         unpredictedEffectsQueue.Enqueue(effect);
 
         TargetEnqueueUnpredictedEvent(effect);
+
+        [TargetRpc]
+        void TargetEnqueueUnpredictedEvent(UnpredictedTransformEffect effect)
+        {
+            unpredictedEffectsQueue.Enqueue(effect);
+        }
     }
 
-    [TargetRpc]
-    void TargetEnqueueUnpredictedEvent(UnpredictedTransformEffect effect)
-    {
-        unpredictedEffectsQueue.Enqueue(effect);
-    }
 
     void HandleTickOnHost()
     {
@@ -181,7 +184,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
         {
             UnpredictedTransformEffect effect = unpredictedEffectsQueue.Dequeue();
             
-            state.effectDisable += effect.Duration;
+            state.effectDuration += effect.Duration;
             state.effectTranslate += effect.Translation;
         }
 
@@ -252,6 +255,11 @@ public class PredictedPlayerTransform : NetworkBehaviour
             lastTickEndTime = Time.time;
             currentTick++;
         }
+    }
+
+    private void Awake()
+    {
+        playerObject = GetComponent<PlayerObject>();
     }
 
     #endregion

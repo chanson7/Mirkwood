@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9f1946b7acfcd64ca38bd34979980a3, type: 3}
+  m_Name: Player Build
+  m_EditorClassIdentifier: 
+  MaxEnergy: 5
+  EnergyRecoveryRate: 1
+  BalanceRecoveryRate: 1
+  PrimaryAttack: {fileID: 11400000, guid: b41bb376b02b097459946a5b1009a286, type: 2}
+  SecondaryAttack: {fileID: 11400000, guid: d49d0b54bf6fe7742a52395add4b297b, type: 2}
+  TertiaryAttack: {fileID: 11400000, guid: c6af6123916a13d44bd814cae6656f46, type: 2}
+  Dodge: {fileID: 11400000, guid: ae9936d740588ef47a465d8bf8fd4e19, type: 2}
+  Block: {fileID: 11400000, guid: cd82c912c9457b241b6b3eaf5fb27816, type: 2}

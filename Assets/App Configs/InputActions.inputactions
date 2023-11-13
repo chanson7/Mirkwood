@@ -43,7 +43,7 @@
                 },
                 {
                     "name": "Block",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "33456ee5-1e3a-483c-a950-652c285e9a27",
                     "expectedControlType": "Button",
                     "processors": "",

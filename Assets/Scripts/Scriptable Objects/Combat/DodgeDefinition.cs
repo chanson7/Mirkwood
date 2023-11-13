@@ -16,4 +16,8 @@ public class DodgeDefinition : ScriptableObject
     [Range(0f, 5f)]
     public float DodgeDistance;
 
+    [Tooltip("The amount of energy used to dodge")]
+    [Range(1, 4)]
+    public int EnergyCost;
+
 }

@@ -29,7 +29,7 @@ public class PredictedPlayerReceiveHit : PredictedTransformModule, IPredictedInp
     public void ProcessInput(ref StatePayload statePayload, InputPayload input)
     {
         //first interrupt tick
-        if (!statePayload.PlayerState.Equals(PlayerState.Disabled) && statePayload.effectDisable > 0f)
+        if ((!statePayload.PlayerState.Equals(PlayerState.Disabled) && !statePayload.PlayerState.Equals(PlayerState.Blocking)) && statePayload.effectDuration > 0f)
         {
             statePayload.PlayerState = PlayerState.Disabled;
             statePayload.LastStateChangeTick = statePayload.Tick;
@@ -43,19 +43,19 @@ public class PredictedPlayerReceiveHit : PredictedTransformModule, IPredictedInp
         //during interrupt
         if (statePayload.PlayerState.Equals(PlayerState.Disabled))
         {
-            Vector3 tickKnockback = input.TickDuration * (statePayload.effectTranslate / statePayload.effectDisable);
+            Vector3 tickKnockback = input.TickDuration * (statePayload.effectTranslate / statePayload.effectDuration);
             tickKnockback.y = 0f; //dont get knocked up into the air
 
             characterController.Move(tickKnockback);
 
             statePayload.effectTranslate -= tickKnockback;
-            statePayload.effectDisable -= input.TickDuration;
+            statePayload.effectDuration -= input.TickDuration;
             statePayload.Position = transform.position;
 
             //end interrupt
-            if(statePayload.effectDisable <= 0f)
+            if(statePayload.effectDuration <= 0f)
             {
-                statePayload.effectDisable = 0f;
+                statePayload.effectDuration = 0f;
                 statePayload.effectTranslate = Vector3.zero;
                 statePayload.PlayerState = PlayerState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;

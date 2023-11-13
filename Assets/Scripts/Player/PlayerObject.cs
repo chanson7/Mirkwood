@@ -12,7 +12,21 @@ public class PlayerObject : NetworkBehaviour
     [SerializeField] Transform cameraTargetTransform;
     [SerializeField] GameObject playerUI;
 
+    [Header("Player Build")]
+    [SerializeField] PlayerBuildDefinition _playerBuild;
+
     #endregion
+
+    #region PROPERTIES
+
+    public PlayerBuildDefinition PlayerBuild {  get { return _playerBuild; } }
+
+    #endregion
+
+    public override void OnStartServer()
+    {
+        GameManager.Singleton.RegisterPlayerObject(this);
+    }
 
     public override void OnStartLocalPlayer()
     {

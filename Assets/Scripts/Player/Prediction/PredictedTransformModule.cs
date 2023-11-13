@@ -35,6 +35,7 @@ public struct InputPayload
         LookAtDirection = Vector2.zero;
         AttackPressed = false;
         DodgePressed = false;
+        BlockPressed = false;
     }
 
     public int Tick;
@@ -46,6 +47,7 @@ public struct InputPayload
     //todo combine all buttons into single ButtonsPressed enum
     public bool AttackPressed;
     public bool DodgePressed;
+    public bool BlockPressed;
 
 }
 
@@ -58,9 +60,12 @@ public struct StatePayload
         Rotation = transform.rotation;
         /*_playerState*/ PlayerState = PlayerState.Balanced;
         LastStateChangeTick = 0;
+        Balance = 100f;
+        Energy = 0;
+        LastEnergyRecoveryMs = 0;
         LookDirection = 0f;
         Velocity = Vector3.zero;
-        effectDisable = 0f;
+        effectDuration = 0f;
         effectTranslate = Vector3.zero;
     }
 
@@ -74,7 +79,10 @@ public struct StatePayload
         LastStateChangeTick = previousStatePayload.LastStateChangeTick;
         LookDirection = previousStatePayload.LookDirection;
         Velocity = previousStatePayload.Velocity;
-        effectDisable  = previousStatePayload.effectDisable;
+        Balance = previousStatePayload.Balance;
+        Energy = previousStatePayload.Energy;
+        LastEnergyRecoveryMs = previousStatePayload.LastEnergyRecoveryMs;
+        effectDuration  = previousStatePayload.effectDuration;
         effectTranslate = previousStatePayload.effectTranslate;
     }
 
@@ -87,7 +95,10 @@ public struct StatePayload
     public int LastStateChangeTick;
     public float LookDirection;
     public Vector3 Velocity;
-    public float effectDisable;
+    public float Balance;
+    public int Energy;
+    public float LastEnergyRecoveryMs;
+    public float effectDuration;
     public Vector3 effectTranslate;
     //public PlayerState PlayerState {
     //    readonly get 
@@ -109,5 +120,7 @@ public enum PlayerState : byte
     Attacking_Secondary = 4,
     Attacking_Tertiary = 8,
     Dodging = 16,
-    Disabled = 32
+    Blocking = 32,
+    KnockedDown = 64,
+    Disabled = 128
 }

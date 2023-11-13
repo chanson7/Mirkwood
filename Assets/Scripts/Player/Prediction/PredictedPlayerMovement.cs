@@ -55,14 +55,14 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
         if (statePayload.PlayerState.Equals(PlayerState.Balanced))
         {
 
-            Vector3 movementVelocity;
             Vector3 previousPosition = statePayload.Position;
             Vector3 desiredMovement = (_strafeSpeed * inputPayload.MoveDirection.x * transform.right +
-                transform.forward * Mathf.Clamp(inputPayload.MoveDirection.y * _runSpeed, -_backpedalSpeed, _runSpeed)) * inputPayload.TickDuration;
+                                      transform.forward * Mathf.Clamp(inputPayload.MoveDirection.y * _runSpeed, -_backpedalSpeed, _runSpeed)) * inputPayload.TickDuration;
 
             characterController.Move(desiredMovement);
 
-            movementVelocity = (transform.position - previousPosition) / inputPayload.TickDuration;
+            Vector3 movementVelocity = (transform.position - previousPosition) / inputPayload.TickDuration;
+
             statePayload.Position = transform.position;
         
             AnimateMovement(movementVelocity);
@@ -80,7 +80,6 @@ public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInput
         
         if (isServer)
             RpcAnimateMovement(currentVelocity);
-        
 
         [ClientRpc(includeOwner = false)]
         void RpcAnimateMovement(Vector3 currentVelocity)

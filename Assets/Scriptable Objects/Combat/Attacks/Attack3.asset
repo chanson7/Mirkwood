@@ -15,8 +15,9 @@ MonoBehaviour:
   _animationHash: Attack3
   AttackDuration: 1
   LungeDistance: 2
+  EnergyCost: 1
   HitApplicationTime: 0.5
   LungeStartTime: 0
   LungeEndTime: 0.5
-  KnockbackMultiplier: 0.4
-  StunDuration: 0
+  KnockbackMultiplier: 1
+  StunDuration: 1

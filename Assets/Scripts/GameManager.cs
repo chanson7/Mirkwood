@@ -1,54 +1,59 @@
 using UnityEngine;
 using Mirror;
-using System.Collections;
+using System.Collections.Generic;
 
 public class GameManager : NetworkBehaviour
 {
 
-    double serverStartTime;
-    int playerCount = 0;
+    [SerializeField] List<PlayerObject> players = new(); //server only?
+    GameState gameState;
 
-    [SerializeField] double playerDisconnectTimeOut = 20;
-    [SerializeField] double gameSessionTimeOut = 120;
+    public static GameManager Singleton { get; internal set; }
 
-
-    public override void OnStartServer()
-    {
-        serverStartTime = Time.timeAsDouble;
-
-        if (gameSessionTimeOut > 0)
-            StartCoroutine(GameSessionTimeOut(gameSessionTimeOut));
-    }
-
-    public void OnPlayerJoinedGameSession()
-    {
-        playerCount++;
-    }
-
-    public void OnPlayerLeftGameSession()
-    {
-        playerCount--;
-        CheckForGameTimeOut();
-    }
-
-    //do this when a player leaves the game session to see if we should end the game
     [Server]
-    void CheckForGameTimeOut()
+    public bool RegisterPlayerObject(PlayerObject player)
     {
-        if (playerCount < 1 && Time.time - serverStartTime > playerDisconnectTimeOut)
+        if (players.Contains(player))
+        {  
+            return false; 
+        }
+        else
         {
-            Debug.Log("..All players have disconnected. Ending the game.");
-            Application.Quit();
+            Debug.Log($"{player} registered with Game Manager");
+            players.Add(player);
+            
+            return true;
         }
     }
 
-    IEnumerator GameSessionTimeOut(double gameTimeOut)
+    bool InitializeSingleton()
     {
-        Debug.Log($"..Game Session will time out in {gameTimeOut} seconds");
+        if (Singleton != null)
+        {
+            if (Singleton == this) return true;
 
-        yield return new WaitForSeconds((float)gameTimeOut);
+            Debug.LogWarning("Multiple Game Managers detected in the scene. Only one Game Manager can exist at a time. The duplicate Game Manager will be destroyed.");
+            Destroy(gameObject);
 
-        Application.Quit();
+            // Return false to not allow collision-destroyed second instance to continue.
+            return false;
+        }
+
+        Singleton = this;
+
+        return true;
     }
 
+    public override void OnStartServer()
+    {
+
+    }
+
+    private void Awake()
+    {
+        if (!InitializeSingleton()) return;
+
+        gameState = GetComponent<GameState>();
+    }
+    
 }

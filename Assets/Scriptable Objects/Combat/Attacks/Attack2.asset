@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animationHash: Attack2
   AttackDuration: 0.75
-  LungeDistance: 0.7
+  LungeDistance: 1
+  EnergyCost: 1
   HitApplicationTime: 0.5
   LungeStartTime: 0.2
-  LungeEndTime: 0.8
-  KnockbackMultiplier: 0.25
-  StunDuration: 0
+  LungeEndTime: 1
+  KnockbackMultiplier: 1
+  StunDuration: 1

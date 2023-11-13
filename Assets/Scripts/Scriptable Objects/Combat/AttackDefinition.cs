@@ -16,6 +16,9 @@ public class AttackDefinition : ScriptableObject
     [Range(0f, 5f)]
     public float LungeDistance;
 
+    [Tooltip("The amount of energy spent to use this attack")]
+    [Range(1, 5)]
+    public int EnergyCost;
 
     [Header("Tick Checkpoints")]
     [Range(0f, 1f)]
@@ -41,21 +44,3 @@ public class AttackDefinition : ScriptableObject
     [Range(0f, 5f)]
     public float StunDuration;
 }
-
-//[CreateAssetMenu(fileName = "Primary Attack Definition", menuName = "Combat/Primary Attack Definition", order = 1)]
-//public class PrimaryAttackDefinition : AttackDefinition
-//{
-
-//}
-
-//[CreateAssetMenu(fileName = "Secondary Attack Definition", menuName = "Combat/Secondary Attack Definition", order = 2)]
-//public class SecondaryAttackDefinition : AttackDefinition
-//{
-
-//}
-
-//[CreateAssetMenu(fileName = "Tertiary Attack Definition", menuName = "Combat/Tertiary Attack Definition", order = 3)]
-//public class TertiaryAttackDefinition : AttackDefinition
-//{
-
-//}

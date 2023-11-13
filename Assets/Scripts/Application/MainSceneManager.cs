@@ -1,6 +1,11 @@
 ﻿using UnityEngine;
 
-public class ApplicationManager : MonoBehaviour {
+public class MainSceneManager : MonoBehaviour {
+
+    private void Awake()
+    {
+		Cursor.lockState = CursorLockMode.None;
+    }
 
     public void Quit () 
 	{

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ab808a93684939b49ada803c439c9c59, type: 3}
-  m_Name: Dodge1
+  m_Name: Dodge
   m_EditorClassIdentifier: 
   _animationHash: Dodge
   DodgeDuration: 0.3

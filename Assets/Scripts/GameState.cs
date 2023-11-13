@@ -4,7 +4,7 @@ using UnityEngine;
 public class GameState : NetworkBehaviour
 {
 
-    public enum EGameState { Off, Loading, Ready, Pregame, Play, End, Postgame };
+    public enum EGameState {Pregame, Play, Postgame };
 
     [SyncVar(hook = nameof(GameStateChanged))] public EGameState currentState;
 
@@ -24,8 +24,6 @@ public class GameState : NetworkBehaviour
             case EGameState.Pregame:
                 break;
             case EGameState.Play:
-                break;
-            case EGameState.End:
                 break;
             case EGameState.Postgame:
                 break;

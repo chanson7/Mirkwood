@@ -572,6 +572,14 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
       insertIndex: -1
+      addedObject: {fileID: 5918531580327289896}
+    - targetCorrespondingSourceObject: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3412247205610316002}
+    - targetCorrespondingSourceObject: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
+        type: 3}
+      insertIndex: -1
       addedObject: {fileID: 5587943912322670215}
     - targetCorrespondingSourceObject: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
         type: 3}
@@ -589,10 +597,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 3113187297178717713}
-    - targetCorrespondingSourceObject: {fileID: 3493533285326876447, guid: 46c98452d8723f247be7594a6628114c,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3412247205610316002}
   m_SourcePrefab: {fileID: 100100000, guid: 46c98452d8723f247be7594a6628114c, type: 3}
 --- !u!1 &172309495854167157 stripped
 GameObject:
@@ -650,6 +654,7 @@ MonoBehaviour:
     type: 3}
   cameraTargetTransform: {fileID: 8430897853992251154}
   playerUI: {fileID: 6170895876888201262}
+  _playerBuild: {fileID: 11400000, guid: a1a220ed71adff54887c0072fad1db53, type: 2}
 --- !u!114 &2196562504172488168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -666,8 +671,11 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   predictedTransformModules:
+  - {fileID: 1941679869838332838}
+  - {fileID: 6808766660584634746}
   - {fileID: 5180325795512186896}
   - {fileID: 8053095096711657322}
+  - {fileID: 5918531580327289896}
   - {fileID: 3412247205610316002}
   - {fileID: 5587943912322670215}
   - {fileID: 2897233537494777786}
@@ -706,6 +714,38 @@ MonoBehaviour:
   tertiaryAttack: {fileID: 11400000, guid: c6af6123916a13d44bd814cae6656f46, type: 2}
   meleeAreaOfEffect: {fileID: 7322397342994585109}
   animationCancelRate: 0.1
+--- !u!114 &5918531580327289896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0074f4da2602814488ad375bf4d7823f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  block: {fileID: 11400000, guid: cd82c912c9457b241b6b3eaf5fb27816, type: 2}
+--- !u!114 &3412247205610316002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 172309495854167157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e36b188fbc9fda5469ea19cd74cc89a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  dodge: {fileID: 11400000, guid: ae9936d740588ef47a465d8bf8fd4e19, type: 2}
 --- !u!114 &5587943912322670215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -780,11 +820,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  playerUIController: {fileID: 3897475669117118997}
-  _energy: 0
-  maxEnergy: 20
-  recoveryIntervalSeconds: 4
-  energyRecoveredPerInterval: 1
+  baseEnergyRecoveryRate: 3
 --- !u!114 &3113187297178717713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -805,22 +841,6 @@ MonoBehaviour:
   uiController: {fileID: 1703985622041249448, guid: 0a7340c1982055146a76b9964b68d98c,
     type: 3}
   enableGhost: 0
---- !u!114 &3412247205610316002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 172309495854167157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e36b188fbc9fda5469ea19cd74cc89a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  dodge: {fileID: 11400000, guid: ae9936d740588ef47a465d8bf8fd4e19, type: 2}
 --- !u!4 &172309495854167161 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3493533285326876435, guid: 46c98452d8723f247be7594a6628114c,

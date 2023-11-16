@@ -359,7 +359,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 34614218}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.000000008283735, y: -0.9402716, z: 0.34042525, w: -0.00000002288009}
+  m_LocalRotation: {x: 0.000000008283737, y: -0.9402716, z: 0.34042525, w: 0.0000000228801}
   m_LocalPosition: {x: 0, y: 2.5, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -438,7 +438,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 155089871}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0000000074471513, y: -0.952017, z: 0.3060453, w: 0.000000023165901}
+  m_LocalRotation: {x: -0.0000000074471513, y: -0.952017, z: 0.3060453, w: -0.000000023165901}
   m_LocalPosition: {x: 0, y: 2.5, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8729,7 +8729,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 172309495854167157, guid: 8b1ba6ffc1cf3914eb368aa32bddc791,
     type: 3}
   autoCreatePlayer: 1
-  playerSpawnMethod: 0
+  playerSpawnMethod: 1
   spawnPrefabs: []
   snapshotSettings:
     bufferTimeMultiplier: 2

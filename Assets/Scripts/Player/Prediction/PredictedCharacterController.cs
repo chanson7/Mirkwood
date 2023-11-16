@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.Events;
 
-[RequireComponent(typeof(PredictedPlayerReceiveHit), typeof(NetworkIdentity), typeof(PlayerObject))]
-public class PredictedPlayerTransform : NetworkBehaviour
+[RequireComponent(typeof(NetworkIdentity), typeof(PlayerObject))]
+public class PredictedCharacterController : NetworkBehaviour
 {
 
     #region EDITOR EXPOSED FIELDS
 
     [Tooltip("Each module runs the same processing function once per tick on both the client and the server")]
-    [SerializeField] List<PredictedTransformModule> predictedTransformModules = new();
+    [SerializeField] List<PredictionModule> predictionModules = new();
 
     #endregion
 
@@ -19,7 +20,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     StatePayload[] stateBuffer;
     int currentTick;
     float tickTimer;
-    Queue<UnpredictedTransformEffect> unpredictedEffectsQueue;
+    Queue<UnpredictedEvent> unpredictedEffectsQueue;
     PlayerObject playerObject;
 
     //client only
@@ -39,9 +40,10 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
     public StatePayload LatestServerState { get => _latestServerState; }
     public float ServerTickMs { get => _serverTickMs; }
+    public UnityEvent<StatePayload> EvtLocalPlayerStateUpdated;
 
     #endregion
-    
+
     #region CONSTANTS
 
     const int BUFFER_SIZE = 1024;
@@ -53,7 +55,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         stateBuffer = new StatePayload[BUFFER_SIZE];
-        unpredictedEffectsQueue = new Queue<UnpredictedTransformEffect>();
+        unpredictedEffectsQueue = new Queue<UnpredictedEvent>();
         clientInputBuffer = new InputPayload[BUFFER_SIZE];
 
         base.OnStartLocalPlayer();
@@ -62,7 +64,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
     public override void OnStartServer()
     {
         stateBuffer = new StatePayload[BUFFER_SIZE];
-        unpredictedEffectsQueue = new Queue<UnpredictedTransformEffect>();
+        unpredictedEffectsQueue = new Queue<UnpredictedEvent>();
         inputQueue = new Queue<InputPayload>();
         _serverTickMs = 1f / NetworkManager.singleton.sendRate;
 
@@ -92,12 +94,18 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
         InputPayload inputPayload = new(currentTick, Time.time - lastTickEndTime);
 
-        foreach (PredictedTransformModule transformModule in predictedTransformModules)
+        foreach (PredictionModule transformModule in predictionModules)
+        {
             if (transformModule is IPredictedInputRecorder inputRecorder)
+            {
                 inputRecorder.RecordInput(ref inputPayload);
+            }
+        }
 
         clientInputBuffer[bufferIndex] = inputPayload;
         stateBuffer[bufferIndex] = ProcessTick(inputPayload);
+
+        EvtLocalPlayerStateUpdated.Invoke(stateBuffer[bufferIndex]);
 
         CmdOnClientInput(inputPayload);
     }
@@ -125,7 +133,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
             stateBuffer[bufferIndex] = statePayload;
         }
 
-        //we processed all of the input!!
+        //No input left, send the new state back to the player
         if (bufferIndex != -1)
         {
             RpcOnServerStateUpdated(stateBuffer[bufferIndex]);
@@ -133,27 +141,26 @@ public class PredictedPlayerTransform : NetworkBehaviour
     }
 
     [Server]
-    public void EnqueueUnpredictedEvent(UnpredictedTransformEffect effect)
+    public void EnqueueUnpredictedEvent(UnpredictedEvent effect)
     {
         unpredictedEffectsQueue.Enqueue(effect);
 
         TargetEnqueueUnpredictedEvent(effect);
 
         [TargetRpc]
-        void TargetEnqueueUnpredictedEvent(UnpredictedTransformEffect effect)
+        void TargetEnqueueUnpredictedEvent(UnpredictedEvent effect)
         {
             unpredictedEffectsQueue.Enqueue(effect);
         }
     }
-
 
     void HandleTickOnHost()
     {
         InputPayload inputPayload = new(currentTick, Time.time - lastTickEndTime);
         int bufferIndex = inputPayload.Tick % BUFFER_SIZE;
 
-        foreach (PredictedTransformModule transformModule in predictedTransformModules)
-            if (transformModule is IPredictedInputRecorder inputRecorder)
+        foreach (PredictionModule predictionModule in predictionModules)
+            if (predictionModule is IPredictedInputRecorder inputRecorder)
                 inputRecorder.RecordInput(ref inputPayload);
 
         stateBuffer[bufferIndex] = ProcessTick(inputPayload);
@@ -176,20 +183,20 @@ public class PredictedPlayerTransform : NetworkBehaviour
     {
         //if we're not in Tick 0, construct a state payload using the last state payload from the buffer
         StatePayload state = input.Tick > 0 ? new(stateBuffer[(input.Tick - 1) % BUFFER_SIZE]) : 
-                                                       new(transform);
-        Vector3 previousPosition = state.Position; //used to calculate velocity
+                                              new(transform);
+        Vector3 previousPosition = state.Position;
 
         //apply any unpredicted effects to the state
         while (unpredictedEffectsQueue.Count > 0)
         {
-            UnpredictedTransformEffect effect = unpredictedEffectsQueue.Dequeue();
+            UnpredictedEvent effect = unpredictedEffectsQueue.Dequeue();
             
             state.effectDuration += effect.Duration;
             state.effectTranslate += effect.Translation;
         }
 
         //process the player's predictable inputs
-        foreach (PredictedTransformModule transformModule in predictedTransformModules)
+        foreach (PredictionModule transformModule in predictionModules)
         {
             if (transformModule is IPredictedInputProcessor inputProcessor)
             {
@@ -198,7 +205,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
         }
 
         state.Velocity = (state.Position - previousPosition) / input.TickDuration;
-     
+
         return state;
     }
 
@@ -266,7 +273,7 @@ public class PredictedPlayerTransform : NetworkBehaviour
 
 }
 
-public struct UnpredictedTransformEffect
+public struct UnpredictedEvent
 {
     public Vector3 Translation;
     public float Duration;

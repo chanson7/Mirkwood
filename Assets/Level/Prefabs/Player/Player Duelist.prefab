@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5116906765952149553}
   - component: {fileID: 5143989286515543315}
   m_Layer: 0
-  m_Name: Energy Text
+  m_Name: Energy Meter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,7 +35,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 828.75, y: -559}
+  m_AnchoredPosition: {x: 754.5, y: -604}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3987740391324428924
@@ -165,7 +165,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7491324811940525267}
   - component: {fileID: 4011039586756565942}
-  - component: {fileID: 3897475669117118997}
   - component: {fileID: 417780963926336740}
   m_Layer: 0
   m_Name: Player UI
@@ -218,20 +217,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &3897475669117118997
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6170895876888201262}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd2ade0c87258184bbbe88078fabd657, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  balanceText: {fileID: 7573623957168286308}
-  energyText: {fileID: 5116906765952149553}
 --- !u!114 &417780963926336740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -302,7 +287,7 @@ GameObject:
   - component: {fileID: 7573623957168286308}
   - component: {fileID: 4353667581414278976}
   m_Layer: 0
-  m_Name: Balance Text
+  m_Name: Balance Meter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -324,7 +309,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 276.25, y: -559}
+  m_AnchoredPosition: {x: 251.5, y: -604}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8035133850320993398
@@ -670,15 +655,18 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  predictedTransformModules:
-  - {fileID: 1941679869838332838}
-  - {fileID: 6808766660584634746}
+  predictionModules:
   - {fileID: 5180325795512186896}
   - {fileID: 8053095096711657322}
   - {fileID: 5918531580327289896}
   - {fileID: 3412247205610316002}
   - {fileID: 5587943912322670215}
   - {fileID: 2897233537494777786}
+  - {fileID: 1941679869838332838}
+  - {fileID: 6808766660584634746}
+  EvtLocalPlayerStateUpdated:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5180325795512186896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -800,11 +788,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  playerUIController: {fileID: 3897475669117118997}
-  balance: 100
-  recoveryInterval: 1
-  balanceRecoveredPerInterval: 1
-  recoveryDelay: 5
+  baseBalanceRecoveryRate: 1
+  EvtPlayerKnockedDown: {fileID: 0}
 --- !u!114 &6808766660584634746
 MonoBehaviour:
   m_ObjectHideFlags: 0

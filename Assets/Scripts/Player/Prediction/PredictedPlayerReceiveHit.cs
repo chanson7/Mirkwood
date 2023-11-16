@@ -2,7 +2,7 @@ using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerReceiveHit : PredictedTransformModule, IPredictedInputProcessor
+public class PredictedPlayerReceiveHit : PredictionModule, IPredictedInputProcessor
 {
 
     #region FIELDS
@@ -19,7 +19,7 @@ public class PredictedPlayerReceiveHit : PredictedTransformModule, IPredictedInp
     [Server]
     public void ServerTriggerHitReceived(Vector3 knockback, float duration)
     {
-        predictedPlayerTransform.EnqueueUnpredictedEvent(new UnpredictedTransformEffect
+        predictedCharacterController.EnqueueUnpredictedEvent(new UnpredictedEvent
         {
             Translation = knockback,
             Duration = duration

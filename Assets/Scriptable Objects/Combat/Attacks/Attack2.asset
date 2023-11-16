@@ -19,5 +19,5 @@ MonoBehaviour:
   HitApplicationTime: 0.5
   LungeStartTime: 0.2
   LungeEndTime: 1
-  KnockbackMultiplier: 1
+  KnockbackMultiplier: 1.4
   StunDuration: 1

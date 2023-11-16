@@ -3,7 +3,7 @@ using System.Collections;
 using Mirror;
 using System;
 
-public class PredictedPlayerBalance : PredictedTransformModule, IPredictedInputProcessor
+public class PredictedPlayerBalance : PredictionModule, IPredictedInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -11,6 +11,9 @@ public class PredictedPlayerBalance : PredictedTransformModule, IPredictedInputP
     [Header("Balance Configuration")]
     [Tooltip("The base rate at which balance is recovered")]
     [SerializeField] float baseBalanceRecoveryRate = 1f;
+
+    [Header("")]
+    [SerializeField] ScriptableEvent EvtPlayerKnockedDown;
 
     #endregion
 
@@ -22,6 +25,8 @@ public class PredictedPlayerBalance : PredictedTransformModule, IPredictedInputP
             statePayload.LastStateChangeTick = statePayload.Tick;
             statePayload.Balance = 0f;
 
+            PlayerKnockedDown();
+
             return;
         }
 
@@ -30,5 +35,12 @@ public class PredictedPlayerBalance : PredictedTransformModule, IPredictedInputP
             statePayload.Balance += baseBalanceRecoveryRate * inputPayload.TickDuration;
             statePayload.Balance = Mathf.Min(100f, statePayload.Balance + baseBalanceRecoveryRate * inputPayload.TickDuration);
         }
+    }
+
+    void PlayerKnockedDown()
+    {
+        Debug.Log($"{name} has been knocked down!");
+
+        EvtPlayerKnockedDown.Raise();
     }
 }

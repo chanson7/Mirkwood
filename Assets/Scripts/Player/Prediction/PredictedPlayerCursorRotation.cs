@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PredictedPlayerCursorRotation : PredictedTransformModule, IPredictedInputRecorder, IPredictedInputProcessor
+public class PredictedPlayerCursorRotation : PredictionModule, IPredictedInputRecorder, IPredictedInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS

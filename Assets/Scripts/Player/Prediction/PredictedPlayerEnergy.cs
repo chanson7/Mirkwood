@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PredictedPlayerEnergy : PredictedTransformModule, IPredictedInputProcessor
+public class PredictedPlayerEnergy : PredictionModule, IPredictedInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -13,11 +13,7 @@ public class PredictedPlayerEnergy : PredictedTransformModule, IPredictedInputPr
 
     #region FIELDS
 
-    PlayerBuildDefinition playerClass;    
-
-    #endregion
-
-    #region PROPERTIES
+    PlayerBuildDefinition playerClass;
 
     #endregion
 
@@ -26,15 +22,14 @@ public class PredictedPlayerEnergy : PredictedTransformModule, IPredictedInputPr
         float energyRecoveryRate = baseEnergyRecoveryRate / playerClass.EnergyRecoveryRate;
 
         //player is below max energy
-        if (statePayload.Energy < playerClass.MaxEnergy)
+        if (statePayload.Energy < playerClass.MaxEnergy && statePayload.PlayerState.Equals(PlayerState.Balanced))
         {
             //player has waited long enough to recover 1 energy
             if (energyRecoveryRate < statePayload.LastEnergyRecoveryMs)
             {
-                Debug.Log($"Energy Recovered! Player has {statePayload.Energy} energy");
                 statePayload.Energy++;
                 statePayload.LastEnergyRecoveryMs = 0f;
-            } 
+            }
             else
             {
                 statePayload.LastEnergyRecoveryMs += inputPayload.TickDuration;

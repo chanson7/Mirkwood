@@ -1,15 +1,15 @@
 using Mirror;
 using UnityEngine;
 
-[RequireComponent(typeof(PredictedPlayerTransform))]
-public abstract class PredictedTransformModule : NetworkBehaviour
+[RequireComponent(typeof(PredictedCharacterController))]
+public abstract class PredictionModule : NetworkBehaviour
 {
 
-    protected PredictedPlayerTransform predictedPlayerTransform;
+    protected PredictedCharacterController predictedCharacterController;
 
     public virtual void Start()
     {
-        predictedPlayerTransform = GetComponent<PredictedPlayerTransform>();
+        predictedCharacterController = GetComponent<PredictedCharacterController>();
     }
 
 }
@@ -121,6 +121,6 @@ public enum PlayerState : byte
     Attacking_Tertiary = 8,
     Dodging = 16,
     Blocking = 32,
-    KnockedDown = 64,
-    Disabled = 128
+    Disabled = 64,
+    KnockedDown = 128
 }

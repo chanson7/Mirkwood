@@ -4,7 +4,7 @@ using Mirror;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerMovement : PredictedTransformModule, IPredictedInputRecorder, IPredictedInputProcessor
+public class PredictedPlayerMovement : PredictionModule, IPredictedInputRecorder, IPredictedInputProcessor
 {
     #region EDITOR EXPOSED FIELDS
 

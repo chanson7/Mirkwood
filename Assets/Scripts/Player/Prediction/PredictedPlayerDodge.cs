@@ -2,7 +2,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PredictedPlayerDodge : PredictedTransformModule, IPredictedInputProcessor, IPredictedInputRecorder
+public class PredictedPlayerDodge : PredictionModule, IPredictedInputProcessor, IPredictedInputRecorder
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -48,7 +48,7 @@ public class PredictedPlayerDodge : PredictedTransformModule, IPredictedInputPro
         if (statePayload.PlayerState.Equals(PlayerState.Dodging))
         {
             //End Dodge
-            if (dodge.DodgeDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
+            if (dodge.DodgeDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs)
             {
                 statePayload.PlayerState = PlayerState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;

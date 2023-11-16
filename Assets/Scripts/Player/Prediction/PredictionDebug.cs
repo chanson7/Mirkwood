@@ -1,7 +1,7 @@
 using UnityEngine;
 using Mirror;
 
-[RequireComponent(typeof(PredictedPlayerTransform))]
+[RequireComponent(typeof(PredictedCharacterController))]
 public class PredictionDebug : NetworkBehaviour
 {
 
@@ -15,7 +15,7 @@ public class PredictionDebug : NetworkBehaviour
 
     #region FIELDS
 
-    PredictedPlayerTransform predictedPlayerTransform;
+    PredictedCharacterController predictedCharacterController;
     GameObject serverGhost;
     Animator ghostAnimator;
 
@@ -40,17 +40,17 @@ public class PredictionDebug : NetworkBehaviour
 
     private void Awake()
     {
-        predictedPlayerTransform = GetComponent<PredictedPlayerTransform>();
+        predictedCharacterController = GetComponent<PredictedCharacterController>();
     }
 
     void Update()
     {
         if (isLocalPlayer)
         {
-            serverGhost.transform.SetPositionAndRotation(predictedPlayerTransform.LatestServerState.Position, predictedPlayerTransform.LatestServerState.Rotation);
-            ghostAnimator.SetFloat(forwardHash, transform.InverseTransformDirection(predictedPlayerTransform.LatestServerState.Velocity).z);
-            ghostAnimator.SetFloat(rightHash, transform.InverseTransformDirection(predictedPlayerTransform.LatestServerState.Velocity).x);
-            uiController.UpdateTextUI(predictedPlayerTransform.LatestServerState);
+            serverGhost.transform.SetPositionAndRotation(predictedCharacterController.LatestServerState.Position, predictedCharacterController.LatestServerState.Rotation);
+            ghostAnimator.SetFloat(forwardHash, transform.InverseTransformDirection(predictedCharacterController.LatestServerState.Velocity).z);
+            ghostAnimator.SetFloat(rightHash, transform.InverseTransformDirection(predictedCharacterController.LatestServerState.Velocity).x);
+            uiController.UpdateTextUI(predictedCharacterController.LatestServerState);
         }
     }
 

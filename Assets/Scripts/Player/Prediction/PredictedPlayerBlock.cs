@@ -2,7 +2,7 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PredictedPlayerBlock : PredictedTransformModule, IPredictedInputProcessor, IPredictedInputRecorder
+public class PredictedPlayerBlock : PredictionModule, IPredictedInputProcessor, IPredictedInputRecorder
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -44,7 +44,7 @@ public class PredictedPlayerBlock : PredictedTransformModule, IPredictedInputPro
         if (statePayload.PlayerState.Equals(PlayerState.Blocking))
         {
             //End Block
-            if (block.BlockDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedPlayerTransform.ServerTickMs)
+            if (block.BlockDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs)
             {
                 statePayload.PlayerState = PlayerState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;

@@ -8,12 +8,14 @@
 /[Bb]uild/
 /[Bb]uilds/
 /[Ll]ogs/
-/[Mm]use/
 /[Mm]emoryCaptures/
 /[Uu]ser[Ss]ettings/
 
 # Ignore Sample Files
 /[Aa]ssets/[Ss]amples/
+
+# Ignore Muse
+/[Aa]ssets/[Mm]use/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/[Aa]ssets/**/*.meta

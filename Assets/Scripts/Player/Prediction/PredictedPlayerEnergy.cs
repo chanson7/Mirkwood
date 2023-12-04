@@ -39,7 +39,7 @@ public class PredictedPlayerEnergy : PredictionModule, IPredictedInputProcessor
 
     private void Awake()
     {
-        playerClass = GetComponent<PlayerObject>().PlayerBuild;
+        playerClass = GetComponent<PlayerDuelistObject>().PlayerBuild;
     }
 
 }

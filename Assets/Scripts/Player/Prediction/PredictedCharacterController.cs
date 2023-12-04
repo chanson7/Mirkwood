@@ -3,7 +3,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(NetworkIdentity), typeof(PlayerObject))]
+[RequireComponent(typeof(NetworkIdentity))]
 public class PredictedCharacterController : NetworkBehaviour
 {
 
@@ -16,12 +16,11 @@ public class PredictedCharacterController : NetworkBehaviour
 
     #region FIELDS
 
-    [SyncVar] float _serverTickMs;
+    [SyncVar] float _serverSendInterval;
     StatePayload[] stateBuffer;
     int currentTick;
     float tickTimer;
     Queue<UnpredictedEvent> unpredictedEffectsQueue;
-    PlayerObject playerObject;
 
     //client only
     readonly float acceptablePositionError = 0.001f;
@@ -39,8 +38,8 @@ public class PredictedCharacterController : NetworkBehaviour
     #region PROPERTIES
 
     public StatePayload LatestServerState { get => _latestServerState; }
-    public float ServerTickMs { get => _serverTickMs; }
-    public UnityEvent<StatePayload> EvtLocalPlayerStateUpdated;
+    public float ServerSendInterval { get => _serverSendInterval; }
+    public UnityEvent<StatePayload> EvtServerStateProcessed; //invoked on server only
 
     #endregion
 
@@ -66,7 +65,7 @@ public class PredictedCharacterController : NetworkBehaviour
         stateBuffer = new StatePayload[BUFFER_SIZE];
         unpredictedEffectsQueue = new Queue<UnpredictedEvent>();
         inputQueue = new Queue<InputPayload>();
-        _serverTickMs = 1f / NetworkManager.singleton.sendRate;
+        _serverSendInterval = 1f / NetworkManager.singleton.sendRate;
 
         base.OnStartServer();
     }
@@ -104,8 +103,6 @@ public class PredictedCharacterController : NetworkBehaviour
 
         clientInputBuffer[bufferIndex] = inputPayload;
         stateBuffer[bufferIndex] = ProcessTick(inputPayload);
-
-        EvtLocalPlayerStateUpdated.Invoke(stateBuffer[bufferIndex]);
 
         CmdOnClientInput(inputPayload);
     }
@@ -153,7 +150,7 @@ public class PredictedCharacterController : NetworkBehaviour
             unpredictedEffectsQueue.Enqueue(effect);
         }
     }
-
+    
     void HandleTickOnHost()
     {
         InputPayload inputPayload = new(currentTick, Time.time - lastTickEndTime);
@@ -164,6 +161,8 @@ public class PredictedCharacterController : NetworkBehaviour
                 inputRecorder.RecordInput(ref inputPayload);
 
         stateBuffer[bufferIndex] = ProcessTick(inputPayload);
+        
+        EvtServerStateProcessed.Invoke(stateBuffer[bufferIndex]);
 
         RpcOnServerStateUpdated(stateBuffer[bufferIndex]);
     }
@@ -254,19 +253,14 @@ public class PredictedCharacterController : NetworkBehaviour
     {
         tickTimer += Time.deltaTime;
 
-        while (tickTimer >= _serverTickMs)
+        while (tickTimer >= _serverSendInterval)
         {
-            tickTimer -= _serverTickMs;
+            tickTimer -= _serverSendInterval;
             Tick();
             
             lastTickEndTime = Time.time;
             currentTick++;
         }
-    }
-
-    private void Awake()
-    {
-        playerObject = GetComponent<PlayerObject>();
     }
 
     #endregion

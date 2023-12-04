@@ -5,13 +5,13 @@ using System.Collections.Generic;
 public class GameManager : NetworkBehaviour
 {
 
-    [SerializeField] List<PlayerObject> players = new(); //server only?
+    [SerializeField] List<PlayerDuelistObject> players = new(); //server only?
     GameState gameState;
 
     public static GameManager Singleton { get; internal set; }
 
     [Server]
-    public bool RegisterPlayerObject(PlayerObject player)
+    public bool RegisterPlayerObject(PlayerDuelistObject player)
     {
         if (players.Contains(player))
         {  

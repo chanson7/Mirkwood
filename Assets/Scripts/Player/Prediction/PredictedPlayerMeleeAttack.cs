@@ -1,6 +1,5 @@
 using Mirror;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecorder, IPredictedInputProcessor
 {
@@ -26,7 +25,7 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
 
     #region FIELDS
 
-    bool isAttackButtonPressed;
+    bool _isAttackButtonPressed;
     bool isHitApplied = true;
     CharacterController characterController;
     Animator animator;
@@ -35,14 +34,11 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
 
     #region INPUT
 
-    void OnAttack(InputValue input)
-    {
-        isAttackButtonPressed = input.isPressed;
-    }
+    public bool IsAttackButtonPressed { set { _isAttackButtonPressed = value; } }
 
     public void RecordInput(ref InputPayload inputPayload)
     {
-        inputPayload.AttackPressed = isAttackButtonPressed;
+        inputPayload.AttackPressed = _isAttackButtonPressed;
     }
 
     #endregion
@@ -64,7 +60,7 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
         //During Primary Attack
         if (statePayload.PlayerState.Equals(PlayerState.Attacking_Primary))
         {
-            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs / primaryAttack.AttackDuration;
+            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval / primaryAttack.AttackDuration;
 
             //Exit Primary Attack
             if (!inputPayload.AttackPressed && !isHitApplied)
@@ -83,7 +79,7 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
             }
 
             //End Primary attack
-            if (primaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs)
+            if (primaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval)
             {
                 //Start Secondary attack
                 if (inputPayload.AttackPressed && statePayload.Energy >= secondaryAttack.EnergyCost)
@@ -109,7 +105,7 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
         //During Secondary Attack
         if (statePayload.PlayerState.Equals(PlayerState.Attacking_Secondary))
         {
-            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs / primaryAttack.AttackDuration;
+            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval / primaryAttack.AttackDuration;
 
             //Exit Secondary Attack
             if (!inputPayload.AttackPressed && !isHitApplied)
@@ -123,13 +119,13 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
             }
 
             //Secondary Attack Damage Tick
-            if (isHitApplied == false && secondaryAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs / secondaryAttack.AttackDuration)
+            if (isHitApplied == false && secondaryAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval / secondaryAttack.AttackDuration)
             {
                 ApplyHit(statePayload.Position, secondaryAttack);
             }
 
             //End Secondary attack
-            if (secondaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs)
+            if (secondaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval)
             {
                 //Start Tertiary attack
                 if (inputPayload.AttackPressed && statePayload.Energy >= tertiaryAttack.EnergyCost)
@@ -155,7 +151,7 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
         //During Tertiary Attack
         if (statePayload.PlayerState.Equals(PlayerState.Attacking_Tertiary))
         {
-            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs / primaryAttack.AttackDuration;
+            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval / primaryAttack.AttackDuration;
 
             //Exit Tertiary Attack
             if (!inputPayload.AttackPressed && !isHitApplied)
@@ -167,13 +163,13 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
             }
 
             //Tertiary Attack Damage Tick
-            if (isHitApplied == false && tertiaryAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs / tertiaryAttack.AttackDuration)
+            if (isHitApplied == false && tertiaryAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval / tertiaryAttack.AttackDuration)
             {
                 ApplyHit(statePayload.Position, tertiaryAttack);
             }
 
             //End Tertiary attack
-            if (tertiaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs)
+            if (tertiaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval)
             {
                 //Restart from Primary attack
                 if (inputPayload.AttackPressed)

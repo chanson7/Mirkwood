@@ -1,6 +1,5 @@
 using Mirror;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PredictedPlayerBlock : PredictionModule, IPredictedInputProcessor, IPredictedInputRecorder
 {
@@ -12,22 +11,15 @@ public class PredictedPlayerBlock : PredictionModule, IPredictedInputProcessor, 
 
     #endregion
 
-    bool isBlockButtonPressed;
+    bool _isBlockButtonPressed;
     Animator animator;
 
-    #region INPUT
-
-    void OnBlock(InputValue input)
-    {
-        isBlockButtonPressed = input.isPressed;
-    }
+    public bool IsBlockButtonPressed { set { _isBlockButtonPressed = value; } }
 
     public void RecordInput(ref InputPayload inputPayload)
     {
-        inputPayload.BlockPressed = isBlockButtonPressed;
+        inputPayload.BlockPressed = _isBlockButtonPressed;
     }
-
-    #endregion
 
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
@@ -44,7 +36,7 @@ public class PredictedPlayerBlock : PredictionModule, IPredictedInputProcessor, 
         if (statePayload.PlayerState.Equals(PlayerState.Blocking))
         {
             //End Block
-            if (block.BlockDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs)
+            if (block.BlockDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval)
             {
                 statePayload.PlayerState = PlayerState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;

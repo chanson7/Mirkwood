@@ -1,6 +1,5 @@
 using Mirror;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class PredictedPlayerDodge : PredictionModule, IPredictedInputProcessor, IPredictedInputRecorder
 {
@@ -12,26 +11,19 @@ public class PredictedPlayerDodge : PredictionModule, IPredictedInputProcessor, 
 
     #endregion
 
-    bool isDodgeButtonPressed;
+    bool _isDodgeButtonPressed;
     Animator animator;
     CharacterController characterController;
+
+    public bool IsDodgeButtonPressed { set { _isDodgeButtonPressed = value; } }
 
     static readonly int dodgeForwardHash = Animator.StringToHash("DodgeForward");
     static readonly int dodgeRightHash = Animator.StringToHash("DodgeRight");
 
-    #region INPUT
-
-    void OnDodge(InputValue input)
-    {
-        isDodgeButtonPressed = input.isPressed;
-    }
-
     public void RecordInput(ref InputPayload inputPayload)
     {
-        inputPayload.DodgePressed = isDodgeButtonPressed;
+        inputPayload.DodgePressed = _isDodgeButtonPressed;
     }
-
-    #endregion
 
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
@@ -48,7 +40,7 @@ public class PredictedPlayerDodge : PredictionModule, IPredictedInputProcessor, 
         if (statePayload.PlayerState.Equals(PlayerState.Dodging))
         {
             //End Dodge
-            if (dodge.DodgeDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerTickMs)
+            if (dodge.DodgeDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval)
             {
                 statePayload.PlayerState = PlayerState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;

@@ -6,10 +6,6 @@ public class PredictedPlayerCursorRotation : PredictionModule, IPredictedInputRe
 
     #region EDITOR EXPOSED FIELDS
 
-    [Header("Player Preferences")]
-    [SerializeField] float lateralSensitivity = 1f;
-    [SerializeField] float verticalSensitivity = 1f;
-
     [Header("Rotation Settings")]
     [SerializeField] 
     float minPitchAngle = -15f;
@@ -28,21 +24,21 @@ public class PredictedPlayerCursorRotation : PredictionModule, IPredictedInputRe
 
     #region FIELDS
 
-    Vector2 rotationInput = Vector3.zero;
+    Vector2 _rotationInput = Vector3.zero;
 
+    #endregion
+
+    #region PROPERTIES
+
+    public Vector2 RotationInput { set { _rotationInput = value; } }
+    
     #endregion
 
     #region METHODS
 
-    void OnLook(InputValue input)
-    {
-        rotationInput.x = input.Get<Vector2>().x * lateralSensitivity;
-        rotationInput.y = input.Get<Vector2>().y * verticalSensitivity;
-    }
-
     public void RecordInput(ref InputPayload inputPayload)
     {
-        inputPayload.LookAtDirection = rotationInput;
+        inputPayload.LookAtDirection = _rotationInput;
     }
 
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)

@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.InputSystem;
 using Mirror;
 
 [RequireComponent(typeof(Animator))]
@@ -9,21 +8,24 @@ public class PredictedPlayerMovement : PredictionModule, IPredictedInputRecorder
     #region EDITOR EXPOSED FIELDS
 
     [Header("Movement Settings")]
-
     [Tooltip("The speed multiplier for when the player moves forward")]
-    [SerializeField] float _runSpeed;
+    [SerializeField] float runSpeed;
 
     [Tooltip("The speed multiplier for when the player strafes sideways")]
-    [SerializeField] float _strafeSpeed;
+    [SerializeField] float strafeSpeed;
 
     [Tooltip("The speed multiplier for when the player moves backwards")]
-    [SerializeField] float _backpedalSpeed;
+    [SerializeField] float backpedalSpeed;
+
+    [Tooltip("Determines how quickly a player's velocity changes. \n0 = player can't move\n1 = player instantly changes velocity")]
+    [Range(0f, 1f)]
+    [SerializeField] float acceleration;
 
     #endregion
 
     #region FIELDS
 
-    Vector2 movementInput = Vector2.zero;
+    Vector2 _movementInput = Vector2.zero;
     Animator animator;
     CharacterController characterController;
 
@@ -32,13 +34,9 @@ public class PredictedPlayerMovement : PredictionModule, IPredictedInputRecorder
 
     #endregion
 
-    #region INPUT
+    #region PROPERTIES
 
-    void OnMove(InputValue input)
-    {
-        movementInput.x = input.Get<Vector2>().x;
-        movementInput.y = input.Get<Vector2>().y;
-    }
+    public Vector2 MovementInput { set { _movementInput = value; } }
 
     #endregion
 
@@ -46,7 +44,7 @@ public class PredictedPlayerMovement : PredictionModule, IPredictedInputRecorder
 
     public void RecordInput(ref InputPayload inputPayload)
     {
-        inputPayload.MoveDirection = movementInput;
+        inputPayload.MoveDirection = _movementInput;
     }
 
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
@@ -54,12 +52,14 @@ public class PredictedPlayerMovement : PredictionModule, IPredictedInputRecorder
 
         if (statePayload.PlayerState.Equals(PlayerState.Balanced))
         {
-
             Vector3 previousPosition = statePayload.Position;
-            Vector3 desiredMovement = (_strafeSpeed * inputPayload.MoveDirection.x * transform.right +
-                                      transform.forward * Mathf.Clamp(inputPayload.MoveDirection.y * _runSpeed, -_backpedalSpeed, _runSpeed)) * inputPayload.TickDuration;
+            Vector3 previousVelocity = statePayload.Velocity * inputPayload.TickDuration;
 
-            characterController.Move(desiredMovement);
+            Vector3 desiredMovementVelocity = inputPayload.TickDuration * 
+                                              (strafeSpeed * inputPayload.MoveDirection.x * transform.right + 
+                                              transform.forward * Mathf.Clamp(inputPayload.MoveDirection.y * runSpeed, -backpedalSpeed, runSpeed));
+
+            characterController.Move(Vector3.Lerp(previousVelocity, desiredMovementVelocity, acceleration));
 
             Vector3 movementVelocity = (transform.position - previousPosition) / inputPayload.TickDuration;
 

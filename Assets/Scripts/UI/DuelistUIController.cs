@@ -8,7 +8,7 @@ public class DuelistUIController : MonoBehaviour
 
     DuelistCharacterController duelistController;
 
-    void UpdateMeterUI(StatePayload state)
+    void UpdateDuelistUI(StatePayload state)
     {
         balanceMeterText.text = state.Balance.ToString();
         energyMeterText.text = state.Energy.ToString();
@@ -17,12 +17,12 @@ public class DuelistUIController : MonoBehaviour
     private void Awake()
     {
         duelistController = GetComponentInParent<DuelistCharacterController>();
-        duelistController.EvtServerStateProcessed.AddListener(UpdateMeterUI);
+        duelistController.EvtServerStateProcessed.AddListener(UpdateDuelistUI);
     }
 
     private void OnDestroy()
     {
-        duelistController.EvtServerStateProcessed.RemoveListener(UpdateMeterUI);
+        duelistController.EvtServerStateProcessed.RemoveListener(UpdateDuelistUI);
 
     }
 }

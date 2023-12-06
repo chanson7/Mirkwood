@@ -1,7 +1,7 @@
 using Mirror;
 using UnityEngine;
 
-public class PredictedPlayerBlock : DuelistControllerModule, IDuelistInputProcessor, IDuelistInputRecorder
+public class DuelistBlock : DuelistControllerModule, IDuelistInputProcessor, IDuelistInputRecorder
 {
 
     #region EDITOR EXPOSED FIELDS

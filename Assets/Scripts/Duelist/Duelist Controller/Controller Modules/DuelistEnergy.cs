@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PredictedPlayerEnergy : DuelistControllerModule, IDuelistInputProcessor
+public class DuelistEnergy : DuelistControllerModule, IDuelistInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS

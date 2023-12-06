@@ -1,15 +1,16 @@
 using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
+using System.Linq;
 
 public class DuelGameManager : NetworkBehaviour
 {
 
-    enum EGameMode { Solo, Duo};
+    enum EGameMode { Solo, Duo };
 
     [SerializeField] EGameMode gameMode = EGameMode.Solo;
-
     [SerializeField] Dictionary<int, CombatantDuelist> duelists = new();
+    
     GameState gameState;
 
     public static DuelGameManager Singleton { get; internal set; }
@@ -29,9 +30,8 @@ public class DuelGameManager : NetworkBehaviour
                     int teamNumber = 0;
 
                     while (duelists.ContainsKey(teamNumber))
-                    {
                         teamNumber++;
-                    }
+                    
                     duelists.Add(teamNumber ,duelist);
 
                     Debug.Log($"{duelist} registered with the Game Manager on Team {teamNumber}");
@@ -46,9 +46,29 @@ public class DuelGameManager : NetworkBehaviour
     }
 
     [Server]
-    public CombatantDuelist GetClosestOpponent(CombatantDuelist duelist)
+    public CombatantDuelist CycleTarget(CombatantDuelist duelist, CombatantDuelist currentTarget = null)
     {
-        return null;
+        CombatantDuelist opponent = currentTarget;
+        float distanceToCurrentTarget = currentTarget == null ? Mathf.Infinity : Vector3.Distance(duelist.transform.position, currentTarget.transform.position);
+        
+        if (duelists.ContainsValue(duelist))
+        {
+            int friendlyTeam = duelists.First(entry => entry.Value == duelist).Key;
+
+            foreach (KeyValuePair<int, CombatantDuelist> entry in duelists)
+            {
+                float distanceToNewDuelist = Vector3.Distance(duelist.transform.position, entry.Value.transform.position);
+
+                if (entry.Key != friendlyTeam &&                        //not on our team
+                    entry.Value != currentTarget &&                     //not the current target
+                    distanceToNewDuelist <= distanceToCurrentTarget)    //closer than the last one
+                {
+                    opponent = entry.Value;
+                }
+            }
+        }
+
+        return opponent;
     }
 
     bool InitializeSingleton()

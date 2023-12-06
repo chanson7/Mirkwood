@@ -1,7 +1,7 @@
 using Mirror;
 using UnityEngine;
 
-public class PredictedPlayerDodge : DuelistControllerModule, IDuelistInputProcessor, IDuelistInputRecorder
+public class DuelistDodge : DuelistControllerModule, IDuelistInputProcessor, IDuelistInputRecorder
 {
 
     #region EDITOR EXPOSED FIELDS

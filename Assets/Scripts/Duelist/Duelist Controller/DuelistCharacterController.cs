@@ -77,7 +77,7 @@ public abstract class DuelistCharacterController : NetworkBehaviour
     public abstract void Tick();
 
     [Server]
-    protected void HandleTickOnServer()
+    protected virtual void HandleTickOnServer()
     {
         int bufferIndex = -1;
 

@@ -3,7 +3,7 @@ using Mirror;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerMovement : DuelistControllerModule, IDuelistInputRecorder, IDuelistInputProcessor
+public class DuelistMovement : DuelistControllerModule, IDuelistInputRecorder, IDuelistInputProcessor
 {
     #region EDITOR EXPOSED FIELDS
 

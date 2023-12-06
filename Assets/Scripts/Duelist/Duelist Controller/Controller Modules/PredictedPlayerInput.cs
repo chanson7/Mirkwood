@@ -8,11 +8,11 @@ public class PredictedPlayerInput : MonoBehaviour
     [SerializeField] float lateralRotationSensitivity = 1f;
     [SerializeField] float verticalRotationSensitivity = 1f;
 
-    PredictedPlayerMovement predictedMovement;
-    PredictedPlayerCursorRotation predictedRotation;
-    PredictedPlayerDodge predictedDodge;
-    PredictedPlayerBlock predictedBlock;
-    PredictedPlayerMeleeAttack predictedMeleeAttack;
+    DuelistMovement predictedMovement;
+    DuelistRotation predictedRotation;
+    DuelistDodge predictedDodge;
+    DuelistBlock predictedBlock;
+    DuelistMeleeAttack predictedMeleeAttack;
 
     void OnMove(InputValue input)
     {
@@ -45,11 +45,11 @@ public class PredictedPlayerInput : MonoBehaviour
 
     private void Awake()
     {
-        predictedMovement = GetComponent<PredictedPlayerMovement>();
-        predictedRotation = GetComponent<PredictedPlayerCursorRotation>();
-        predictedDodge =  GetComponent<PredictedPlayerDodge>();
-        predictedBlock = GetComponent<PredictedPlayerBlock>();
-        predictedMeleeAttack = GetComponent<PredictedPlayerMeleeAttack>();
+        predictedMovement = GetComponent<DuelistMovement>();
+        predictedRotation = GetComponent<DuelistRotation>();
+        predictedDodge =  GetComponent<DuelistDodge>();
+        predictedBlock = GetComponent<DuelistBlock>();
+        predictedMeleeAttack = GetComponent<DuelistMeleeAttack>();
     }
 
 }

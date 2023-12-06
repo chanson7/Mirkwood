@@ -28,29 +28,29 @@ public class PlayerDuelist : CombatantDuelist
     {
         Vector2 movementInput = new(input.Get<Vector2>().x, input.Get<Vector2>().y);
 
-        predictedMovement.MovementInput = movementInput;
+        movement.MovementInput = movementInput;
     }
 
     void OnLook(InputValue input)
     {
         Vector2 rotationInput = new(input.Get<Vector2>().x * lateralRotationSensitivity, input.Get<Vector2>().y * verticalRotationSensitivity);
 
-        predictedRotation.RotationInput = rotationInput;
+        rotation.RotationInput = rotationInput;
     }
 
     void OnDodge(InputValue input)
     {
-        predictedDodge.IsDodgeButtonPressed = input.isPressed;
+        dodge.IsDodgeButtonPressed = input.isPressed;
     }
 
     void OnAttack(InputValue input)
     {
-        predictedMeleeAttack.IsAttackButtonPressed = input.isPressed;
+        meleeAttack.IsAttackButtonPressed = input.isPressed;
     }
 
     void OnBlock(InputValue input)
     {
-        predictedBlock.IsBlockButtonPressed = input.isPressed;
+        block.IsBlockButtonPressed = input.isPressed;
     }
 
     #endregion

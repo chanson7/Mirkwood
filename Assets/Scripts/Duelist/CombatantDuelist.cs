@@ -13,19 +13,19 @@ public class CombatantDuelist : NetworkBehaviour
 
     #endregion
 
-    protected PredictedPlayerMovement predictedMovement;
-    protected PredictedPlayerCursorRotation predictedRotation;
-    protected PredictedPlayerDodge predictedDodge;
-    protected PredictedPlayerBlock predictedBlock;
-    protected PredictedPlayerMeleeAttack predictedMeleeAttack;
+    protected DuelistMovement movement;
+    protected DuelistRotation rotation;
+    protected DuelistDodge dodge;
+    protected DuelistBlock block;
+    protected DuelistMeleeAttack meleeAttack;
 
     private void Awake()
     {
-        predictedMovement = GetComponent<PredictedPlayerMovement>();
-        predictedRotation = GetComponent<PredictedPlayerCursorRotation>();
-        predictedDodge = GetComponent<PredictedPlayerDodge>();
-        predictedBlock = GetComponent<PredictedPlayerBlock>();
-        predictedMeleeAttack = GetComponent<PredictedPlayerMeleeAttack>();
+        movement = GetComponent<DuelistMovement>();
+        rotation = GetComponent<DuelistRotation>();
+        dodge = GetComponent<DuelistDodge>();
+        block = GetComponent<DuelistBlock>();
+        meleeAttack = GetComponent<DuelistMeleeAttack>();
     }
 
     public override void OnStartServer()

@@ -1,7 +1,7 @@
 using Mirror;
 using UnityEngine;
 
-public class PredictedPlayerMeleeAttack : DuelistControllerModule, IDuelistInputRecorder, IDuelistInputProcessor
+public class DuelistMeleeAttack : DuelistControllerModule, IDuelistInputRecorder, IDuelistInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS

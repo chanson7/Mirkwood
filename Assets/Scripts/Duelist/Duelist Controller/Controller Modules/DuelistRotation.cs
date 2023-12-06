@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PredictedPlayerCursorRotation : DuelistControllerModule, IDuelistInputRecorder, IDuelistInputProcessor
+public class DuelistRotation : DuelistControllerModule, IDuelistInputRecorder, IDuelistInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -32,7 +32,8 @@ public class PredictedPlayerCursorRotation : DuelistControllerModule, IDuelistIn
     #region PROPERTIES
 
     public Vector2 RotationInput { set { _rotationInput = value; } }
-    
+    public float RotationXInput { set { _rotationInput.x = value; } }
+
     #endregion
 
     #region METHODS

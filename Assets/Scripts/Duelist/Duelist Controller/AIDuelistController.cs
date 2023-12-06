@@ -5,18 +5,13 @@ public class AIDuelistController : DuelistCharacterController
 {
     public override void Tick()
     {
-        if (isServerOnly)
-        {
-            RecordInput();
-            HandleTickOnServer();
-        }
-
+        if (isServerOnly) HandleTickOnServer();
         else if (isServer) HandleTickOnHost();
         else if (isClient) HandleTickOnClient();
     }
 
     [Server]
-    void RecordInput()
+    protected override void HandleTickOnServer()
     {
         InputPayload inputPayload = new(currentTick, Time.time - lastTickEndTime);
 
@@ -29,5 +24,7 @@ public class AIDuelistController : DuelistCharacterController
         }
 
         inputQueue.Enqueue(inputPayload);
+
+        base.HandleTickOnServer();
     }
 }

@@ -1,9 +1,6 @@
 using UnityEngine;
-using System.Collections;
-using Mirror;
-using System;
 
-public class PredictedPlayerBalance : DuelistControllerModule, IDuelistInputProcessor
+public class DuelistBalance : DuelistControllerModule, IDuelistInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS

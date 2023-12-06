@@ -3,7 +3,7 @@ using Mirror;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerMovement : PredictionModule, IPredictedInputRecorder, IPredictedInputProcessor
+public class PredictedPlayerMovement : DuelistControllerModule, IDuelistInputRecorder, IDuelistInputProcessor
 {
     #region EDITOR EXPOSED FIELDS
 
@@ -50,7 +50,7 @@ public class PredictedPlayerMovement : PredictionModule, IPredictedInputRecorder
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
 
-        if (statePayload.PlayerState.Equals(PlayerState.Balanced))
+        if (statePayload.CombatState.Equals(CombatState.Balanced))
         {
             Vector3 previousPosition = statePayload.Position;
             Vector3 previousVelocity = statePayload.Velocity * inputPayload.TickDuration;

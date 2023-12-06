@@ -1,25 +1,24 @@
 using Mirror;
 using UnityEngine;
 
-[RequireComponent(typeof(PredictedCharacterController))]
-public abstract class PredictionModule : NetworkBehaviour
+public abstract class DuelistControllerModule : NetworkBehaviour
 {
 
-    protected PredictedCharacterController predictedCharacterController;
+    protected DuelistCharacterController duelistCharacterController;
 
     public virtual void Start()
     {
-        predictedCharacterController = GetComponent<PredictedCharacterController>();
+        duelistCharacterController = GetComponent<DuelistCharacterController>();
     }
 
 }
 
-public interface IPredictedInputRecorder
+public interface IDuelistInputRecorder
 {
     public void RecordInput(ref InputPayload inputPayload);
 }
 
-public interface IPredictedInputProcessor
+public interface IDuelistInputProcessor
 {
     public abstract void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload);
 }
@@ -32,7 +31,7 @@ public struct InputPayload
         TickDuration = tickDuration;
         ClientTime = Time.time;
         MoveDirection = Vector2.zero;
-        LookAtDirection = Vector2.zero;
+        HorizontalLookDirection = 0f;
         AttackPressed = false;
         DodgePressed = false;
         BlockPressed = false;
@@ -42,7 +41,7 @@ public struct InputPayload
     public float TickDuration;
     public float ClientTime;
     public Vector2 MoveDirection;
-    public Vector2 LookAtDirection;
+    public float HorizontalLookDirection;
 
     //todo combine all buttons into single ButtonsPressed enum
     public bool AttackPressed;
@@ -58,7 +57,7 @@ public struct StatePayload
         Tick = 0;
         Position = transform.position;
         Rotation = transform.rotation;
-        /*_playerState*/ PlayerState = PlayerState.Balanced;
+        /*_playerState*/ CombatState = CombatState.Balanced;
         LastStateChangeTick = 0;
         Balance = 100f;
         Energy = 0;
@@ -75,7 +74,7 @@ public struct StatePayload
         Tick = previousStatePayload.Tick + 1;
         Position = previousStatePayload.Position;
         Rotation = previousStatePayload.Rotation;
-        /*_playerState*/ PlayerState = previousStatePayload.PlayerState;
+        /*_duelistState*/ CombatState = previousStatePayload.CombatState;
         LastStateChangeTick = previousStatePayload.LastStateChangeTick;
         LookDirection = previousStatePayload.LookDirection;
         Velocity = previousStatePayload.Velocity;
@@ -86,12 +85,12 @@ public struct StatePayload
         effectTranslate = previousStatePayload.effectTranslate;
     }
 
-    //PlayerState _playerState;
+    //PlayerState _duelistState;
 
     public int Tick;
     public Vector3 Position;
     public Quaternion Rotation;
-    public PlayerState PlayerState;
+    public CombatState CombatState;
     public int LastStateChangeTick;
     public float LookDirection;
     public Vector3 Velocity;
@@ -100,20 +99,20 @@ public struct StatePayload
     public float LastEnergyRecoveryMs;
     public float effectDuration;
     public Vector3 effectTranslate;
-    //public PlayerState PlayerState {
+    //public CombatState CombatState {
     //    readonly get 
     //    {
-    //        return _playerState; 
+    //        return _combatState; 
     //    }
     //    set 
     //    {
     //        LastStateChangeTick = Tick;
-    //        _playerState = value;
+    //        _combatState = value;
     //    } 
     //}
 }
 
-public enum PlayerState : byte
+public enum CombatState : byte
 {
     Balanced = 1,
     Attacking_Primary = 2,

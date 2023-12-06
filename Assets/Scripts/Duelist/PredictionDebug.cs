@@ -1,7 +1,6 @@
 using UnityEngine;
 using Mirror;
 
-[RequireComponent(typeof(PredictedCharacterController))]
 public class PredictionDebug : NetworkBehaviour
 {
 
@@ -15,7 +14,7 @@ public class PredictionDebug : NetworkBehaviour
 
     #region FIELDS
 
-    PredictedCharacterController predictedCharacterController;
+    DuelistCharacterController predictedCharacterController;
     GameObject serverGhost;
     Animator ghostAnimator;
 
@@ -40,7 +39,7 @@ public class PredictionDebug : NetworkBehaviour
 
     private void Awake()
     {
-        predictedCharacterController = GetComponent<PredictedCharacterController>();
+        predictedCharacterController = GetComponent<DuelistCharacterController>();
     }
 
     void Update()

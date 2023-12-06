@@ -1,7 +1,7 @@
 using Mirror;
 using UnityEngine;
 
-public class PredictedPlayerBlock : PredictionModule, IPredictedInputProcessor, IPredictedInputRecorder
+public class PredictedPlayerBlock : DuelistControllerModule, IDuelistInputProcessor, IDuelistInputRecorder
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -24,21 +24,21 @@ public class PredictedPlayerBlock : PredictionModule, IPredictedInputProcessor, 
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
         //Start Block
-        if (inputPayload.BlockPressed && statePayload.PlayerState.Equals(PlayerState.Balanced))
+        if (inputPayload.BlockPressed && statePayload.CombatState.Equals(CombatState.Balanced))
         {
-            statePayload.PlayerState = PlayerState.Blocking;
+            statePayload.CombatState = CombatState.Blocking;
             statePayload.LastStateChangeTick = statePayload.Tick;
 
             TriggerBlockAnimation(block.AnimationHash);
         }
 
         //During Block
-        if (statePayload.PlayerState.Equals(PlayerState.Blocking))
+        if (statePayload.CombatState.Equals(CombatState.Blocking))
         {
             //End Block
-            if (block.BlockDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval)
+            if (block.BlockDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * duelistCharacterController.ServerSendInterval)
             {
-                statePayload.PlayerState = PlayerState.Balanced;
+                statePayload.CombatState = CombatState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;
             }
         }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PredictedPlayerEnergy : PredictionModule, IPredictedInputProcessor
+public class PredictedPlayerEnergy : DuelistControllerModule, IDuelistInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -13,16 +13,16 @@ public class PredictedPlayerEnergy : PredictionModule, IPredictedInputProcessor
 
     #region FIELDS
 
-    PlayerBuildDefinition playerClass;
+    DuelistBuild duelistBuild;
 
     #endregion
 
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
-        float energyRecoveryRate = baseEnergyRecoveryRate / playerClass.EnergyRecoveryRate;
+        float energyRecoveryRate = baseEnergyRecoveryRate / duelistBuild.EnergyRecoveryRate;
 
         //player is below max energy
-        if (statePayload.Energy < playerClass.MaxEnergy && statePayload.PlayerState.Equals(PlayerState.Balanced))
+        if (statePayload.Energy < duelistBuild.MaxEnergy && statePayload.CombatState.Equals(CombatState.Balanced))
         {
             //player has waited long enough to recover 1 energy
             if (energyRecoveryRate < statePayload.LastEnergyRecoveryMs)
@@ -39,7 +39,7 @@ public class PredictedPlayerEnergy : PredictionModule, IPredictedInputProcessor
 
     private void Awake()
     {
-        playerClass = GetComponent<PlayerDuelistObject>().PlayerBuild;
+        duelistBuild = GetComponent<CombatantDuelist>().Build;
     }
 
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5319602476891466067}
   - component: {fileID: 4684407600501573136}
   m_Layer: 0
-  m_Name: Third Person Virtual Camera
+  m_Name: Duelist Virtual Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -3,7 +3,7 @@ using System.Collections;
 using Mirror;
 using System;
 
-public class PredictedPlayerBalance : PredictionModule, IPredictedInputProcessor
+public class PredictedPlayerBalance : DuelistControllerModule, IDuelistInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -19,9 +19,9 @@ public class PredictedPlayerBalance : PredictionModule, IPredictedInputProcessor
 
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
-        if(statePayload.Balance <= 0f && !statePayload.PlayerState.Equals(PlayerState.KnockedDown))
+        if(statePayload.Balance <= 0f && !statePayload.CombatState.Equals(CombatState.KnockedDown))
         {
-            statePayload.PlayerState = PlayerState.KnockedDown;
+            statePayload.CombatState = CombatState.KnockedDown;
             statePayload.LastStateChangeTick = statePayload.Tick;
             statePayload.Balance = 0f;
 

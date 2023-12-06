@@ -1,7 +1,7 @@
 using Mirror;
 using UnityEngine;
 
-public class PredictedPlayerDodge : PredictionModule, IPredictedInputProcessor, IPredictedInputRecorder
+public class PredictedPlayerDodge : DuelistControllerModule, IDuelistInputProcessor, IDuelistInputRecorder
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -28,21 +28,21 @@ public class PredictedPlayerDodge : PredictionModule, IPredictedInputProcessor, 
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
         //Start Dodge
-        if (inputPayload.DodgePressed && statePayload.PlayerState.Equals(PlayerState.Balanced))
+        if (inputPayload.DodgePressed && statePayload.CombatState.Equals(CombatState.Balanced))
         {
-            statePayload.PlayerState = PlayerState.Dodging;
+            statePayload.CombatState = CombatState.Dodging;
             statePayload.LastStateChangeTick = statePayload.Tick;
 
             TriggerDodgeAnimation(dodge.AnimationHash, inputPayload.MoveDirection);
         }
 
         //During Dodge
-        if (statePayload.PlayerState.Equals(PlayerState.Dodging))
+        if (statePayload.CombatState.Equals(CombatState.Dodging))
         {
             //End Dodge
-            if (dodge.DodgeDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval)
+            if (dodge.DodgeDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * duelistCharacterController.ServerSendInterval)
             {
-                statePayload.PlayerState = PlayerState.Balanced;
+                statePayload.CombatState = CombatState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;
             }
             else

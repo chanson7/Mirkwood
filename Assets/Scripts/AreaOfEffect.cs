@@ -6,10 +6,10 @@ public class AreaOfEffect : MonoBehaviour
 {
 
     #region PROPERTIES
-    public List<Transform> Collisions = new();
-    #endregion
 
-    [SerializeField] LayerMask layerMask;
+    public List<Transform> Collisions = new();
+
+    #endregion
 
     private void Start()
     {

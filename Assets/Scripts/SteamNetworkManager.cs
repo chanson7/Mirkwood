@@ -13,7 +13,6 @@ public class SteamNetworkManager : NetworkManager
     // Overrides the base singleton so we don't
     // have to cast to this type everywhere.
     public static new SteamNetworkManager singleton { get; private set; }
-    [SerializeField] LobbyManager partyLobbyManager;
 
     #region Unity Callbacks
 
@@ -59,31 +58,27 @@ public class SteamNetworkManager : NetworkManager
 
     #endregion
 
-    #region Steam
+    //public void StartSteamMatch()
+    //{
+    //    if (partyLobbyManager.Lobby.IsOwner)
+    //    {
+    //        Debug.Log($"Starting the Host");
 
-    public void StartSteamMatch()
-    {
-        if (partyLobbyManager.Lobby.IsOwner)
-        {
-            Debug.Log($"Starting the Host");
+    //        partyLobbyManager.Lobby.SetGameServer();
 
-            partyLobbyManager.Lobby.SetGameServer();
+    //        StartHost();
+    //    }
+    //}
 
-            StartHost();
-        }
-    }
+    //public void JoinSteamMatch(LobbyGameServer gameServer)
+    //{
+    //    if (transport.GetType() != typeof(FizzySteamworks))
+    //        return;
 
-    public void JoinSteamMatch(LobbyGameServer gameServer)
-    {
-        if (transport.GetType() != typeof(FizzySteamworks))
-            return;
-
-        Debug.Log($"Joining Game Server {gameServer.id}");
-        networkAddress = gameServer.id.ToString();
-        StartClient();
-    }
-
-    #endregion
+    //    Debug.Log($"Joining Game Server {gameServer.id}");
+    //    networkAddress = gameServer.id.ToString();
+    //    StartClient();
+    //}
 
     #region Start & Stop
 

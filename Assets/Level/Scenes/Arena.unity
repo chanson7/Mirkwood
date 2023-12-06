@@ -146,7 +146,7 @@ PrefabInstance:
     - target: {fileID: 789065387881477761, guid: b4591c2d2b0edd840b2de4582682359a,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1631473840261883936, guid: b4591c2d2b0edd840b2de4582682359a,
         type: 3}
@@ -2811,7 +2811,7 @@ PrefabInstance:
     - target: {fileID: 789065387881477761, guid: b4591c2d2b0edd840b2de4582682359a,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1631473840261883936, guid: b4591c2d2b0edd840b2de4582682359a,
         type: 3}
@@ -3548,7 +3548,7 @@ PrefabInstance:
     - target: {fileID: 789065387881477761, guid: b4591c2d2b0edd840b2de4582682359a,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1631473840261883936, guid: b4591c2d2b0edd840b2de4582682359a,
         type: 3}
@@ -3993,6 +3993,79 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!1001 &975359121
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5164632221521912918, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: sceneId
+      value: 1253974005
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463968, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463968, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463968, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463968, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463968, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463968, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463968, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463968, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463968, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463968, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8396857652373463980, guid: d6252d74f83d7c8428158f607c8dfbdb,
+        type: 3}
+      propertyPath: m_Name
+      value: AI Duelist
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d6252d74f83d7c8428158f607c8dfbdb, type: 3}
 --- !u!1 &1059257601
 GameObject:
   m_ObjectHideFlags: 0
@@ -5403,7 +5476,7 @@ GameObject:
   - component: {fileID: 1426938974}
   - component: {fileID: 1426938975}
   m_Layer: 0
-  m_Name: Game Manager
+  m_Name: Duel Game Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5472,7 +5545,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  players: []
+  gameMode: 0
 --- !u!43 &1504662192
 Mesh:
   m_ObjectHideFlags: 0
@@ -6149,7 +6222,7 @@ PrefabInstance:
     - target: {fileID: 789065387881477761, guid: b4591c2d2b0edd840b2de4582682359a,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1631473840261883936, guid: b4591c2d2b0edd840b2de4582682359a,
         type: 3}
@@ -6594,3 +6667,4 @@ SceneRoots:
   - {fileID: 1426938971}
   - {fileID: 963194228}
   - {fileID: 90786394}
+  - {fileID: 975359121}

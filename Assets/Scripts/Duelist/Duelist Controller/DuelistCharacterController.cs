@@ -4,34 +4,34 @@ using Mirror;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(NetworkIdentity))]
-public class PredictedCharacterController : NetworkBehaviour
+public abstract class DuelistCharacterController : NetworkBehaviour
 {
 
     #region EDITOR EXPOSED FIELDS
 
     [Tooltip("Each module runs the same processing function once per tick on both the client and the server")]
-    [SerializeField] List<PredictionModule> predictionModules = new();
+    [SerializeField] protected List<DuelistControllerModule> controllerModules = new();
 
     #endregion
 
     #region FIELDS
 
-    [SyncVar] float _serverSendInterval;
-    StatePayload[] stateBuffer;
-    int currentTick;
-    float tickTimer;
-    Queue<UnpredictedEvent> unpredictedEffectsQueue;
+    [SyncVar] protected float _serverSendInterval;
+    protected StatePayload[] stateBuffer;
+    protected int currentTick;
+    protected float tickTimer;
+    protected Queue<UnpredictedEvent> unpredictedEffectsQueue;
 
     //client only
-    readonly float acceptablePositionError = 0.001f;
-    readonly float acceptableRotationError = 0.001f;
-    float lastTickEndTime = 0f;
-    InputPayload[] clientInputBuffer;
-    StatePayload _latestServerState;
-    StatePayload lastProcessedState;
+    protected readonly float acceptablePositionError = 0.001f;
+    protected readonly float acceptableRotationError = 0.001f;
+    protected float lastTickEndTime = 0f;
+    protected InputPayload[] clientInputBuffer;
+    protected StatePayload _latestServerState;
+    protected StatePayload lastProcessedState;
 
     //server only
-    Queue<InputPayload> inputQueue;
+    protected Queue<InputPayload> inputQueue;
 
     #endregion
 
@@ -45,7 +45,7 @@ public class PredictedCharacterController : NetworkBehaviour
 
     #region CONSTANTS
 
-    const int BUFFER_SIZE = 1024;
+    protected const int BUFFER_SIZE = 1024;
 
     #endregion
 
@@ -74,48 +74,10 @@ public class PredictedCharacterController : NetworkBehaviour
 
     #region METHODS
 
-    public void Tick()
-    {
-        if (isLocalPlayer)
-            if(isServer) HandleTickOnHost();            //host
-            else HandleTickOnLocalClient();             //local client
-        else if (isServer) HandleTickOnServer();        //server
-        else if (isClient) HandleTickOnOtherClient();   //other client
-    }
-
-    [Client]
-    void HandleTickOnLocalClient()
-    {
-        if (!_latestServerState.Equals(default(StatePayload)) && (lastProcessedState.Equals(default(StatePayload)) || !_latestServerState.Equals(lastProcessedState)))
-            HandleServerReconciliation();
-
-        int bufferIndex = currentTick % BUFFER_SIZE;
-
-        InputPayload inputPayload = new(currentTick, Time.time - lastTickEndTime);
-
-        foreach (PredictionModule transformModule in predictionModules)
-        {
-            if (transformModule is IPredictedInputRecorder inputRecorder)
-            {
-                inputRecorder.RecordInput(ref inputPayload);
-            }
-        }
-
-        clientInputBuffer[bufferIndex] = inputPayload;
-        stateBuffer[bufferIndex] = ProcessTick(inputPayload);
-
-        CmdOnClientInput(inputPayload);
-    }
-
-    [Command]
-    void CmdOnClientInput(InputPayload inputPayload)
-    {
-        //TODO a client can just send any frequency of inputs to speed hack. this is bad
-        inputQueue.Enqueue(inputPayload);
-    }
+    public abstract void Tick();
 
     [Server]
-    void HandleTickOnServer()
+    protected void HandleTickOnServer()
     {
         int bufferIndex = -1;
 
@@ -142,7 +104,8 @@ public class PredictedCharacterController : NetworkBehaviour
     {
         unpredictedEffectsQueue.Enqueue(effect);
 
-        TargetEnqueueUnpredictedEvent(effect);
+        if(gameObject.GetComponent<PlayerDuelist>()) //might be a better way to check with mirror.  Only want to enqueue on player clients
+            TargetEnqueueUnpredictedEvent(effect);
 
         [TargetRpc]
         void TargetEnqueueUnpredictedEvent(UnpredictedEvent effect)
@@ -150,14 +113,14 @@ public class PredictedCharacterController : NetworkBehaviour
             unpredictedEffectsQueue.Enqueue(effect);
         }
     }
-    
-    void HandleTickOnHost()
+
+    protected void HandleTickOnHost()
     {
         InputPayload inputPayload = new(currentTick, Time.time - lastTickEndTime);
         int bufferIndex = inputPayload.Tick % BUFFER_SIZE;
 
-        foreach (PredictionModule predictionModule in predictionModules)
-            if (predictionModule is IPredictedInputRecorder inputRecorder)
+        foreach (DuelistControllerModule module in controllerModules)
+            if (module is IDuelistInputRecorder inputRecorder)
                 inputRecorder.RecordInput(ref inputPayload);
 
         stateBuffer[bufferIndex] = ProcessTick(inputPayload);
@@ -173,12 +136,12 @@ public class PredictedCharacterController : NetworkBehaviour
         _latestServerState = statePayload;
     }
 
-    void HandleTickOnOtherClient()
+    protected void HandleTickOnClient()
     {
         transform.SetPositionAndRotation(_latestServerState.Position, _latestServerState.Rotation);
     }
 
-    StatePayload ProcessTick(InputPayload input)
+    protected StatePayload ProcessTick(InputPayload input)
     {
         //if we're not in Tick 0, construct a state payload using the last state payload from the buffer
         StatePayload state = input.Tick > 0 ? new(stateBuffer[(input.Tick - 1) % BUFFER_SIZE]) : 
@@ -195,9 +158,9 @@ public class PredictedCharacterController : NetworkBehaviour
         }
 
         //process the player's predictable inputs
-        foreach (PredictionModule transformModule in predictionModules)
+        foreach (DuelistControllerModule transformModule in controllerModules)
         {
-            if (transformModule is IPredictedInputProcessor inputProcessor)
+            if (transformModule is IDuelistInputProcessor inputProcessor)
             {
                 inputProcessor.ProcessInput(ref state, input);
             }
@@ -206,43 +169,6 @@ public class PredictedCharacterController : NetworkBehaviour
         state.Velocity = (state.Position - previousPosition) / input.TickDuration;
 
         return state;
-    }
-
-    [Client]
-    void HandleServerReconciliation()
-    {
-        lastProcessedState = _latestServerState;
-
-        int serverStateBufferIndex = _latestServerState.Tick % BUFFER_SIZE;
-        float positionError = Vector3.Distance(_latestServerState.Position, stateBuffer[serverStateBufferIndex].Position);
-        float rotationError = (_latestServerState.Rotation * Quaternion.Inverse(stateBuffer[serverStateBufferIndex].Rotation)).eulerAngles.magnitude;
-
-        if (positionError > acceptablePositionError || rotationError > acceptableRotationError)
-        {
-            Debug.Log($"Reconciling for {positionError} position error and/or {rotationError} rotation error");
-
-            //reset position and rotation
-            transform.SetPositionAndRotation(_latestServerState.Position, _latestServerState.Rotation);
-
-            // Update buffer at index of latest server state
-            stateBuffer[serverStateBufferIndex] = _latestServerState;
-
-            // Now re-simulate the rest of the ticks up to the current tick on the client
-            int tickToProcess = _latestServerState.Tick + 1;
-
-            while (tickToProcess < currentTick)
-            {
-                int bufferIndex = tickToProcess % BUFFER_SIZE;
-
-                // Process new movement with reconciled state
-                StatePayload statePayload = ProcessTick(clientInputBuffer[bufferIndex]);
-
-                // Update buffer with recalculated state
-                stateBuffer[bufferIndex] = statePayload;
-
-                tickToProcess++;
-            }
-        }
     }
 
     #endregion
@@ -271,5 +197,4 @@ public struct UnpredictedEvent
 {
     public Vector3 Translation;
     public float Duration;
-    public bool ServerWait;
 }

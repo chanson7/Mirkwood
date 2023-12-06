@@ -1,7 +1,7 @@
 using Mirror;
 using UnityEngine;
 
-public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecorder, IPredictedInputProcessor
+public class PredictedPlayerMeleeAttack : DuelistControllerModule, IDuelistInputRecorder, IDuelistInputProcessor
 {
 
     #region EDITOR EXPOSED FIELDS
@@ -32,8 +32,6 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
 
     #endregion
 
-    #region INPUT
-
     public bool IsAttackButtonPressed { set { _isAttackButtonPressed = value; } }
 
     public void RecordInput(ref InputPayload inputPayload)
@@ -41,16 +39,14 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
         inputPayload.AttackPressed = _isAttackButtonPressed;
     }
 
-    #endregion
-
     public void ProcessInput(ref StatePayload statePayload, InputPayload inputPayload)
     {
         //Start Primary Attack
-        if (inputPayload.AttackPressed && statePayload.PlayerState.Equals(PlayerState.Balanced) && statePayload.Energy >= primaryAttack.EnergyCost)
+        if (inputPayload.AttackPressed && statePayload.CombatState.Equals(CombatState.Balanced) && statePayload.Energy >= primaryAttack.EnergyCost)
         {
             isHitApplied = false;
 
-            statePayload.PlayerState = PlayerState.Attacking_Primary;
+            statePayload.CombatState = CombatState.Attacking_Primary;
             statePayload.LastStateChangeTick = statePayload.Tick;
             statePayload.Energy -= primaryAttack.EnergyCost;
 
@@ -58,16 +54,16 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
         }
 
         //During Primary Attack
-        if (statePayload.PlayerState.Equals(PlayerState.Attacking_Primary))
+        if (statePayload.CombatState.Equals(CombatState.Attacking_Primary))
         {
-            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval / primaryAttack.AttackDuration;
+            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * duelistCharacterController.ServerSendInterval / primaryAttack.AttackDuration;
 
             //Exit Primary Attack
             if (!inputPayload.AttackPressed && !isHitApplied)
             {
                 CancelAttackAnimation();
 
-                statePayload.PlayerState = PlayerState.Balanced;
+                statePayload.CombatState = CombatState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;
                 return;
             }
@@ -79,18 +75,18 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
             }
 
             //End Primary attack
-            if (primaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval)
+            if (primaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * duelistCharacterController.ServerSendInterval)
             {
                 //Start Secondary attack
                 if (inputPayload.AttackPressed && statePayload.Energy >= secondaryAttack.EnergyCost)
                 {
                     isHitApplied = false;
-                    statePayload.PlayerState = PlayerState.Attacking_Secondary;
+                    statePayload.CombatState = CombatState.Attacking_Secondary;
                     statePayload.Energy -= secondaryAttack.EnergyCost;
                     TriggerAttackAnimation(secondaryAttack.AnimationHash);
                 }
                 else
-                    statePayload.PlayerState = PlayerState.Balanced;
+                    statePayload.CombatState = CombatState.Balanced;
 
                 statePayload.LastStateChangeTick = statePayload.Tick;
                 return;
@@ -103,14 +99,14 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
         }
 
         //During Secondary Attack
-        if (statePayload.PlayerState.Equals(PlayerState.Attacking_Secondary))
+        if (statePayload.CombatState.Equals(CombatState.Attacking_Secondary))
         {
-            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval / primaryAttack.AttackDuration;
+            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * duelistCharacterController.ServerSendInterval / primaryAttack.AttackDuration;
 
             //Exit Secondary Attack
             if (!inputPayload.AttackPressed && !isHitApplied)
             {
-                statePayload.PlayerState = PlayerState.Balanced;
+                statePayload.CombatState = CombatState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;
 
                 CancelAttackAnimation();
@@ -119,24 +115,24 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
             }
 
             //Secondary Attack Damage Tick
-            if (isHitApplied == false && secondaryAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval / secondaryAttack.AttackDuration)
+            if (isHitApplied == false && secondaryAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * duelistCharacterController.ServerSendInterval / secondaryAttack.AttackDuration)
             {
                 ApplyHit(statePayload.Position, secondaryAttack);
             }
 
             //End Secondary attack
-            if (secondaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval)
+            if (secondaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * duelistCharacterController.ServerSendInterval)
             {
                 //Start Tertiary attack
                 if (inputPayload.AttackPressed && statePayload.Energy >= tertiaryAttack.EnergyCost)
                 {
                     isHitApplied = false;
-                    statePayload.PlayerState = PlayerState.Attacking_Tertiary;
+                    statePayload.CombatState = CombatState.Attacking_Tertiary;
                     statePayload.Energy -= tertiaryAttack.EnergyCost;
                     TriggerAttackAnimation(tertiaryAttack.AnimationHash);
                 }
                 else
-                    statePayload.PlayerState = PlayerState.Balanced;
+                    statePayload.CombatState = CombatState.Balanced;
 
                 statePayload.LastStateChangeTick = inputPayload.Tick;
                 return;
@@ -149,37 +145,37 @@ public class PredictedPlayerMeleeAttack : PredictionModule, IPredictedInputRecor
         }
 
         //During Tertiary Attack
-        if (statePayload.PlayerState.Equals(PlayerState.Attacking_Tertiary))
+        if (statePayload.CombatState.Equals(CombatState.Attacking_Tertiary))
         {
-            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval / primaryAttack.AttackDuration;
+            float attackCompletionPercentage = (statePayload.Tick - statePayload.LastStateChangeTick) * duelistCharacterController.ServerSendInterval / primaryAttack.AttackDuration;
 
             //Exit Tertiary Attack
             if (!inputPayload.AttackPressed && !isHitApplied)
             {
-                statePayload.PlayerState = PlayerState.Balanced;
+                statePayload.CombatState = CombatState.Balanced;
                 CancelAttackAnimation();
 
                 return;
             }
 
             //Tertiary Attack Damage Tick
-            if (isHitApplied == false && tertiaryAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval / tertiaryAttack.AttackDuration)
+            if (isHitApplied == false && tertiaryAttack.HitApplicationTime <= (statePayload.Tick - statePayload.LastStateChangeTick) * duelistCharacterController.ServerSendInterval / tertiaryAttack.AttackDuration)
             {
                 ApplyHit(statePayload.Position, tertiaryAttack);
             }
 
             //End Tertiary attack
-            if (tertiaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * predictedCharacterController.ServerSendInterval)
+            if (tertiaryAttack.AttackDuration <= (statePayload.Tick - statePayload.LastStateChangeTick) * duelistCharacterController.ServerSendInterval)
             {
                 //Restart from Primary attack
                 if (inputPayload.AttackPressed)
                 {
-                    statePayload.PlayerState = PlayerState.Attacking_Primary;
+                    statePayload.CombatState = CombatState.Attacking_Primary;
 
                     TriggerAttackAnimation(primaryAttack.AnimationHash);
                 }
                 else
-                    statePayload.PlayerState = PlayerState.Balanced;
+                    statePayload.CombatState = CombatState.Balanced;
 
                 statePayload.LastStateChangeTick = inputPayload.Tick;
                 return;

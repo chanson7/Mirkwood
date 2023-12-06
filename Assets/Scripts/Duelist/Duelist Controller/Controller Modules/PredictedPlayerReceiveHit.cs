@@ -2,7 +2,7 @@ using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class PredictedPlayerReceiveHit : PredictionModule, IPredictedInputProcessor
+public class PredictedPlayerReceiveHit : DuelistControllerModule, IDuelistInputProcessor
 {
 
     #region FIELDS
@@ -19,7 +19,7 @@ public class PredictedPlayerReceiveHit : PredictionModule, IPredictedInputProces
     [Server]
     public void ServerTriggerHitReceived(Vector3 knockback, float duration)
     {
-        predictedCharacterController.EnqueueUnpredictedEvent(new UnpredictedEvent
+        duelistCharacterController.EnqueueUnpredictedEvent(new UnpredictedEvent
         {
             Translation = knockback,
             Duration = duration
@@ -29,9 +29,9 @@ public class PredictedPlayerReceiveHit : PredictionModule, IPredictedInputProces
     public void ProcessInput(ref StatePayload statePayload, InputPayload input)
     {
         //first interrupt tick
-        if ((!statePayload.PlayerState.Equals(PlayerState.Disabled) && !statePayload.PlayerState.Equals(PlayerState.Blocking)) && statePayload.effectDuration > 0f)
+        if ((!statePayload.CombatState.Equals(CombatState.Disabled) && !statePayload.CombatState.Equals(CombatState.Blocking)) && statePayload.effectDuration > 0f)
         {
-            statePayload.PlayerState = PlayerState.Disabled;
+            statePayload.CombatState = CombatState.Disabled;
             statePayload.LastStateChangeTick = statePayload.Tick;
 
             if (isLocalPlayer)
@@ -41,7 +41,7 @@ public class PredictedPlayerReceiveHit : PredictionModule, IPredictedInputProces
         }
 
         //during interrupt
-        if (statePayload.PlayerState.Equals(PlayerState.Disabled))
+        if (statePayload.CombatState.Equals(CombatState.Disabled))
         {
             Vector3 tickKnockback = input.TickDuration * (statePayload.effectTranslate / statePayload.effectDuration);
             tickKnockback.y = 0f; //dont get knocked up into the air
@@ -57,7 +57,7 @@ public class PredictedPlayerReceiveHit : PredictionModule, IPredictedInputProces
             {
                 statePayload.effectDuration = 0f;
                 statePayload.effectTranslate = Vector3.zero;
-                statePayload.PlayerState = PlayerState.Balanced;
+                statePayload.CombatState = CombatState.Balanced;
                 statePayload.LastStateChangeTick = statePayload.Tick;
             }
         }
